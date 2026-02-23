@@ -7,6 +7,8 @@ import 'services/api_service.dart';
 import 'services/queue_service.dart';
 import 'services/socket_service.dart';
 import 'services/fcm_service.dart';
+import 'services/auth_service.dart';
+import 'screens/auth_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/queue_selection_screen.dart';
 import 'screens/qr_scan_screen.dart';
@@ -23,7 +25,14 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        Provider<ApiService>(create: (_) => ApiService()),
+        ChangeNotifierProvider(create: (_) => AuthService()),
+        ProxyProvider<AuthService, ApiService>(
+          update: (_, auth, __) {
+             final api = ApiService();
+             if(auth.token != null) api.setToken(auth.token!);
+             return api;
+          },
+        ),
         ProxyProvider<ApiService, QueueService>(
           update: (_, api, __) => QueueService(api),
         ),
@@ -43,7 +52,11 @@ class SmartQueueApp extends StatelessWidget {
     return MaterialApp(
       title: 'Smart Queue Management System',
       theme: AppTheme.darkTheme,
-      home: const MainBottomNavScreen(),
+      home: Consumer<AuthService>(
+        builder: (context, auth, _) {
+          return auth.isAuthenticated ? const MainBottomNavScreen() : const AuthScreen();
+        },
+      ),
     );
   }
 }

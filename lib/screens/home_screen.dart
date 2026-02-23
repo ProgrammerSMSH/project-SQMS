@@ -22,14 +22,20 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _loadActiveTokens() async {
     try {
-      final tokens = await context.read<QueueService>().getActiveTokens();
+      final dynamic responseData = await context.read<QueueService>().getActiveTokens();
       setState(() {
-        activeTokens = tokens;
+         // Handle map encapsulation if backend returns { tokens: [] }
+         final tokensList = (responseData is Map && responseData.containsKey('tokens'))
+             ? responseData['tokens']
+             : responseData;
+
+        // Ensure it's treated as a list, default to empty if null/unexpected type
+        activeTokens = (tokensList is List) ? tokensList : [];
         isLoading = false;
       });
       
       // Auto-join socket rooms for active queues
-      for (var token in tokens) {
+      for (var token in activeTokens) {
         if(token['queueId'] != null) {
           context.read<SocketService>().joinQueue(token['queueId']['_id'], 'user_id_here');
         }
@@ -126,7 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text('Token Number', style: TextStyle(fontSize: 12, color: Colors.grey)),
-                  Text(tokenNumber, style: const TextStyle(fontSize: 36, fontWeight: FontWeight.black, color: Colors.white)),
+                  Text(tokenNumber, style: const TextStyle(fontSize: 36, fontWeight: FontWeight.w900, color: Colors.white)),
                 ],
               ),
               Column(

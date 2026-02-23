@@ -22,4 +22,9 @@ class QueueService {
     final response = await api.get('/tokens/active');
     return response as List<dynamic>;
   }
+
+  Future<List<dynamic>> getHistoryTokens() async {
+    final response = await api.get('/tokens/history');
+    return response as List<dynamic>;
+  }
 }

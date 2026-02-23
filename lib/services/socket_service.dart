@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 
 class SocketService extends ChangeNotifier {
   IO.Socket? socket;
-  final String serverUrl = 'http://10.167.58.42:5000'; // For physical device testing
+  final String serverUrl = 'https://project-sqms.vercel.app'; // Live Vercel Socket
 
   void initSocket() {
     socket = IO.io(serverUrl, <String, dynamic>{

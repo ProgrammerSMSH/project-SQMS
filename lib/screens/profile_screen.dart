@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../services/auth_service.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final auth = context.watch<AuthService>();
+    final userName = auth.userName ?? 'User';
+
     return Scaffold(
       appBar: AppBar(title: const Text('Profile')),
       body: ListView(
@@ -18,11 +23,11 @@ class ProfileScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          const Center(
-            child: Text('John Doe', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+          Center(
+            child: Text(userName, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
           ),
           const Center(
-            child: Text('+1 234 567 8900', style: TextStyle(color: Colors.grey)),
+            child: Text('Phone verified', style: TextStyle(color: Colors.green)),
           ),
           const SizedBox(height: 32),
           const Divider(color: Colors.white12),
@@ -49,7 +54,7 @@ class ProfileScreen extends StatelessWidget {
             leading: const Icon(Icons.logout, color: Colors.redAccent),
             title: const Text('Logout', style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
             onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Logging out...')));
+              context.read<AuthService>().logout();
             },
           ),
         ],

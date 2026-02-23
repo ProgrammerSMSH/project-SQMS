@@ -22,9 +22,12 @@ class _QueueSelectionScreenState extends State<QueueSelectionScreen> {
 
   Future<void> _loadQueues() async {
     try {
-      final data = await context.read<QueueService>().getQueues();
+      final dynamic responseData = await context.read<QueueService>().getQueues();
       setState(() {
-        queues = data;
+        // Assuming API might return { queues: [...] } or just [...]
+        queues = (responseData is Map && responseData.containsKey('queues')) 
+            ? responseData['queues'] 
+            : responseData;
         isLoading = false;
       });
     } catch (e) {
@@ -55,21 +58,31 @@ class _QueueSelectionScreenState extends State<QueueSelectionScreen> {
       appBar: AppBar(title: const Text('Join a Queue')),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
-          : Column(
-              children: [
-                _buildPrioritySelector(),
-                const Divider(color: Colors.white12, height: 1),
-                Expanded(
-                  child: ListView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: queues.length,
-                    itemBuilder: (context, index) {
-                      final queue = queues[index];
-                      return _buildQueueCard(queue);
-                    },
+          : RefreshIndicator(
+              onRefresh: _loadQueues,
+              child: Column(
+                children: [
+                  _buildPrioritySelector(),
+                  const Divider(color: Colors.white12, height: 1),
+                  Expanded(
+                    child: queues.isEmpty 
+                      ? ListView(
+                          children: const [
+                            SizedBox(height: 100),
+                            Center(child: Text("No active queues available right now.", style: TextStyle(color: Colors.grey))),
+                          ],
+                        )
+                      : ListView.builder(
+                          padding: const EdgeInsets.all(16),
+                          itemCount: queues.length,
+                          itemBuilder: (context, index) {
+                            final queue = queues[index];
+                            return _buildQueueCard(queue);
+                          },
+                        ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
     );
   }
