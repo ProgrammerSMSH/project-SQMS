@@ -35,6 +35,15 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'SQMS Backend API is working' });
 });
 
+// Root route for browsers hits
+app.get('/', (req, res) => {
+  res.json({ 
+     status: 'OK', 
+     message: 'Welcome to SQMS API. Please use the Flutter App to communicate with /api/v1 endpoints.',
+     documentation: 'REST and Sockets are active.'
+  });
+});
+
 // Socket.io injection into request
 app.use((req, res, next) => {
   req.io = io;
