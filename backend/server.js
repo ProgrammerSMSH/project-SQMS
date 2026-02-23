@@ -19,24 +19,6 @@ connectDB().then(async () => {
     // Index doesn't exist, which is fine
   });
 
-  // Seed Default Admin if none exists
-  try {
-    const adminExists = await User.findOne({ role: 'ADMIN' });
-    if (!adminExists) {
-      console.log('Seeding default admin user...');
-      await User.create({
-        name: 'System Admin',
-        email: 'admin@sqms.com',
-        password: 'admin123', // Will be hashed by pre-save hook
-        role: 'ADMIN'
-      });
-      console.log('Default admin created: admin@sqms.com / admin123');
-    }
-  } catch (error) {
-    console.error('Error seeding admin:', error);
-  }
-});
-
 const app = express();
 
 app.use(express.json());
@@ -64,6 +46,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/v1/auth', authRoutes); // Unified auth prefix
+app.use('/api/v1/user/auth', authRoutes); // Legacy bridge for older app builds
 app.use('/api/v1/queues', queueRoutes);
 app.use('/api/v1/tokens', tokenRoutes);
 app.use('/api/v1/counters', counterRoutes);
