@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 
 class ApiService {
   // Use your computer's local IP or 10.0.2.2 for Android Emulator
-  static const String baseUrl = 'http://10.0.2.2:5000/api/v1';
+  static const String baseUrl = 'https://project-sqms.vercel.app/api/v1';
   String? jwtToken;
 
   void setToken(String token) {

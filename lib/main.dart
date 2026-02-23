@@ -7,6 +7,11 @@ import 'services/api_service.dart';
 import 'services/queue_service.dart';
 import 'services/socket_service.dart';
 import 'services/fcm_service.dart';
+import 'screens/home_screen.dart';
+import 'screens/queue_selection_screen.dart';
+import 'screens/qr_scan_screen.dart';
+import 'screens/token_history_screen.dart';
+import 'screens/profile_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,7 +48,6 @@ class SmartQueueApp extends StatelessWidget {
   }
 }
 
-// Stub for the main view as defined in architecture doc
 class MainBottomNavScreen extends StatefulWidget {
   const MainBottomNavScreen({super.key});
 
@@ -54,19 +58,37 @@ class MainBottomNavScreen extends StatefulWidget {
 class _MainBottomNavScreenState extends State<MainBottomNavScreen> {
   int _currentIndex = 0;
 
+  final List<Widget> _screens = [
+    const HomeScreen(),
+    const QueueSelectionScreen(),
+    const QRScanScreen(),
+    const TokenHistoryScreen(),
+    const ProfileScreen(),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize global socket connection on app start
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<SocketService>().initSocket();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Queue Dashboard')),
-      body: Center(
-        child: Text('Integration ready. UI placeholders mapped here.'),
+      body: IndexedStack(
+        index: _currentIndex,
+        children: _screens,
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (i) => setState(() => _currentIndex = i),
+        type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Queue'),
+          BottomNavigationBarItem(icon: Icon(Icons.list_alt), label: 'Queue'),
           BottomNavigationBarItem(icon: Icon(Icons.qr_code_scanner), label: 'Scan'),
           BottomNavigationBarItem(icon: Icon(Icons.history), label: 'History'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),

@@ -7,15 +7,13 @@
       "name": "sqms_app",
       "version": "1.0.0+1",
       "dependencies": [
-        "cloud_firestore",
         "cupertino_icons",
-        "firebase_auth",
         "firebase_core",
+        "firebase_messaging",
         "flutter",
         "google_fonts",
         "http",
         "provider",
-        "shared_preferences",
         "socket_io_client"
       ],
       "devDependencies": [
@@ -25,7 +23,7 @@
     },
     {
       "name": "flutter_lints",
-      "version": "6.0.0",
+      "version": "2.0.3",
       "dependencies": [
         "lints"
       ]
@@ -49,25 +47,35 @@
       ]
     },
     {
-      "name": "provider",
-      "version": "6.1.5+1",
+      "name": "google_fonts",
+      "version": "6.3.3",
       "dependencies": [
-        "collection",
+        "crypto",
         "flutter",
-        "nested"
+        "http",
+        "path_provider"
       ]
     },
     {
-      "name": "shared_preferences",
-      "version": "2.5.4",
+      "name": "firebase_messaging",
+      "version": "14.7.10",
       "dependencies": [
+        "firebase_core",
+        "firebase_core_platform_interface",
+        "firebase_messaging_platform_interface",
+        "firebase_messaging_web",
         "flutter",
-        "shared_preferences_android",
-        "shared_preferences_foundation",
-        "shared_preferences_linux",
-        "shared_preferences_platform_interface",
-        "shared_preferences_web",
-        "shared_preferences_windows"
+        "meta"
+      ]
+    },
+    {
+      "name": "firebase_core",
+      "version": "2.32.0",
+      "dependencies": [
+        "firebase_core_platform_interface",
+        "firebase_core_web",
+        "flutter",
+        "meta"
       ]
     },
     {
@@ -90,48 +98,12 @@
       ]
     },
     {
-      "name": "cloud_firestore",
-      "version": "5.6.12",
+      "name": "provider",
+      "version": "6.1.5+1",
       "dependencies": [
-        "cloud_firestore_platform_interface",
-        "cloud_firestore_web",
         "collection",
-        "firebase_core",
-        "firebase_core_platform_interface",
         "flutter",
-        "meta"
-      ]
-    },
-    {
-      "name": "firebase_auth",
-      "version": "5.7.0",
-      "dependencies": [
-        "firebase_auth_platform_interface",
-        "firebase_auth_web",
-        "firebase_core",
-        "firebase_core_platform_interface",
-        "flutter",
-        "meta"
-      ]
-    },
-    {
-      "name": "firebase_core",
-      "version": "3.15.2",
-      "dependencies": [
-        "firebase_core_platform_interface",
-        "firebase_core_web",
-        "flutter",
-        "meta"
-      ]
-    },
-    {
-      "name": "google_fonts",
-      "version": "8.0.2",
-      "dependencies": [
-        "crypto",
-        "flutter",
-        "http",
-        "path_provider"
+        "nested"
       ]
     },
     {
@@ -153,7 +125,7 @@
     },
     {
       "name": "lints",
-      "version": "6.1.0",
+      "version": "2.1.1",
       "dependencies": []
     },
     {
@@ -241,68 +213,69 @@
       ]
     },
     {
-      "name": "nested",
-      "version": "1.0.0",
+      "name": "path_provider",
+      "version": "2.1.5",
       "dependencies": [
-        "flutter"
-      ]
-    },
-    {
-      "name": "shared_preferences_windows",
-      "version": "2.4.1",
-      "dependencies": [
-        "file",
         "flutter",
-        "path",
+        "path_provider_android",
+        "path_provider_foundation",
+        "path_provider_linux",
         "path_provider_platform_interface",
-        "path_provider_windows",
-        "shared_preferences_platform_interface"
+        "path_provider_windows"
       ]
     },
     {
-      "name": "shared_preferences_web",
-      "version": "2.4.3",
+      "name": "crypto",
+      "version": "3.0.7",
       "dependencies": [
+        "typed_data"
+      ]
+    },
+    {
+      "name": "firebase_messaging_web",
+      "version": "3.5.18",
+      "dependencies": [
+        "_flutterfire_internals",
+        "firebase_core",
+        "firebase_core_web",
+        "firebase_messaging_platform_interface",
         "flutter",
         "flutter_web_plugins",
-        "shared_preferences_platform_interface",
-        "web"
+        "js",
+        "meta"
       ]
     },
     {
-      "name": "shared_preferences_platform_interface",
-      "version": "2.4.1",
+      "name": "firebase_messaging_platform_interface",
+      "version": "4.5.37",
       "dependencies": [
+        "_flutterfire_internals",
+        "firebase_core",
         "flutter",
+        "meta",
         "plugin_platform_interface"
       ]
     },
     {
-      "name": "shared_preferences_linux",
-      "version": "2.4.1",
+      "name": "firebase_core_platform_interface",
+      "version": "5.4.2",
       "dependencies": [
-        "file",
+        "collection",
         "flutter",
-        "path",
-        "path_provider_linux",
-        "path_provider_platform_interface",
-        "shared_preferences_platform_interface"
+        "flutter_test",
+        "meta",
+        "plugin_platform_interface"
       ]
     },
     {
-      "name": "shared_preferences_foundation",
-      "version": "2.5.6",
+      "name": "firebase_core_web",
+      "version": "2.24.0",
       "dependencies": [
+        "firebase_core_platform_interface",
         "flutter",
-        "shared_preferences_platform_interface"
-      ]
-    },
-    {
-      "name": "shared_preferences_android",
-      "version": "2.4.20",
-      "dependencies": [
-        "flutter",
-        "shared_preferences_platform_interface"
+        "flutter_web_plugins",
+        "meta",
+        "web"
       ]
     },
     {
@@ -348,95 +321,10 @@
       ]
     },
     {
-      "name": "firebase_core_platform_interface",
-      "version": "6.0.2",
+      "name": "nested",
+      "version": "1.0.0",
       "dependencies": [
-        "collection",
-        "flutter",
-        "flutter_test",
-        "meta",
-        "plugin_platform_interface"
-      ]
-    },
-    {
-      "name": "cloud_firestore_web",
-      "version": "4.4.12",
-      "dependencies": [
-        "_flutterfire_internals",
-        "cloud_firestore_platform_interface",
-        "collection",
-        "firebase_core",
-        "firebase_core_web",
-        "flutter",
-        "flutter_web_plugins"
-      ]
-    },
-    {
-      "name": "cloud_firestore_platform_interface",
-      "version": "6.6.12",
-      "dependencies": [
-        "_flutterfire_internals",
-        "collection",
-        "firebase_core",
-        "flutter",
-        "meta",
-        "plugin_platform_interface"
-      ]
-    },
-    {
-      "name": "firebase_auth_web",
-      "version": "5.15.3",
-      "dependencies": [
-        "firebase_auth_platform_interface",
-        "firebase_core",
-        "firebase_core_web",
-        "flutter",
-        "flutter_web_plugins",
-        "http_parser",
-        "meta",
-        "web"
-      ]
-    },
-    {
-      "name": "firebase_auth_platform_interface",
-      "version": "7.7.3",
-      "dependencies": [
-        "_flutterfire_internals",
-        "collection",
-        "firebase_core",
-        "flutter",
-        "meta",
-        "plugin_platform_interface"
-      ]
-    },
-    {
-      "name": "firebase_core_web",
-      "version": "2.24.1",
-      "dependencies": [
-        "firebase_core_platform_interface",
-        "flutter",
-        "flutter_web_plugins",
-        "meta",
-        "web"
-      ]
-    },
-    {
-      "name": "path_provider",
-      "version": "2.1.5",
-      "dependencies": [
-        "flutter",
-        "path_provider_android",
-        "path_provider_foundation",
-        "path_provider_linux",
-        "path_provider_platform_interface",
-        "path_provider_windows"
-      ]
-    },
-    {
-      "name": "crypto",
-      "version": "3.0.7",
-      "dependencies": [
-        "typed_data"
+        "flutter"
       ]
     },
     {
@@ -525,28 +413,6 @@
       ]
     },
     {
-      "name": "file",
-      "version": "7.0.1",
-      "dependencies": [
-        "meta",
-        "path"
-      ]
-    },
-    {
-      "name": "flutter_web_plugins",
-      "version": "0.0.0",
-      "dependencies": [
-        "flutter"
-      ]
-    },
-    {
-      "name": "plugin_platform_interface",
-      "version": "2.1.8",
-      "dependencies": [
-        "meta"
-      ]
-    },
-    {
       "name": "path_provider_linux",
       "version": "2.2.1",
       "dependencies": [
@@ -555,24 +421,6 @@
         "path",
         "path_provider_platform_interface",
         "xdg_directories"
-      ]
-    },
-    {
-      "name": "typed_data",
-      "version": "1.4.0",
-      "dependencies": [
-        "collection"
-      ]
-    },
-    {
-      "name": "_flutterfire_internals",
-      "version": "1.3.59",
-      "dependencies": [
-        "collection",
-        "firebase_core",
-        "firebase_core_platform_interface",
-        "flutter",
-        "meta"
       ]
     },
     {
@@ -591,6 +439,38 @@
       "dependencies": [
         "flutter",
         "path_provider_platform_interface"
+      ]
+    },
+    {
+      "name": "typed_data",
+      "version": "1.4.0",
+      "dependencies": [
+        "collection"
+      ]
+    },
+    {
+      "name": "flutter_web_plugins",
+      "version": "0.0.0",
+      "dependencies": [
+        "flutter"
+      ]
+    },
+    {
+      "name": "_flutterfire_internals",
+      "version": "1.3.35",
+      "dependencies": [
+        "collection",
+        "firebase_core",
+        "firebase_core_platform_interface",
+        "flutter",
+        "meta"
+      ]
+    },
+    {
+      "name": "plugin_platform_interface",
+      "version": "2.1.8",
+      "dependencies": [
+        "meta"
       ]
     },
     {
@@ -686,6 +566,14 @@
         "collection",
         "source_span",
         "string_scanner"
+      ]
+    },
+    {
+      "name": "file",
+      "version": "7.0.1",
+      "dependencies": [
+        "meta",
+        "path"
       ]
     }
   ],
