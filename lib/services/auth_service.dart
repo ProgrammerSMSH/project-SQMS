@@ -13,12 +13,12 @@ class AuthService with ChangeNotifier {
   String? get userName => _userName;
   bool get isAuthenticated => _token != null;
 
-  Future<bool> login(String phone, String name) async {
+  Future<bool> login(String email, String password) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/user/auth/login'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'phone': phone, 'name': name}),
+        body: jsonEncode({'email': email, 'password': password}),
       );
 
       if (response.statusCode == 200) {
@@ -36,6 +36,38 @@ class AuthService with ChangeNotifier {
       return false;
     } catch (e) {
       print('Login error: $e');
+      return false;
+    }
+  }
+
+  Future<bool> register(String name, String email, String password, {String? phone}) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/user/auth/register'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'name': name,
+          'email': email,
+          'password': password,
+          'phone': phone,
+        }),
+      );
+
+      if (response.statusCode == 201) {
+        final data = jsonDecode(response.body);
+        _token = data['token'];
+        _userName = data['name'];
+
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('token', _token!);
+        await prefs.setString('userName', _userName!);
+
+        notifyListeners();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      print('Register error: $e');
       return false;
     }
   }

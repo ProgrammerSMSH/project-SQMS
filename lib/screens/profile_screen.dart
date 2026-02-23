@@ -11,54 +11,91 @@ class ProfileScreen extends StatelessWidget {
     final userName = auth.userName ?? 'User';
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Profile')),
+      backgroundColor: const Color(0xFF0F0F13),
+      appBar: AppBar(title: const Text('PROFILE', style: TextStyle(letterSpacing: 2, fontWeight: FontWeight.w900))),
       body: ListView(
         padding: const EdgeInsets.all(24),
         children: [
-          const Center(
-            child: CircleAvatar(
-              radius: 50,
-              backgroundColor: Colors.blueAccent,
-              child: Icon(Icons.person, size: 50, color: Colors.white),
+          Center(
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    boxShadow: [BoxShadow(color: Colors.blueAccent.withOpacity(0.2), blurRadius: 40, spreadRadius: 10)],
+                  ),
+                ),
+                Container(
+                  width: 100,
+                  height: 100,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(colors: [Colors.blueAccent, Colors.purpleAccent]),
+                  ),
+                  child: const Icon(Icons.person, size: 50, color: Colors.white),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
           Center(
-            child: Text(userName, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            child: Text(userName, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: Colors.white)),
           ),
+          const SizedBox(height: 4),
           const Center(
-            child: Text('Phone verified', style: TextStyle(color: Colors.green)),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.verified, size: 14, color: Colors.greenAccent),
+                SizedBox(width: 4),
+                Text('VERIFIED ACCOUNT', style: TextStyle(color: Colors.greenAccent, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1)),
+              ],
+            ),
           ),
+          const SizedBox(height: 48),
+          _buildGlassTile(Icons.settings_outlined, 'Settings', Colors.white38),
+          _buildGlassTile(Icons.language_outlined, 'Language', Colors.white38),
+          _buildGlassTile(Icons.help_outline, 'Support & Feedback', Colors.white38),
           const SizedBox(height: 32),
-          const Divider(color: Colors.white12),
-          ListTile(
-            leading: const Icon(Icons.settings),
-            title: const Text('Settings'),
-            trailing: const Icon(Icons.chevron_right, color: Colors.grey),
-            onTap: () {},
-          ),
-          ListTile(
-            leading: const Icon(Icons.language),
-            title: const Text('Language'),
-            trailing: const Icon(Icons.chevron_right, color: Colors.grey),
-            onTap: () {},
-          ),
-          ListTile(
-            leading: const Icon(Icons.help_outline),
-            title: const Text('Support & Feedback'),
-            trailing: const Icon(Icons.chevron_right, color: Colors.grey),
-            onTap: () {},
-          ),
-          const Divider(color: Colors.white12),
-          ListTile(
-            leading: const Icon(Icons.logout, color: Colors.redAccent),
-            title: const Text('Logout', style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
-            onTap: () {
-              context.read<AuthService>().logout();
-            },
-          ),
+          _buildGlassTile(Icons.logout, 'LOGOUT', Colors.redAccent, isAction: true, onTap: () => auth.logout()),
         ],
       ),
+    );
+  }
+
+  Widget _buildGlassTile(IconData icon, String title, Color color, {bool isAction = false, VoidCallback? onTap}) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.04),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white10),
+      ),
+      child: ListTile(
+        onTap: onTap,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
+          child: Icon(icon, size: 20, color: color),
+        ),
+        title: Text(title, style: TextStyle(color: color, fontWeight: isAction ? FontWeight.w900 : FontWeight.w600, fontSize: 14, letterSpacing: isAction ? 1.2 : 0)),
+        trailing: const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.white24),
+      ),
+    );
+  }
+}
+
+extension on CircleAvatar {
+  static Widget gradientAvatar({required double radius, required Gradient gradient, required Widget child}) {
+    return Container(
+      width: radius * 2,
+      height: radius * 2,
+      decoration: BoxDecoration(shape: BoxShape.circle, gradient: gradient),
+      child: Center(child: child),
     );
   }
 }

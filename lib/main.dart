@@ -14,6 +14,9 @@ import 'screens/queue_selection_screen.dart';
 import 'screens/qr_scan_screen.dart';
 import 'screens/token_history_screen.dart';
 import 'screens/profile_screen.dart';
+import 'screens/onboarding_screen.dart';
+import 'screens/signup_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -57,14 +60,43 @@ class SmartQueueApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Smart Queue Management System',
+      title: 'SQMS',
+      debugShowCheckedModeBanner: false,
       theme: AppTheme.darkTheme,
-      home: Consumer<AuthService>(
-        builder: (context, auth, _) {
-          return auth.isAuthenticated ? const MainBottomNavScreen() : const AuthScreen();
-        },
-      ),
+      home: const AppRoot(),
     );
+  }
+}
+
+class AppRoot extends StatelessWidget {
+  const AppRoot({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<bool>(
+      future: _checkFirstSeen(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) return const Scaffold(body: Center(child: CircularProgressIndicator()));
+        
+        final bool showOnboarding = snapshot.data!;
+        
+        if (showOnboarding) {
+          return const OnboardingScreen();
+        }
+
+        return Consumer<AuthService>(
+          builder: (context, auth, _) {
+            return auth.isAuthenticated ? const MainBottomNavScreen() : const AuthScreen();
+          },
+        );
+      },
+    );
+  }
+
+  Future<bool> _checkFirstSeen() async {
+    final prefs = await SharedPreferences.getInstance();
+    // Use a unique key for the new onboarding
+    return !(prefs.getBool('seen_onboarding_v2') ?? false);
   }
 }
 

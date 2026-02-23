@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/queue_service.dart';
@@ -62,8 +63,9 @@ class _QueueSelectionScreenState extends State<QueueSelectionScreen> {
               onRefresh: _loadQueues,
               child: Column(
                 children: [
-                  _buildPrioritySelector(),
-                  const Divider(color: Colors.white12, height: 1),
+                   const SizedBox(height: 12),
+                  _buildModernPrioritySelector(),
+                  const SizedBox(height: 12),
                   Expanded(
                     child: queues.isEmpty 
                       ? ListView(
@@ -87,40 +89,53 @@ class _QueueSelectionScreenState extends State<QueueSelectionScreen> {
     );
   }
 
-  Widget _buildPrioritySelector() {
+  Widget _buildModernPrioritySelector() {
     return Container(
-      padding: const EdgeInsets.all(16),
-      color: Theme.of(context).scaffoldBackgroundColor,
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(6),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(32),
+        border: Border.all(color: Colors.white10),
+      ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _priorityChip('NORMAL', 'Normal', Icons.person),
-          _priorityChip('SENIOR', 'Senior', Icons.elderly),
-          _priorityChip('EMERGENCY', 'Emergency', Icons.warning),
+          Expanded(child: _modernPriorityChip('NORMAL', 'Normal', Icons.person)),
+          Expanded(child: _modernPriorityChip('SENIOR', 'Senior', Icons.elderly)),
+          Expanded(child: _modernPriorityChip('EMERGENCY', 'Emergency', Icons.bolt)),
         ],
       ),
     );
   }
 
-  Widget _priorityChip(String value, String label, IconData icon) {
+  Widget _modernPriorityChip(String value, String label, IconData icon) {
     final isSelected = selectedPriority == value;
-    final color = value == 'EMERGENCY' ? Colors.red : (value == 'SENIOR' ? Colors.orange : Theme.of(context).primaryColor);
+    final color = value == 'EMERGENCY' ? Colors.redAccent : (value == 'SENIOR' ? Colors.orangeAccent : Colors.blueAccent);
     
     return GestureDetector(
       onTap: () => setState(() => selectedPriority = value),
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOutCubic,
+        padding: const EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected ? color.withOpacity(0.2) : Colors.transparent,
-          border: Border.all(color: isSelected ? color : Colors.white24),
-          borderRadius: BorderRadius.circular(20),
+          color: isSelected ? color : Colors.transparent,
+          borderRadius: BorderRadius.circular(26),
+          boxShadow: isSelected ? [BoxShadow(color: color.withOpacity(0.3), blurRadius: 10, offset: const Offset(0, 4))] : [],
         ),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 16, color: isSelected ? color : Colors.white54),
-            const SizedBox(width: 8),
-            Text(label, style: TextStyle(color: isSelected ? color : Colors.white54, fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
+            Icon(icon, size: 14, color: isSelected ? Colors.white : Colors.white24),
+            const SizedBox(width: 6),
+            Text(
+              label, 
+              style: TextStyle(
+                fontSize: 12,
+                color: isSelected ? Colors.white : Colors.white38, 
+                fontWeight: isSelected ? FontWeight.w900 : FontWeight.w600
+              )
+            ),
           ],
         ),
       ),
@@ -128,37 +143,54 @@ class _QueueSelectionScreenState extends State<QueueSelectionScreen> {
   }
 
   Widget _buildQueueCard(dynamic queue) {
-    return Card(
+    return Container(
       margin: const EdgeInsets.only(bottom: 16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      elevation: 4,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: () {
-          _confirmJoinDialog(queue['_id'], queue['name']);
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(color: Theme.of(context).primaryColor.withOpacity(0.1), shape: BoxShape.circle),
-                child: Icon(Icons.local_hospital, color: Theme.of(context).primaryColor),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: Colors.white10),
+            ),
+            child: InkWell(
+              onTap: () => _confirmJoinDialog(queue['_id'], queue['name']),
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Row(
                   children: [
-                    Text(queue['name'], style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 4),
-                    Text('Est. Wait: ${queue['avgWaitTimePerToken']} min/person', style: const TextStyle(color: Colors.grey, fontSize: 13)),
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.blueAccent.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(Icons.layers_outlined, color: Colors.blueAccent),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(queue['name'], style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Colors.white)),
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              const Icon(Icons.timer_outlined, size: 12, color: Colors.grey),
+                              const SizedBox(width: 4),
+                              Text('${queue['avgWaitTimePerToken']}m per person', style: const TextStyle(color: Colors.grey, fontSize: 12)),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.white24),
                   ],
                 ),
               ),
-              const Icon(Icons.chevron_right, color: Colors.grey),
-            ],
+            ),
           ),
         ),
       ),
@@ -168,21 +200,67 @@ class _QueueSelectionScreenState extends State<QueueSelectionScreen> {
   void _confirmJoinDialog(String id, String name) {
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: Theme.of(context).cardColor,
-        title: Text('Join $name?'),
-        content: Text('Priority: $selectedPriority\nAre you sure you want to generate a token?'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel', style: TextStyle(color: Colors.grey))),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).primaryColor),
-            onPressed: () {
-              Navigator.pop(ctx);
-              _generateToken(id);
-            },
-            child: const Text('Generate Token'),
+      builder: (ctx) => Center(
+        child: Container(
+          margin: const EdgeInsets.all(32),
+          child: Material(
+            color: Colors.transparent,
+            child: Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: const Color(0xFF1C1C23),
+                borderRadius: BorderRadius.circular(32),
+                border: Border.all(color: Colors.white10),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(color: Colors.blueAccent.withOpacity(0.1), shape: BoxShape.circle),
+                    child: const Icon(Icons.check_circle_outline, color: Colors.blueAccent, size: 32),
+                  ),
+                  const SizedBox(height: 20),
+                  Text('Confirm Joining', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: Colors.white)),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Join $name queue with $selectedPriority priority?', 
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: Colors.white60, fontSize: 14)
+                  ),
+                  const SizedBox(height: 32),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextButton(
+                          onPressed: () => Navigator.pop(ctx),
+                          child: const Text('Cancel', style: TextStyle(color: Colors.white38, fontWeight: FontWeight.bold)),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blueAccent,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                          ),
+                          onPressed: () {
+                            Navigator.pop(ctx);
+                            _generateToken(id);
+                          },
+                          child: const Text('JOIN NOW', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1)),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ),
-        ],
+        ),
       ),
     );
   }
