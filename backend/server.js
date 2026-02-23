@@ -18,6 +18,7 @@ connectDB().then(async () => {
   User.collection.dropIndex('phone_1').catch(() => {
     // Index doesn't exist, which is fine
   });
+});
 
 const app = express();
 
