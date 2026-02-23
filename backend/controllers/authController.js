@@ -1,35 +1,67 @@
 const User = require('../models/User');
 const generateToken = require('../utils/generateToken');
 
-// @desc    Auth user / Login (Mocked OTP validation for now)
+// @desc    Register a new user
+// @route   POST /api/v1/user/auth/register
+// @access  Public
+const registerUser = async (req, res, next) => {
+  try {
+    const { name, email, password, phone } = req.body;
+
+    const userExists = await User.findOne({ email });
+
+    if (userExists) {
+      res.status(400);
+      throw new Error('User already exists');
+    }
+
+    const user = await User.create({
+      name,
+      email,
+      password,
+      phone,
+    });
+
+    if (user) {
+      res.status(201).json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        role: user.role,
+        token: generateToken(user._id),
+      });
+    } else {
+      res.status(400);
+      throw new Error('Invalid user data');
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Auth user / Login
 // @route   POST /api/v1/user/auth/login
 // @access  Public
 const authUser = async (req, res, next) => {
   try {
-    const { phone, name } = req.body;
+    const { email, password } = req.body;
 
-    if (!phone) {
-      res.status(400);
-      throw new Error('Please provide phone number');
-    }
+    const user = await User.findOne({ email });
 
-    // In a real app, verify OTP here. We are mocking OTP success and auto-registering if not exists.
-    let user = await User.findOne({ phone });
-
-    if (!user) {
-      user = await User.create({
-        phone,
-        name: name || 'Guest User',
+    if (user && (await user.matchPassword(password))) {
+      res.json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        role: user.role,
+        token: generateToken(user._id),
       });
+    } else {
+      res.status(401);
+      throw new Error('Invalid email or password');
     }
-
-    res.json({
-      _id: user._id,
-      name: user.name,
-      phone: user.phone,
-      role: user.role,
-      token: generateToken(user._id),
-    });
   } catch (error) {
     next(error);
   }
@@ -90,4 +122,4 @@ const authAdmin = async (req, res, next) => {
     }
 };
 
-module.exports = { authUser, registerFcmToken, authAdmin };
+module.exports = { registerUser, authUser, registerFcmToken, authAdmin };
