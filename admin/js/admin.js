@@ -33,6 +33,8 @@ function promptForToken() {
         ADMIN_TOKEN = newToken;
         localStorage.setItem('admin_token', newToken);
         initDashboard();
+    } else {
+        alert("Admin Token required.");
     }
 }
 
@@ -59,12 +61,19 @@ async function initDashboard() {
 // Fetch Data
 async function fetchCounters() {
     try {
-        const res = await fetch(`${API_URL}/counters`, { headers: { 'Authorization': `Bearer ${ADMIN_TOKEN}` } });
+        const res = await fetch(`${API_URL}/counters`, { 
+            headers: { 'Authorization': `Bearer ${ADMIN_TOKEN}` } 
+        });
+        if (res.status === 401) {
+            localStorage.removeItem('admin_token');
+            ADMIN_TOKEN = '';
+            promptForToken();
+            return;
+        }
         if (!res.ok) throw new Error(res.status);
         counters = await res.json();
         renderCounters();
     } catch (e) {
-        if (e.message === '401') promptForToken();
         console.error("Failed to load counters", e);
     }
 }

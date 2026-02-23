@@ -20,20 +20,18 @@
         <div class="w-1/4 bg-white p-4 rounded-xl shadow">
             <h2 class="text-lg font-bold border-b pb-2 mb-4">Counters</h2>
             <ul id="counter-list" class="space-y-2">
-                <li class="p-3 bg-blue-100 text-blue-800 rounded font-semibold cursor-pointer border-l-4 border-blue-600">Counter 1 (Active)</li>
-                <li class="p-3 hover:bg-gray-50 rounded cursor-pointer border border-gray-100">Counter 2 (Paused)</li>
-                <li class="p-3 hover:bg-gray-50 rounded cursor-pointer border border-gray-100">Emergency (Active)</li>
+                <li class="p-3 text-gray-400 text-center italic">Loading counters...</li>
             </ul>
         </div>
 
         <!-- Main Controller Area -->
         <div class="w-2/4 bg-white p-8 rounded-xl shadow flex flex-col items-center justify-center text-center relative">
-            <h3 class="text-gray-500 font-bold uppercase tracking-widest mb-2">Counter 1</h3>
-            <p class="text-sm text-gray-400 mb-8">Serving Queue: General Checkup</p>
+            <h3 class="text-gray-500 font-bold uppercase tracking-widest mb-2" id="counter-name-disp">Counter</h3>
+            <p class="text-sm text-gray-400 mb-8" id="serving-queue-disp">Ready to serve</p>
 
             <div class="mb-10">
                 <p class="text-gray-500 text-lg mb-2">Currently Serving</p>
-                <div class="text-6xl font-black text-blue-900 tracking-tighter" id="current-token">GN-104</div>
+                <div class="text-6xl font-black text-blue-900 tracking-tighter" id="current-token">--</div>
             </div>
 
             <div class="flex gap-4 mb-12">
@@ -50,18 +48,7 @@
         <div class="w-1/4 bg-white p-4 rounded-xl shadow">
             <h2 class="text-lg font-bold border-b pb-2 mb-4">Next in Line</h2>
             <ul id="upcoming-list" class="space-y-3">
-                <li class="flex justify-between items-center p-3 bg-red-50 text-red-800 rounded border border-red-200">
-                    <span class="font-bold">GN-109</span>
-                    <span class="text-xs bg-red-200 px-2 py-1 rounded uppercase tracking-wider font-bold">Emergency</span>
-                </li>
-                <li class="flex justify-between items-center p-3 bg-yellow-50 text-yellow-800 rounded border border-yellow-200">
-                    <span class="font-bold">GN-105</span>
-                    <span class="text-xs bg-yellow-200 px-2 py-1 rounded uppercase tracking-wider font-bold">Senior</span>
-                </li>
-                <li class="flex justify-between items-center p-3 bg-gray-50 rounded border border-gray-200">
-                    <span class="font-bold">GN-106</span>
-                    <span class="text-xs text-gray-500">Normal</span>
-                </li>
+                <li class="p-3 text-gray-400 text-center italic">No tokens in line</li>
             </ul>
         </div>
     </div>

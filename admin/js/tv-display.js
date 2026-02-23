@@ -11,7 +11,7 @@ async function pollQueueStatus() {
     try {
         const response = await fetch(`${API_URL}/queues/${displayQueueId}/active-status`);
         if (!response.ok) return;
-        const data = await res.json();
+        const data = await response.json();
         
         renderActiveCounters(data.serving);
         renderWaitingList(data.waiting);
