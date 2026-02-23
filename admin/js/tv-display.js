@@ -1,7 +1,7 @@
-const socket = io('http://127.0.0.1:5000', { transports: ['websocket'] });
+const socket = io('https://project-sqms.vercel.app', { transports: ['websocket'] });
 
-// Assume this display is listening to a specific Queue ID
-const displayQueueId = 'mock-queue-id';
+// TV Display is listening to the General Checkup Queue ID
+const displayQueueId = '699cb4db1c93564ddbb59b44';
 
 socket.on('connect', () => {
     console.log('TV Display connected to WebSocket server');

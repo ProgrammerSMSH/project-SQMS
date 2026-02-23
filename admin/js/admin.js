@@ -1,11 +1,12 @@
 // Mock API Base URL (Change to production URL)
-const API_URL = 'http://127.0.0.1:5000/api/v1';
+const API_URL = 'https://project-sqms.vercel.app/api/v1';
+const ADMIN_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OWNiNGIyODNmMzE0ODg5ODhkZGU5ZiIsImlhdCI6MTc3MTg3NzU1NCwiZXhwIjoxNzc0NDY5NTU0fQ.Use6QFKxO7RKPFgiPsn7TgL0N_WCJIAjJ-U30C8ODvo';
 let currentTokenId = null; 
-let currentCounterId = 'mock-counter-id'; // Assume selected from UI
-let currentQueueId = 'mock-queue-id'; // Assume assigned to this counter
+let currentCounterId = '699cb4dc1c93564ddbb59b47'; // Live Seeded Counter
+let currentQueueId = '699cb4db1c93564ddbb59b44'; // Live Seeded Queue
 
 // Initialize Socket.io
-const socket = io('http://127.0.0.1:5000', { transports: ['websocket'] });
+const socket = io('https://project-sqms.vercel.app', { transports: ['websocket'] });
 
 socket.on('connect', () => {
     console.log('Connected to WebSocket server');
@@ -32,10 +33,13 @@ const upcomingList = document.getElementById('upcoming-list');
 // API Call Wrappers
 async function callNextToken() {
     try {
-        // Needs Bearer Token in real app
+        // Needs Bearer Token
         const response = await fetch(`${API_URL}/counters/${currentCounterId}/call-next`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${ADMIN_TOKEN}`
+            },
             body: JSON.stringify({ queueId: currentQueueId })
         });
         
@@ -54,7 +58,10 @@ async function callNextToken() {
 async function markComplete() {
     if(!currentTokenId) return;
     try {
-        await fetch(`${API_URL}/counters/${currentCounterId}/complete`, { method: 'POST' });
+        await fetch(`${API_URL}/counters/${currentCounterId}/complete`, { 
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${ADMIN_TOKEN}` }
+        });
         currentTokenDisp.innerText = "--";
         currentTokenId = null;
     } catch (e) {
@@ -65,7 +72,10 @@ async function markComplete() {
 async function markNoShow() {
     if(!currentTokenId) return;
     try {
-        await fetch(`${API_URL}/counters/${currentCounterId}/no-show`, { method: 'POST' });
+        await fetch(`${API_URL}/counters/${currentCounterId}/no-show`, { 
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${ADMIN_TOKEN}` }
+        });
         currentTokenDisp.innerText = "--";
         currentTokenId = null;
     } catch (e) {
