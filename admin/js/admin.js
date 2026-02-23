@@ -202,7 +202,7 @@ async function callNextToken() {
         });
         
         if (!response.ok) {
-            if (response.status === 401) promptForToken();
+            if (response.status === 401) showLoginModal();
             else throw new Error(await response.text());
         } else {
             const token = await response.json();
