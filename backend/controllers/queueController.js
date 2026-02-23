@@ -1,4 +1,6 @@
 const Queue = require('../models/Queue');
+const Token = require('../models/Token');
+const Counter = require('../models/Counter');
 
 // @desc    Get all active queues
 // @route   GET /api/v1/queues
@@ -42,7 +44,6 @@ const createQueue = async (req, res, next) => {
 // @access  Public
 const getWaitingTokens = async (req, res, next) => {
   try {
-    const Token = require('../models/Token');
     const tokens = await Token.find({ 
       queueId: req.params.id, 
       status: 'WAITING' 
