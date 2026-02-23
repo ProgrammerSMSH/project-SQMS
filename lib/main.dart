@@ -4,8 +4,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'theme/app_theme.dart';
 import 'services/api_service.dart';
+import 'services/api_service.dart';
 import 'services/queue_service.dart';
-import 'services/socket_service.dart';
+import 'services/sync_service.dart';
 import 'services/fcm_service.dart';
 import 'services/auth_service.dart';
 import 'screens/auth_screen.dart';
@@ -36,7 +37,13 @@ void main() async {
         ProxyProvider<ApiService, QueueService>(
           update: (_, api, __) => QueueService(api),
         ),
-        ChangeNotifierProvider(create: (_) => SocketService()),
+        ChangeNotifierProxyProvider<ApiService, SyncService>(
+          create: (_) => SyncService(ApiService()), // Initial dummy, updated below
+          update: (_, api, previousSync) {
+            // Give SyncService the updated ApiService (with token)
+            return previousSync ?? SyncService(api)..startSyncing();
+          },
+        ),
         Provider<FCMService>(create: (_) => FCMService()),
       ],
       child: const SmartQueueApp(),
@@ -82,10 +89,17 @@ class _MainBottomNavScreenState extends State<MainBottomNavScreen> {
   @override
   void initState() {
     super.initState();
-    // Initialize global socket connection on app start
+    // Start background syncing when main screen loads
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<SocketService>().initSocket();
+      context.read<SyncService>().startSyncing();
     });
+  }
+
+  @override
+  void dispose() {
+    // Though usually alive for app lifetime, good practice
+    if(mounted) context.read<SyncService>().stopSyncing();
+    super.dispose();
   }
 
   @override
