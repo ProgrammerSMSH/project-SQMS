@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:sqms_app/constants.dart';
 import 'package:sqms_app/screens/onboarding_screen.dart';
 import 'package:sqms_app/screens/login_screen.dart';
@@ -20,7 +21,9 @@ class SQMSApp extends StatelessWidget {
         brightness: Brightness.dark,
         scaffoldBackgroundColor: AppColors.background,
         primaryColor: AppColors.primary,
-        fontFamily: 'Inter', // Defaulting to Inter
+        textTheme: GoogleFonts.tomorrowTextTheme(
+          ThemeData.dark().textTheme,
+        ),
         colorScheme: ColorScheme.dark(
           primary: AppColors.primary,
           secondary: AppColors.accent,
