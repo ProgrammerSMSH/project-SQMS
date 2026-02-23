@@ -8,6 +8,10 @@
           {
                "source": "/admin/(.*)",
                "destination": "/admin/$1"
+          },
+          {
+               "source": "/(.*)",
+               "destination": "/backend/server.js"
           }
      ],
      "headers": [
@@ -31,20 +35,6 @@
                          "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization"
                     }
                ]
-          }
-     ],
-     "routes": [
-          {
-               "src": "/admin/(.*)",
-               "dest": "/admin/$1"
-          },
-          {
-               "src": "/api/v1/(.*)",
-               "dest": "/backend/server.js"
-          },
-          {
-               "src": "/(.*)",
-               "dest": "/backend/server.js"
           }
      ]
 }
