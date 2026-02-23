@@ -11,27 +11,57 @@ class ServicesScreen extends StatefulWidget {
 
 class _ServicesScreenState extends State<ServicesScreen> {
   final QueueService _queueService = QueueService();
-  bool _isLoading = false;
+  bool _isLoading = true;
+  List<dynamic> _services = [];
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _fetchServices();
+  }
+
+  Future<void> _fetchServices() async {
+    final Map<String, dynamic>? branch = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    if (branch != null) {
+      final services = await _queueService.getServices(branch['id']);
+      if (mounted) {
+        setState(() {
+          _services = services ?? [];
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final Map<String, dynamic>? branch = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    final String branchName = branch?['name'] ?? 'Services';
+
+    return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
-            _buildHeader(context, queueService),
+            _buildHeader(context, branchName),
             Expanded(
-              child: ListView(
-                padding: const EdgeInsets.all(AppSpacing.padding),
-                children: [
-                  _buildSearchBar(),
-                  const SizedBox(height: 30),
-                  _buildSectionTitle('Categories'),
-                  const SizedBox(height: 16),
-                  _buildCategories(),
-                  const SizedBox(height: 30),
-                  _buildSectionTitle('All Services'),
-                  const SizedBox(height: 16),
-                  _buildServiceGrid(context),
-                ],
-              ),
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : _services.isEmpty
+                      ? const Center(child: Text('No services found at this location'))
+                      : ListView(
+                          padding: const EdgeInsets.all(AppSpacing.padding),
+                          children: [
+                            _buildSearchBar(),
+                            const SizedBox(height: 30),
+                            _buildSectionTitle('Categories'),
+                            const SizedBox(height: 16),
+                            _buildCategories(),
+                            const SizedBox(height: 30),
+                            _buildSectionTitle('Available Services'),
+                            const SizedBox(height: 16),
+                            _buildServiceGrid(context),
+                          ],
+                        ),
             ),
           ],
         ),
@@ -39,32 +69,35 @@ class _ServicesScreenState extends State<ServicesScreen> {
     );
   }
 
-  Widget _buildHeader(BuildContext context, QueueService queueService) {
+  Widget _buildHeader(BuildContext context, String branchName) {
     return Padding(
       padding: const EdgeInsets.all(AppSpacing.padding),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Explore',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: AppColors.textSecondary,
-                  fontWeight: FontWeight.w600,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Explore',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: AppColors.textSecondary,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              ),
-              Text(
-                'Services',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.textBody,
+                Text(
+                  branchName,
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.textBody,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           Container(
             decoration: BoxDecoration(
@@ -80,7 +113,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
             child: IconButton(
               icon: const Icon(Icons.logout_rounded, color: AppColors.danger),
               onPressed: () async {
-                await queueService.signOut();
+                await _queueService.signOut();
                 if (context.mounted) Navigator.pushReplacementNamed(context, '/login');
               },
             ),
@@ -173,31 +206,19 @@ class _ServicesScreenState extends State<ServicesScreen> {
         mainAxisSpacing: 16,
         childAspectRatio: 0.85,
       ),
-      itemCount: 4,
+      itemCount: _services.length,
       itemBuilder: (context, index) {
-        final titles = [
-          'Financial Services',
-          'Student Affairs',
-          'Academic Registry',
-          'Library Support'
-        ];
-        final icons = [
-          Icons.account_balance_rounded,
-          Icons.school_rounded,
-          Icons.assignment_ind_rounded,
-          Icons.local_library_rounded
-        ];
-        return _buildServiceCard(context, titles[index], icons[index]);
+        final service = _services[index];
+        return _buildServiceCard(context, service);
       },
     );
   }
 
-  Widget _buildServiceCard(BuildContext context, String title, IconData icon) {
+  Widget _buildServiceCard(BuildContext context, Map<String, dynamic> service) {
     return GestureDetector(
       onTap: () async {
         setState(() => _isLoading = true);
-        // Using a placeholder service ID for demonstration
-        final tokenData = await _queueService.generateToken('65d8f1e5f1e5f1e5f1e5f1e5'); 
+        final tokenData = await _queueService.generateToken(service['_id']); 
         setState(() => _isLoading = false);
 
         if (tokenData != null && context.mounted) {
@@ -206,8 +227,8 @@ class _ServicesScreenState extends State<ServicesScreen> {
             '/live_ticket',
             arguments: {
               'ticketNumber': tokenData['tokenNumber'],
-              'serviceName': title,
-              'initialPosition': 5, // Extracted from live status API in a real flow
+              'serviceName': service['name'],
+              'initialPosition': 5,
               'initialWaitTime': tokenData['estimatedWaitTime'] ?? 10,
             },
           );
@@ -229,59 +250,45 @@ class _ServicesScreenState extends State<ServicesScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (_isLoading)
-              const CircularProgressIndicator(strokeWidth: 2)
-            else ...[
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(icon, color: AppColors.primary),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
               ),
-              const Spacer(),
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
+              child: Icon(_getIconForService(service['name']), color: AppColors.primary),
+            ),
+            const Spacer(),
+            Text(
+              service['name'] ?? 'Unknown',
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
               ),
-              const SizedBox(height: 4),
-              const Text(
-                '8 min wait',
-                style: TextStyle(
-                  color: AppColors.success,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              '${service['avgServiceTime'] ?? 8} min wait',
+              style: const TextStyle(
+                color: AppColors.success,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
               ),
-            ],
+            ),
           ],
         ),
       ),
     );
   }
-}
 
-  IconData _getIconForService(String iconName) {
-    switch (iconName) {
-      case 'wallet':
-        return Icons.account_balance_wallet_outlined;
-      case 'school':
-        return Icons.school_outlined;
-      case 'id':
-        return Icons.assignment_ind_outlined;
-      case 'computer':
-        return Icons.computer_outlined;
-      case 'library':
-        return Icons.local_library_outlined;
-      case 'health':
-        return Icons.medical_services_outlined;
-      default:
-        return Icons.help_outline;
-    }
+  IconData _getIconForService(String? name) {
+    if (name == null) return Icons.help_outline;
+    final n = name.toLowerCase();
+    if (n.contains('financial')) return Icons.account_balance_rounded;
+    if (n.contains('student')) return Icons.school_rounded;
+    if (n.contains('academic')) return Icons.assignment_ind_rounded;
+    if (n.contains('library')) return Icons.local_library_rounded;
+    return Icons.settings_rounded;
   }
 }

@@ -21,7 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _isLoading = false);
 
     if (user != null) {
-      if (mounted) Navigator.pushReplacementNamed(context, '/services');
+      if (mounted) Navigator.pushReplacementNamed(context, '/locations');
     } else {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

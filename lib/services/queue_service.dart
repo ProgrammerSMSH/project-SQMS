@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
 class QueueService {
-  static const String baseUrl = 'http://10.0.2.2:5000/api'; // Android Emulator localhost
+  static const String baseUrl = 'https://project-sqms.vercel.app/api'; 
   late io.Socket socket;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -14,7 +14,7 @@ class QueueService {
   }
 
   void _initSocket() {
-    socket = io.io('http://10.0.2.2:5000', io.OptionBuilder()
+    socket = io.io('https://project-sqms.vercel.app', io.OptionBuilder()
       .setTransports(['websocket'])
       .disableAutoConnect()
       .build());
@@ -73,6 +73,19 @@ class QueueService {
       return null;
     } catch (e) {
       debugPrint('Get status error: $e');
+      return null;
+    }
+  }
+
+  Future<List<dynamic>?> getServices(String locationId) async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/services/location/$locationId'));
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body)['data'];
+      }
+      return null;
+    } catch (e) {
+      debugPrint('Get services error: $e');
       return null;
     }
   }

@@ -47,8 +47,11 @@ app.get('/', (req, res) => {
 // Import Routes
 const tokenRoutes = require('./routes/tokenRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const serviceRoutes = require('./routes/serviceRoutes');
+
 app.use('/api/tokens', tokenRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/services', serviceRoutes);
 
 const PORT = process.env.PORT || 5000;
 

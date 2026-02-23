@@ -4,7 +4,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:sqms_app/constants.dart';
 import 'package:sqms_app/screens/onboarding_screen.dart';
 import 'package:sqms_app/screens/login_screen.dart';
+import 'package:sqms_app/screens/locations_screen.dart';
 import 'package:sqms_app/screens/services_screen.dart';
+import 'package:sqms_app/screens/live_ticket_screen.dart';
+import 'package:sqms_app/screens/admin_dashboard.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -53,13 +56,25 @@ class SQMSApp extends StatelessWidget {
       routes: {
         '/': (context) => const OnboardingScreen(),
         '/login': (context) => const LoginScreen(),
+        '/locations': (context) => const LocationsScreen(),
         '/services': (context) => const ServicesScreen(),
-        '/live_ticket': (context) => const LiveTicketScreen(
-              ticketNumber: 42,
-              serviceName: 'Financial Services',
-              initialPosition: 5,
-              initialWaitTime: 12,
-            ),
+        '/admin': (context) => const AdminDashboard(),
+      },
+      onGenerateRoute: (settings) {
+        if (settings.name == '/live_ticket') {
+          final args = settings.arguments as Map<String, dynamic>?;
+          return MaterialPageRoute(
+            builder: (context) {
+              return LiveTicketScreen(
+                ticketNumber: args?['ticketNumber'] ?? 0,
+                serviceName: args?['serviceName'] ?? 'Unknown',
+                initialPosition: args?['initialPosition'] ?? 0,
+                initialWaitTime: args?['initialWaitTime'] ?? 0,
+              );
+            },
+          );
+        }
+        return null;
       },
     );
   }
