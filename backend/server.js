@@ -21,8 +21,7 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
-// Explicitly handle OPTIONS for all routes
-app.options('*', cors());
+// Basic route for health check
 app.use(helmet());
 app.use(morgan('dev'));
 
