@@ -11,12 +11,30 @@ const tokenRoutes = require('./routes/tokenRoutes');
 const counterRoutes = require('./routes/counterRoutes');
 
 dotenv.config();
-connectDB().then(() => {
-  // One-time cleanup: Drop old phone index if it exists
+connectDB().then(async () => {
   const User = require('./models/User');
+
+  // One-time cleanup: Drop old phone index if it exists
   User.collection.dropIndex('phone_1').catch(() => {
     // Index doesn't exist, which is fine
   });
+
+  // Seed Default Admin if none exists
+  try {
+    const adminExists = await User.findOne({ role: 'ADMIN' });
+    if (!adminExists) {
+      console.log('Seeding default admin user...');
+      await User.create({
+        name: 'System Admin',
+        email: 'admin@sqms.com',
+        password: 'admin123', // Will be hashed by pre-save hook
+        role: 'ADMIN'
+      });
+      console.log('Default admin created: admin@sqms.com / admin123');
+    }
+  } catch (error) {
+    console.error('Error seeding admin:', error);
+  }
 });
 
 const app = express();
