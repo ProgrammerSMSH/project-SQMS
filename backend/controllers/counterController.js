@@ -78,7 +78,7 @@ const callNextToken = async (req, res, next) => {
     // We'll assume admin hit complete/no-show before calling next.
 
     // Priority loop
-    const priorities = ['EMERGENCY', 'SENIOR', 'NORMAL'];
+    const priorities = ['EMERGENCY', 'SENIOR', 'GENERAL'];
     let nextToken = null;
 
     for (let p of priorities) {

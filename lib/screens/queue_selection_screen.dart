@@ -13,7 +13,7 @@ class QueueSelectionScreen extends StatefulWidget {
 class _QueueSelectionScreenState extends State<QueueSelectionScreen> {
   bool isLoading = true;
   List<dynamic> queues = [];
-  String selectedPriority = 'NORMAL';
+  String selectedPriority = 'GENERAL';
 
   @override
   void initState() {
@@ -100,7 +100,7 @@ class _QueueSelectionScreenState extends State<QueueSelectionScreen> {
       ),
       child: Row(
         children: [
-          Expanded(child: _modernPriorityChip('NORMAL', 'Normal', Icons.person)),
+          Expanded(child: _modernPriorityChip('GENERAL', 'General', Icons.person)),
           Expanded(child: _modernPriorityChip('SENIOR', 'Senior', Icons.elderly)),
           Expanded(child: _modernPriorityChip('EMERGENCY', 'Emergency', Icons.bolt)),
         ],

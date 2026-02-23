@@ -175,7 +175,15 @@ async function pollActiveStatus() {
                      <span class="font-tomorrow text-xl text-white group-hover:text-blue-400 transition">${token.tokenNumber}</span>
                 </div>
                 <div class="text-right">
-                    <span class="text-[9px] ${token.priority === 'EMERGENCY' ? 'text-red-400 border-red-400/30 bg-red-400/10' : token.priority === 'SENIOR' ? 'text-yellow-400 border-yellow-400/30 bg-yellow-400/10' : 'text-blue-400 border-blue-400/30 bg-blue-400/10'} px-2 py-1 rounded border uppercase tracking-widest font-black">${token.priority}</span>
+                    ${(() => {
+                        const priorityColors = {
+                            'EMERGENCY': 'bg-red-500/20 text-red-400 border-red-500/20',
+                            'SENIOR': 'bg-yellow-500/20 text-yellow-400 border-yellow-500/20',
+                            'GENERAL': 'bg-blue-500/20 text-blue-400 border-blue-500/20'
+                        };
+                        const priorityClass = priorityColors[token.priority] || priorityColors['GENERAL'];
+                        return `<span class="text-[9px] ${priorityClass} px-2 py-1 rounded border uppercase tracking-widest font-black">${token.priority}</span>`;
+                    })()}
                 </div>
             `;
             upcomingList.appendChild(li);

@@ -42,7 +42,7 @@ const generateToken = async (req, res, next) => {
       userId,
       queueId,
       tokenNumber,
-      priority: priority || 'NORMAL',
+      priority: priority || 'GENERAL',
       estimatedWaitTime,
     });
 
