@@ -11,7 +11,13 @@ const tokenRoutes = require('./routes/tokenRoutes');
 const counterRoutes = require('./routes/counterRoutes');
 
 dotenv.config();
-connectDB();
+connectDB().then(() => {
+  // One-time cleanup: Drop old phone index if it exists
+  const User = require('./models/User');
+  User.collection.dropIndex('phone_1').catch(() => {
+    // Index doesn't exist, which is fine
+  });
+});
 
 const app = express();
 
