@@ -4,11 +4,11 @@ const { registerUser, authUser, registerFcmToken, authAdmin } = require('../cont
 const { protect } = require('../middlewares/authMiddleware');
 
 // User Auth Routes
-router.post('/user/auth/register', registerUser);
-router.post('/user/auth/login', authUser);
-router.post('/user/auth/fcm-token', protect, registerFcmToken);
+router.post('/register', registerUser);
+router.post('/login', authUser);
+router.post('/fcm-token', protect, registerFcmToken);
 
 // Admin Auth Routes
-router.post('/admin/auth/login', authAdmin);
+router.post('/admin-login', authAdmin);
 
 module.exports = router;

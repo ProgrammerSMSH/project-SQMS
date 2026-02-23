@@ -23,7 +23,7 @@ class _SignupScreenState extends State<SignupScreen> {
     }
 
     setState(() => _isLoading = true);
-    final success = await context.read<AuthService>().register(
+    final error = await context.read<AuthService>().register(
       _nameController.text,
       _emailController.text,
       _passwordController.text,
@@ -31,10 +31,10 @@ class _SignupScreenState extends State<SignupScreen> {
 
     if (mounted) {
       setState(() => _isLoading = false);
-      if (success) {
+      if (error == null) {
         Navigator.of(context).pop(); // Back to login? or auto login
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Registration failed. Email might already exist.")));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
       }
     }
   }

@@ -39,7 +39,7 @@ app.get('/', (req, res) => {
   });
 });
 
-app.use('/api/v1', authRoutes); // Includes both user/auth & admin/auth
+app.use('/api/v1/auth', authRoutes); // Unified auth prefix
 app.use('/api/v1/queues', queueRoutes);
 app.use('/api/v1/tokens', tokenRoutes);
 app.use('/api/v1/counters', counterRoutes);

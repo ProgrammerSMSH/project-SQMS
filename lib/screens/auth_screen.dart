@@ -25,17 +25,17 @@ class _AuthScreenState extends State<AuthScreen> {
     }
 
     setState(() => _isLoading = true);
-    final success = await context.read<AuthService>().login(
+    final error = await context.read<AuthService>().login(
       _emailController.text,
       _passwordController.text,
     );
     
     if (mounted) {
       setState(() => _isLoading = false);
-      if (success) {
+      if (error == null) {
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const MainBottomNavScreen()));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Invalid credentials")));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
       }
     }
   }

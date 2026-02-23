@@ -13,16 +13,16 @@ class AuthService with ChangeNotifier {
   String? get userName => _userName;
   bool get isAuthenticated => _token != null;
 
-  Future<bool> login(String email, String password) async {
+  Future<String?> login(String email, String password) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/user/auth/login'),
+        Uri.parse('$baseUrl/auth/login'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'email': email, 'password': password}),
       );
 
+      final data = jsonDecode(response.body);
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
         _token = data['token'];
         _userName = data['name'];
         
@@ -31,19 +31,19 @@ class AuthService with ChangeNotifier {
         await prefs.setString('userName', _userName!);
         
         notifyListeners();
-        return true;
+        return null; // Success
       }
-      return false;
+      return data['message'] ?? 'Login failed (${response.statusCode})';
     } catch (e) {
       print('Login error: $e');
-      return false;
+      return 'Connection error: $e';
     }
   }
 
-  Future<bool> register(String name, String email, String password, {String? phone}) async {
+  Future<String?> register(String name, String email, String password, {String? phone}) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/user/auth/register'),
+        Uri.parse('$baseUrl/auth/register'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'name': name,
@@ -53,8 +53,8 @@ class AuthService with ChangeNotifier {
         }),
       );
 
+      final data = jsonDecode(response.body);
       if (response.statusCode == 201) {
-        final data = jsonDecode(response.body);
         _token = data['token'];
         _userName = data['name'];
 
@@ -63,12 +63,12 @@ class AuthService with ChangeNotifier {
         await prefs.setString('userName', _userName!);
 
         notifyListeners();
-        return true;
+        return null; // Success
       }
-      return false;
+      return data['message'] ?? 'Registration failed (${response.statusCode})';
     } catch (e) {
       print('Register error: $e');
-      return false;
+      return 'Connection error: $e';
     }
   }
 
