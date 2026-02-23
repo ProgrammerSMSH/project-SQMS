@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sqms_app/constants.dart';
+import 'package:sqms_app/theme/app_theme.dart';
 import 'package:sqms_app/services/queue_service.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -21,7 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _isLoading = false);
 
     if (user != null) {
-      if (mounted) Navigator.pushReplacementNamed(context, '/locations');
+      if (mounted) Navigator.pushReplacementNamed(context, '/main');
     } else {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -48,21 +49,21 @@ class _LoginScreenState extends State<LoginScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 20),
-            const Text(
+            Text(
               AppStrings.loginTitle,
               style: TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.w800,
-                color: AppColors.textBody,
+                color: context.textBody,
                 height: 1.2,
               ),
             ),
             const SizedBox(height: 8),
-            const Text(
+            Text(
               'Sign in to your account',
               style: TextStyle(
                 fontSize: 16,
-                color: AppColors.textSecondary,
+                color: context.textSecondary,
               ),
             ),
             const SizedBox(height: 60),
@@ -99,9 +100,9 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
+                  Text(
                     "Don't have an account? ",
-                    style: TextStyle(color: AppColors.textSecondary),
+                    style: TextStyle(color: context.textSecondary),
                   ),
                   TextButton(
                     onPressed: () {},
@@ -133,10 +134,10 @@ class _LoginScreenState extends State<LoginScreen> {
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w600,
-            color: AppColors.textBody,
+            color: context.textBody,
           ),
         ),
         const SizedBox(height: 8),
@@ -146,7 +147,7 @@ class _LoginScreenState extends State<LoginScreen> {
           decoration: InputDecoration(
             prefixIcon: Icon(icon, color: AppColors.primary, size: 20),
             filled: true,
-            fillColor: Colors.white,
+            fillColor: context.surfaceColor,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
               borderSide: BorderSide.none,
@@ -198,7 +199,6 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
       ),
     );
-  }
   }
 
   @override

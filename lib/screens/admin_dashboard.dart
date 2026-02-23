@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sqms_app/constants.dart';
+import 'package:sqms_app/theme/app_theme.dart';
 import 'package:sqms_app/services/queue_service.dart';
 
 class AdminDashboard extends StatefulWidget {
@@ -61,14 +62,14 @@ class _AdminDashboardState extends State<AdminDashboard> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Column(
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'Staff Portal',
                 style: TextStyle(
                   fontSize: 14,
-                  color: AppColors.textSecondary,
+                  color: context.textSecondary,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -77,7 +78,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.w800,
-                  color: AppColors.textBody,
+                  color: context.textBody,
                 ),
               ),
             ],
@@ -120,7 +121,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: context.surfaceColor,
         borderRadius: BorderRadius.circular(AppSpacing.borderRadius),
         boxShadow: [
           BoxShadow(
@@ -136,17 +137,17 @@ class _AdminDashboardState extends State<AdminDashboard> {
           const SizedBox(height: 12),
           Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.w800,
-              color: AppColors.textBody,
+              color: context.textBody,
             ),
           ),
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 12,
-              color: AppColors.textSecondary,
+              color: context.textSecondary,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -160,7 +161,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
       width: double.infinity,
       padding: const EdgeInsets.all(30),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: context.surfaceColor,
         borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
@@ -172,10 +173,10 @@ class _AdminDashboardState extends State<AdminDashboard> {
       ),
       child: Column(
         children: [
-          const Text(
+          Text(
             'Currently Serving',
             style: TextStyle(
-              color: AppColors.textSecondary,
+              color: context.textSecondary,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -232,12 +233,12 @@ class _AdminDashboardState extends State<AdminDashboard> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'History',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: AppColors.textBody,
+            color: context.textBody,
           ),
         ),
         const SizedBox(height: 16),
@@ -251,7 +252,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: context.surfaceColor,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(

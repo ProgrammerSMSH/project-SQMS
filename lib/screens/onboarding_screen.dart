@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sqms_app/constants.dart';
+import 'package:sqms_app/theme/app_theme.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
@@ -7,7 +8,7 @@ class OnboardingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: context.backgroundColor,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.padding),
@@ -31,22 +32,22 @@ class OnboardingScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 60),
-              const Text(
+              Text(
                 AppStrings.onboardingTitle,
                 style: TextStyle(
                   fontSize: 36,
                   fontWeight: FontWeight.w800,
-                  color: AppColors.textBody,
+                  color: context.textBody,
                   height: 1.1,
                 ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
-              const Text(
+              Text(
                 AppStrings.onboardingSubtitle,
                 style: TextStyle(
                   fontSize: 16,
-                  color: AppColors.textSecondary,
+                  color: context.textSecondary,
                   height: 1.5,
                 ),
                 textAlign: TextAlign.center,

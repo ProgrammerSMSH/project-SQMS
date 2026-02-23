@@ -4,6 +4,8 @@ import 'package:socket_io_client/socket_io_client.dart' as io;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
+import 'package:sqms_app/services/ticket_storage.dart';
+
 class QueueService {
   static const String baseUrl = 'https://project-sqms.vercel.app/api'; 
   late io.Socket socket;
@@ -55,7 +57,9 @@ class QueueService {
       );
 
       if (response.statusCode == 201) {
-        return jsonDecode(response.body)['data'];
+        final data = jsonDecode(response.body)['data'];
+        await TicketStorage.saveTicket(data);
+        return data;
       }
       return null;
     } catch (e) {
@@ -86,6 +90,19 @@ class QueueService {
       return null;
     } catch (e) {
       debugPrint('Get services error: $e');
+      return null;
+    }
+  }
+
+  Future<List<dynamic>?> getLocations() async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/locations'));
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body)['data'];
+      }
+      return null;
+    } catch (e) {
+      debugPrint('Get locations error: $e');
       return null;
     }
   }

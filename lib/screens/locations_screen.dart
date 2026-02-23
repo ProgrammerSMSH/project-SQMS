@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sqms_app/constants.dart';
+import 'package:sqms_app/theme/app_theme.dart';
 import 'package:sqms_app/services/queue_service.dart';
 
 class LocationsScreen extends StatefulWidget {
@@ -69,14 +70,14 @@ class _LocationsScreenState extends State<LocationsScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Column(
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'Nearby',
                     style: TextStyle(
                       fontSize: 14,
-                      color: AppColors.textSecondary,
+                      color: context.textSecondary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -85,14 +86,14 @@ class _LocationsScreenState extends State<LocationsScreen> {
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.w800,
-                      color: AppColors.textBody,
+                      color: context.textBody,
                     ),
                   ),
                 ],
               ),
               Container(
                 decoration: BoxDecoration(
-                  color: AppColors.surface,
+                  color: context.surfaceColor,
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
@@ -119,7 +120,7 @@ class _LocationsScreenState extends State<LocationsScreen> {
       child: Container(
         margin: const EdgeInsets.only(bottom: 20),
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: context.surfaceColor,
           borderRadius: BorderRadius.circular(AppSpacing.borderRadius),
           boxShadow: [
             BoxShadow(
@@ -184,22 +185,22 @@ class _LocationsScreenState extends State<LocationsScreen> {
                   const SizedBox(height: 12),
                   Text(
                     branch['name'],
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textBody,
+                      color: context.textBody,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      const Icon(Icons.location_on_rounded, size: 14, color: AppColors.textSecondary),
+                      Icon(Icons.location_on_rounded, size: 14, color: context.textSecondary),
                       const SizedBox(width: 4),
                       Text(
                         branch['address'],
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
-                          color: AppColors.textSecondary,
+                          color: context.textSecondary,
                         ),
                       ),
                     ],

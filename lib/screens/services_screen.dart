@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sqms_app/constants.dart';
+import 'package:sqms_app/theme/app_theme.dart';
 import 'package:sqms_app/services/queue_service.dart';
 
 class ServicesScreen extends StatefulWidget {
@@ -79,20 +80,20 @@ class _ServicesScreenState extends State<ServicesScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Explore',
                   style: TextStyle(
                     fontSize: 14,
-                    color: AppColors.textSecondary,
+                    color: context.textSecondary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 Text(
                   branchName,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.w800,
-                    color: AppColors.textBody,
+                    color: context.textBody,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -101,7 +102,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
           ),
           Container(
             decoration: BoxDecoration(
-              color: AppColors.surface,
+              color: context.surfaceColor,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
@@ -127,7 +128,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: context.surfaceColor,
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
@@ -137,12 +138,12 @@ class _ServicesScreenState extends State<ServicesScreen> {
           ),
         ],
       ),
-      child: const TextField(
+      child: TextField(
         decoration: InputDecoration(
           hintText: AppStrings.searchServices,
-          icon: Icon(Icons.search_rounded, color: AppColors.textSecondary),
+          icon: Icon(Icons.search_rounded, color: context.textSecondary),
           border: InputBorder.none,
-          hintStyle: TextStyle(color: AppColors.textSecondary),
+          hintStyle: TextStyle(color: context.textSecondary),
         ),
       ),
     );
@@ -151,10 +152,10 @@ class _ServicesScreenState extends State<ServicesScreen> {
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.bold,
-        color: AppColors.textBody,
+        color: context.textBody,
       ),
     );
   }
@@ -171,7 +172,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             decoration: BoxDecoration(
               gradient: isAll ? AppColors.primaryGradient : null,
-              color: isAll ? null : AppColors.surface,
+              color: isAll ? null : context.surfaceColor,
               borderRadius: BorderRadius.circular(16),
               boxShadow: isAll
                   ? [
@@ -186,7 +187,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
             child: Text(
               cat,
               style: TextStyle(
-                color: isAll ? Colors.white : AppColors.textSecondary,
+                color: isAll ? Colors.white : context.textSecondary,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -237,7 +238,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: context.surfaceColor,
           borderRadius: BorderRadius.circular(AppSpacing.borderRadius),
           boxShadow: [
             BoxShadow(

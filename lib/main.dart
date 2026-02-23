@@ -1,18 +1,26 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:sqms_app/constants.dart';
+import 'package:provider/provider.dart';
+import 'package:sqms_app/theme/app_theme.dart';
+import 'package:sqms_app/theme/theme_provider.dart';
 import 'package:sqms_app/screens/onboarding_screen.dart';
 import 'package:sqms_app/screens/login_screen.dart';
 import 'package:sqms_app/screens/locations_screen.dart';
 import 'package:sqms_app/screens/services_screen.dart';
 import 'package:sqms_app/screens/live_ticket_screen.dart';
 import 'package:sqms_app/screens/admin_dashboard.dart';
+import 'package:sqms_app/screens/main_screen.dart';
+import 'package:sqms_app/screens/auth_wrapper.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(const SQMSApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => ThemeProvider(),
+      child: const SQMSApp(),
+    ),
+  );
 }
 
 class SQMSApp extends StatelessWidget {
@@ -20,61 +28,39 @@ class SQMSApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'SQMS',
-      theme: ThemeData(
-        brightness: Brightness.light,
-        scaffoldBackgroundColor: AppColors.background,
-        primaryColor: AppColors.primary,
-        fontFamily: GoogleFonts.outfit().fontFamily,
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          centerTitle: true,
-          titleTextStyle: TextStyle(
-            color: AppColors.textBody,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-          iconTheme: IconThemeData(color: AppColors.textBody),
-        ),
-        textTheme: GoogleFonts.outfitTextTheme(
-          ThemeData.light().textTheme,
-        ).copyWith(
-          bodyLarge: const TextStyle(color: AppColors.textBody),
-          bodyMedium: const TextStyle(color: AppColors.textBody),
-        ),
-        colorScheme: ColorScheme.light(
-          primary: AppColors.primary,
-          secondary: AppColors.secondary,
-          surface: AppColors.surface,
-        ),
-        useMaterial3: true,
-      ),
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const OnboardingScreen(),
-        '/login': (context) => const LoginScreen(),
-        '/locations': (context) => const LocationsScreen(),
-        '/services': (context) => const ServicesScreen(),
-        '/admin': (context) => const AdminDashboard(),
-      },
-      onGenerateRoute: (settings) {
-        if (settings.name == '/live_ticket') {
-          final args = settings.arguments as Map<String, dynamic>?;
-          return MaterialPageRoute(
-            builder: (context) {
-              return LiveTicketScreen(
-                ticketNumber: args?['ticketNumber'] ?? 0,
-                serviceName: args?['serviceName'] ?? 'Unknown',
-                initialPosition: args?['initialPosition'] ?? 0,
-                initialWaitTime: args?['initialWaitTime'] ?? 0,
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'SQMS',
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: themeProvider.themeMode,
+          home: const AuthWrapper(),
+          routes: {
+            '/login': (context) => const LoginScreen(),
+            '/main': (context) => const MainScreen(),
+            '/locations': (context) => const LocationsScreen(),
+            '/services': (context) => const ServicesScreen(),
+            '/admin': (context) => const AdminDashboard(),
+          },
+          onGenerateRoute: (settings) {
+            if (settings.name == '/live_ticket') {
+              final args = settings.arguments as Map<String, dynamic>?;
+              return MaterialPageRoute(
+                builder: (context) {
+                  return LiveTicketScreen(
+                    ticketNumber: args?['ticketNumber'] ?? 0,
+                    serviceName: args?['serviceName'] ?? 'Unknown',
+                    initialPosition: args?['initialPosition'] ?? 0,
+                    initialWaitTime: args?['initialWaitTime'] ?? 0,
+                  );
+                },
               );
-            },
-          );
-        }
-        return null;
+            }
+            return null;
+          },
+        );
       },
     );
   }

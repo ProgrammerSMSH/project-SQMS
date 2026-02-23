@@ -48,10 +48,12 @@ app.get('/', (req, res) => {
 const tokenRoutes = require('./routes/tokenRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const serviceRoutes = require('./routes/serviceRoutes');
+const locationRoutes = require('./routes/locationRoutes');
 
 app.use('/api/tokens', tokenRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/services', serviceRoutes);
+app.use('/api/locations', locationRoutes);
 
 const PORT = process.env.PORT || 5000;
 
