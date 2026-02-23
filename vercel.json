@@ -1,0 +1,27 @@
+{
+     "version": 2,
+     "rewrites": [
+          {
+               "source": "/api/v1/:path*",
+               "destination": "/backend/server.js"
+          },
+          {
+               "source": "/admin/(.*)",
+               "destination": "/admin/$1"
+          }
+     ],
+     "routes": [
+          {
+               "src": "/admin/(.*)",
+               "dest": "/admin/$1"
+          },
+          {
+               "src": "/api/v1/(.*)",
+               "dest": "/backend/server.js"
+          },
+          {
+               "src": "/(.*)",
+               "dest": "/backend/server.js"
+          }
+     ]
+}

@@ -23,24 +23,61 @@ const servingQueueDisp = document.getElementById('serving-queue-disp');
 // Authentication Check
 function checkAuth() {
     if (!ADMIN_TOKEN) {
-        promptForToken();
+        showLoginModal();
+    } else {
+        initDashboard();
     }
 }
 
-function promptForToken() {
-    const newToken = prompt("Please enter a valid Admin Token to access the panel:");
-    if (newToken) {
-        ADMIN_TOKEN = newToken;
-        localStorage.setItem('admin_token', newToken);
+function showLoginModal() {
+    const modal = document.getElementById('login-modal');
+    if (modal) {
+        modal.classList.remove('hidden');
+    }
+}
+
+function hideLoginModal() {
+    const modal = document.getElementById('login-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+}
+
+// Login Handler
+async function handleLogin(phone) {
+    const errorEl = document.getElementById('login-error');
+    if (errorEl) errorEl.classList.add('hidden');
+
+    try {
+        const response = await fetch(`${API_URL}/admin/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ phone })
+        });
+
+        if (!response.ok) {
+            throw new Error('Login failed');
+        }
+
+        const data = await response.json();
+        ADMIN_TOKEN = data.token;
+        localStorage.setItem('admin_token', ADMIN_TOKEN);
+        
+        hideLoginModal();
         initDashboard();
-    } else {
-        alert("Admin Token required.");
+    } catch (error) {
+        if (errorEl) {
+            errorEl.innerText = "Invalid Admin credentials or connection error.";
+            errorEl.classList.remove('hidden');
+        }
     }
 }
 
 // Initialization
 async function initDashboard() {
-    checkAuth();
+    // Only fetch if we have a token
+    if (!ADMIN_TOKEN) return;
+    
     await fetchCounters();
     await fetchQueues();
     
@@ -67,7 +104,7 @@ async function fetchCounters() {
         if (res.status === 401) {
             localStorage.removeItem('admin_token');
             ADMIN_TOKEN = '';
-            promptForToken();
+            showLoginModal();
             return;
         }
         if (!res.ok) throw new Error(res.status);
@@ -204,5 +241,11 @@ btnCallNext.addEventListener('click', callNextToken);
 btnComplete.addEventListener('click', () => handleTokenAction('complete'));
 btnNoShow.addEventListener('click', () => handleTokenAction('no-show'));
 
+document.getElementById('login-form')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const phone = document.getElementById('admin-phone').value;
+    handleLogin(phone);
+});
+
 // Boot
-initDashboard();
+checkAuth();
