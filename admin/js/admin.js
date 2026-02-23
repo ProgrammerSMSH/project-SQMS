@@ -1,12 +1,12 @@
-// Mock API Base URL (Change to production URL)
-const API_URL = 'https://project-sqms.vercel.app/api/v1';
+// Local API Base URL
+const API_URL = 'http://localhost:5000/api/v1';
 const ADMIN_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OWNiNGIyODNmMzE0ODg5ODhkZGU5ZiIsImlhdCI6MTc3MTg3NzU1NCwiZXhwIjoxNzc0NDY5NTU0fQ.Use6QFKxO7RKPFgiPsn7TgL0N_WCJIAjJ-U30C8ODvo';
 let currentTokenId = null; 
-let currentCounterId = '699cb4dc1c93564ddbb59b47'; // Live Seeded Counter
-let currentQueueId = '699cb4db1c93564ddbb59b44'; // Live Seeded Queue
+let currentCounterId = '699cb8f138b27de96287b463'; // Updated via seed
+let currentQueueId = '699cb8f138b27de96287b45f'; // Updated via seed
 
 // Initialize Socket.io
-const socket = io('https://project-sqms.vercel.app', { transports: ['websocket'] });
+const socket = io('http://localhost:5000', { transports: ['websocket'] });
 
 socket.on('connect', () => {
     console.log('Connected to WebSocket server');
@@ -83,11 +83,31 @@ async function markNoShow() {
     }
 }
 
-// Mock function to refresh the right-hand sidebar queue list
-function refreshUpcomingTokens() {
-    // In production, GET /api/v1/queues/:id/waiting
-    console.log('Refreshing upcoming tokens list...');
+// Refresh the right-hand sidebar queue list
+async function refreshUpcomingTokens() {
+    try {
+        const response = await fetch(`${API_URL}/queues/${currentQueueId}/waiting`);
+        if (!response.ok) throw new Error("Failed to fetch waiting list");
+        
+        const tokens = await response.json();
+        upcomingList.innerHTML = '';
+        
+        tokens.forEach(token => {
+            const li = document.createElement('li');
+            li.className = 'flex justify-between items-center p-3 bg-gray-50 rounded border border-gray-200';
+            li.innerHTML = `
+                <span class="font-bold">${token.tokenNumber}</span>
+                <span class="text-xs ${token.priority === 'EMERGENCY' ? 'bg-red-200 text-red-800' : token.priority === 'SENIOR' ? 'bg-yellow-200 text-yellow-800' : 'text-gray-500'} px-2 py-1 rounded uppercase tracking-wider font-bold">${token.priority}</span>
+            `;
+            upcomingList.appendChild(li);
+        });
+    } catch (error) {
+        console.error('Error refreshing waiting list:', error);
+    }
 }
+
+// Initial load
+refreshUpcomingTokens();
 
 // Event Listeners
 btnCallNext.addEventListener('click', callNextToken);

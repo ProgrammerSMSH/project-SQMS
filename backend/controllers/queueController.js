@@ -37,4 +37,21 @@ const createQueue = async (req, res, next) => {
   }
 };
 
-module.exports = { getQueues, createQueue };
+// @desc    Get all waiting tokens for a queue
+// @route   GET /api/v1/queues/:id/waiting
+// @access  Public
+const getWaitingTokens = async (req, res, next) => {
+  try {
+    const Token = require('../models/Token');
+    const tokens = await Token.find({ 
+      queueId: req.params.id, 
+      status: 'WAITING' 
+    }).sort({ joinedAt: 1 });
+    res.json(tokens);
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { getQueues, createQueue, getWaitingTokens };
+

@@ -1,7 +1,7 @@
-const socket = io('https://project-sqms.vercel.app', { transports: ['websocket'] });
+const socket = io('http://localhost:5000', { transports: ['websocket'] });
 
 // TV Display is listening to the General Checkup Queue ID
-const displayQueueId = '699cb4db1c93564ddbb59b44';
+const displayQueueId = '699cb8f138b27de96287b45f';
 
 socket.on('connect', () => {
     console.log('TV Display connected to WebSocket server');
@@ -35,9 +35,29 @@ function updateActiveCounterGrid(counterName, tokenNumber) {
     targetCard.classList.add('called-animation');
 }
 
-function refreshWaitingList() {
-    // GET waiting list and render
+async function refreshWaitingList() {
+    try {
+        const response = await fetch(`http://localhost:5000/api/v1/queues/${displayQueueId}/waiting`);
+        if (!response.ok) throw new Error("Failed to fetch waiting list");
+        
+        const tokens = await response.json();
+        const waitingListEl = document.getElementById('waiting-tokens-list');
+        if (!waitingListEl) return;
+
+        waitingListEl.innerHTML = '';
+        tokens.forEach(token => {
+            const div = document.createElement('div');
+            div.className = 'text-3xl font-bold p-4 bg-white rounded-lg shadow-sm border-l-8 border-blue-500 flex justify-between';
+            div.innerHTML = `<span>${token.tokenNumber}</span> <span class="text-sm text-gray-400 font-normal self-center">${token.priority}</span>`;
+            waitingListEl.appendChild(div);
+        });
+    } catch (e) {
+        console.error(e);
+    }
 }
+
+// Initial load
+refreshWaitingList();
 
 function playSoundAlert() {
     // Play a gentle ding chime when a new patient is called
