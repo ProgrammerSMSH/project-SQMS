@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
-import 'package:qrs/services/api_service.dart';
+import 'package:sqms_app/services/api_service.dart';
 
 class SyncService extends ChangeNotifier {
-  final ApiService _apiService;
+  ApiService _apiService;
   Timer? _pollingTimer;
   bool _isActive = false;
 
@@ -12,6 +12,11 @@ class SyncService extends ChangeNotifier {
   bool isLoading = true;
 
   SyncService(this._apiService);
+ 
+  void updateApi(ApiService newApi) {
+    _apiService = newApi;
+    if (_isActive) _fetchData();
+  }
 
   void startSyncing() {
     if (_isActive) return;

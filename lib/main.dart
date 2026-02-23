@@ -4,7 +4,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'theme/app_theme.dart';
 import 'services/api_service.dart';
-import 'services/api_service.dart';
 import 'services/queue_service.dart';
 import 'services/sync_service.dart';
 import 'services/fcm_service.dart';
@@ -19,14 +18,14 @@ import 'screens/profile_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Initialize Firebase (Assuming firebase_options is generated)
-  // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  // FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+  // Initialize AuthService and try auto-login
+  final authService = AuthService();
+  await authService.tryAutoLogin();
 
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AuthService()),
+        ChangeNotifierProvider.value(value: authService),
         ProxyProvider<AuthService, ApiService>(
           update: (_, auth, __) {
              final api = ApiService();
@@ -38,10 +37,11 @@ void main() async {
           update: (_, api, __) => QueueService(api),
         ),
         ChangeNotifierProxyProvider<ApiService, SyncService>(
-          create: (_) => SyncService(ApiService()), // Initial dummy, updated below
+          create: (context) => SyncService(context.read<ApiService>()),
           update: (_, api, previousSync) {
-            // Give SyncService the updated ApiService (with token)
-            return previousSync ?? SyncService(api)..startSyncing();
+            if (previousSync == null) return SyncService(api)..startSyncing();
+            previousSync.updateApi(api);
+            return previousSync;
           },
         ),
         Provider<FCMService>(create: (_) => FCMService()),
