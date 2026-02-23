@@ -101,15 +101,15 @@ const registerFcmToken = async (req, res, next) => {
 // @access  Public
 const authAdmin = async (req, res, next) => {
     try {
-      const { phone } = req.body;
+      const { email, password } = req.body;
   
-      const user = await User.findOne({ phone, role: 'ADMIN' });
+      const user = await User.findOne({ email, role: 'ADMIN' });
   
-      if (user) {
+      if (user && (await user.matchPassword(password))) {
         res.json({
           _id: user._id,
           name: user.name,
-          phone: user.phone,
+          email: user.email,
           role: user.role,
           token: generateToken(user._id),
         });

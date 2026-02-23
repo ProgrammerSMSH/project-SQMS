@@ -44,15 +44,15 @@ function hideLoginModal() {
 }
 
 // Login Handler
-async function handleLogin(phone) {
+async function handleLogin(email, password) {
     const errorEl = document.getElementById('login-error');
     if (errorEl) errorEl.classList.add('hidden');
 
     try {
-        const response = await fetch(`${API_URL}/admin/auth/login`, {
+        const response = await fetch(`${API_URL}/auth/admin-login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ phone })
+            body: JSON.stringify({ email, password })
         });
 
         if (!response.ok) {
@@ -67,7 +67,7 @@ async function handleLogin(phone) {
         initDashboard();
     } catch (error) {
         if (errorEl) {
-            errorEl.innerText = "Invalid Admin credentials or connection error.";
+            errorEl.innerText = "ACCESS DENIED: INVALID CREDENTIALS";
             errorEl.classList.remove('hidden');
         }
     }
@@ -163,19 +163,23 @@ async function pollActiveStatus() {
         
         // Update Waiting List
         upcomingList.innerHTML = '';
+        if (data.waiting.length === 0) {
+            upcomingList.innerHTML = '<li class="p-8 text-white/10 text-center italic text-xs">No active queue</li>';
+        }
         data.waiting.forEach(token => {
             const li = document.createElement('li');
-            li.className = 'flex justify-between items-center p-3 bg-gray-50 rounded border border-gray-200 transition-all hover:shadow-sm';
+            li.className = 'flex justify-between items-center p-4 glass bg-white/5 border-white/5 transition-all hover:bg-white/10 group';
             li.innerHTML = `
-                <span class="font-bold text-gray-800">${token.tokenNumber}</span>
-                <span class="text-xs ${token.priority === 'EMERGENCY' ? 'bg-red-200 text-red-800' : token.priority === 'SENIOR' ? 'bg-yellow-200 text-yellow-800' : 'bg-gray-200 text-gray-600'} px-2 py-1 rounded uppercase tracking-wider font-bold">${token.priority}</span>
+                <div>
+                     <p class="text-[10px] text-white/30 font-black tracking-widest uppercase mb-1">TOKEN</p>
+                     <span class="font-tomorrow text-xl text-white group-hover:text-blue-400 transition">${token.tokenNumber}</span>
+                </div>
+                <div class="text-right">
+                    <span class="text-[9px] ${token.priority === 'EMERGENCY' ? 'text-red-400 border-red-400/30 bg-red-400/10' : token.priority === 'SENIOR' ? 'text-yellow-400 border-yellow-400/30 bg-yellow-400/10' : 'text-blue-400 border-blue-400/30 bg-blue-400/10'} px-2 py-1 rounded border uppercase tracking-widest font-black">${token.priority}</span>
+                </div>
             `;
             upcomingList.appendChild(li);
         });
-
-        // If another counter updates, we might want to refresh counters softly, 
-        // but for this specific logged-in admin, we only care about *their* active token.
-        // We rely on the button clicks to update their own view instantly.
     } catch (e) {
         console.error("Polling error", e);
     }
@@ -183,15 +187,46 @@ async function pollActiveStatus() {
 
 function startPolling() {
     pollActiveStatus();
-    setInterval(pollActiveStatus, 3000); // Fast 3-second unified poll
+    setInterval(pollActiveStatus, 3000); // 3-second unified poll
+}
+
+// Rendering
+function renderCounters() {
+    counterListEl.innerHTML = '';
+    counters.forEach(counter => {
+        const li = document.createElement('li');
+        const isActive = counter._id === currentCounterId;
+        li.className = `p-4 rounded-xl cursor-pointer border transition-all ${
+            isActive ? 'active-counter border-blue-500/50 shadow-[0_0_20px_rgba(77,161,255,0.1)]' : 'bg-white/5 border-white/5 hover:bg-white/10'
+        }`;
+        li.innerHTML = `
+            <div class="flex justify-between items-center">
+                <span class="font-tomorrow text-sm tracking-tight ${isActive ? 'text-blue-400' : 'text-white/70'}">${counter.name}</span>
+                <span class="text-[8px] px-2 py-1 rounded bg-black/40 text-white/40 font-black tracking-widest uppercase">${counter.status}</span>
+            </div>
+        `;
+        li.onclick = () => selectCounter(counter._id);
+        counterListEl.appendChild(li);
+    });
+}
+
+function selectCounter(id) {
+    currentCounterId = id;
+    const counter = counters.find(c => c._id === id);
+    if(counter) {
+        if(counterNameDisp) counterNameDisp.innerText = counter.name;
+        currentTokenId = counter.servingTokenId?._id || null;
+        currentTokenDisp.innerText = counter.servingTokenId?.tokenNumber || "--";
+    }
+    renderCounters();
 }
 
 // Actions
 async function callNextToken() {
     if (!currentCounterId || !currentQueueId) return alert("Select a counter and queue first.");
     const btn = btnCallNext;
-    const originalText = btn.innerText;
-    btn.innerText = "CALLING...";
+    const originalContent = btn.innerHTML;
+    btn.innerHTML = '<span class="animate-pulse">CALLING...</span>';
     btn.disabled = true;
 
     try {
@@ -203,48 +238,59 @@ async function callNextToken() {
         
         if (!response.ok) {
             if (response.status === 401) showLoginModal();
-            else throw new Error(await response.text());
+            else {
+                const errorText = await response.text();
+                // Simple toast-like alert for now
+                alert("Queue Issue: " + errorText);
+            }
         } else {
             const token = await response.json();
             currentTokenId = token._id;
             currentTokenDisp.innerText = token.tokenNumber;
-            // Immediate UI update for snappiness
             pollActiveStatus(); 
         }
     } catch (error) {
-        alert("Error calling next: " + error.message);
+        alert("Connection Error: " + error.message);
     } finally {
-        btn.innerText = originalText;
+        btn.innerHTML = originalContent;
         btn.disabled = false;
     }
 }
 
-async function handleTokenAction(action) { // 'complete' or 'no-show'
+async function handleTokenAction(action) { 
     if(!currentTokenId || !currentCounterId) return;
     try {
         const res = await fetch(`${API_URL}/counters/${currentCounterId}/${action}`, { 
             method: 'POST', headers: { 'Authorization': `Bearer ${ADMIN_TOKEN}` }
         });
         if (!res.ok) {
-            if (res.status === 401) promptForToken();
+            if (res.status === 401) showLoginModal();
             else throw new Error(await res.text());
         }
         currentTokenDisp.innerText = "--";
         currentTokenId = null;
     } catch (e) {
-        alert(`Error marking ${action}: ` + e.message);
+        alert(`Error: ` + e.message);
     }
+}
+
+function handleLogout() {
+    localStorage.removeItem('admin_token');
+    ADMIN_TOKEN = '';
+    location.reload();
 }
 
 // Event Listeners
 btnCallNext.addEventListener('click', callNextToken);
 btnComplete.addEventListener('click', () => handleTokenAction('complete'));
 btnNoShow.addEventListener('click', () => handleTokenAction('no-show'));
+document.getElementById('logout-btn')?.addEventListener('click', handleLogout);
 
 document.getElementById('login-form')?.addEventListener('submit', (e) => {
     e.preventDefault();
-    const phone = document.getElementById('admin-phone').value;
-    handleLogin(phone);
+    const email = document.getElementById('admin-email').value;
+    const password = document.getElementById('admin-password').value;
+    handleLogin(email, password);
 });
 
 // Boot

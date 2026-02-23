@@ -26,13 +26,9 @@ function renderActiveCounters(servingData) {
     if (!grid) return;
     grid.innerHTML = '';
 
-    // Color palette for counters
-    const colors = ['blue', 'green', 'red', 'purple', 'yellow'];
-
     servingData.forEach((serving, index) => {
-        const color = colors[index % colors.length];
         const hasChanged = previousServingTokens[serving.counterName] !== serving.tokenNumber;
-        const animClass = hasChanged ? 'called-animation' : '';
+        const animClass = hasChanged ? 'call-flash' : '';
         
         if (hasChanged) {
             playSoundAlert();
@@ -40,16 +36,18 @@ function renderActiveCounters(servingData) {
         }
 
         const div = document.createElement('div');
-        div.className = `bg-gray-800 rounded-2xl p-8 shadow-2xl border-l-8 border-${color}-500 flex flex-col items-center justify-center transform transition-transform ${animClass}`;
+        div.className = `glass p-12 flex flex-col items-center justify-center relative overflow-hidden transition-all duration-700 ${animClass}`;
         div.innerHTML = `
-            <p class="text-gray-400 text-3xl mb-4 font-light">${serving.counterName}</p>
-            <div class="text-7xl lg:text-9xl font-black text-white tracking-tighter drop-shadow-lg">${serving.tokenNumber}</div>
+            <div class="absolute inset-0 bg-blue-500/5 -z-10"></div>
+            <p class="font-tomorrow text-xl text-white/30 tracking-[10px] uppercase mb-4">${serving.counterName}</p>
+            <div class="text-[120px] font-tomorrow leading-none neon-blue tracking-tighter">${serving.tokenNumber}</div>
+            <div class="w-24 h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent mt-6"></div>
         `;
         grid.appendChild(div);
     });
 
     if (servingData.length === 0) {
-        grid.innerHTML = `<div class="col-span-2 text-center text-gray-500 text-2xl mt-20 font-light">Waiting for counters to open...</div>`;
+        grid.innerHTML = `<div class="col-span-2 text-center text-white/20 font-tomorrow tracking-widest mt-20 animate-pulse uppercase">Waiting for stations to open...</div>`;
     }
 }
 
@@ -60,33 +58,28 @@ function renderWaitingList(waitingTokens) {
 
     waitingTokens.forEach((token, index) => {
         const div = document.createElement('div');
-        // Visually deprioritize items further down the list
-        const opacity = index === 0 ? 'opacity-100 shadow-md transform scale-105' : 
-                        index < 3 ? 'opacity-90' : 'opacity-60 text-gray-500';
+        const isNext = index === 0;
         
-        const nextBadge = index === 0 ? `<span class="text-lg bg-blue-600 text-white px-4 py-1 rounded-full font-bold shadow-sm animate-pulse">NEXT</span>` : '';
-        
-        div.className = `p-6 bg-gray-700/50 backdrop-blur-sm rounded-xl flex justify-between items-center border border-gray-600/50 transition-all ${opacity}`;
+        div.className = `p-6 glass bg-white/5 border-white/5 flex justify-between items-center transition-all ${isNext ? 'border-blue-500/30 bg-blue-500/5 shadow-[0_0_30px_rgba(77,161,255,0.1)]' : 'opacity-60 scale-95 origin-left'}`;
         div.innerHTML = `
-            <div class="flex items-center gap-4">
-               <span class="text-4xl font-bold font-mono tracking-tight">${token.tokenNumber}</span>
-               ${token.priority !== 'NORMAL' ? `<span class="text-xs px-2 py-1 rounded bg-gray-800 text-gray-300 uppercase">${token.priority}</span>` : ''}
+            <div>
+               <p class="text-[10px] text-white/30 font-black tracking-widest uppercase mb-1">TOKEN</p>
+               <span class="font-tomorrow text-4xl text-white">${token.tokenNumber}</span>
             </div>
-            ${nextBadge}
+            ${isNext ? '<span class="font-tomorrow text-sm bg-blue-500 text-white px-4 py-2 rounded-full font-black tracking-widest animate-pulse">NEXT</span>' : ''}
         `;
         list.appendChild(div);
     });
 
     if (waitingTokens.length === 0) {
-        list.innerHTML = `<div class="text-center text-gray-500 p-8">The queue is currently empty.</div>`;
+        list.innerHTML = `<div class="text-center text-white/10 p-12 italic text-sm tracking-widest uppercase">The queue is currently empty</div>`;
     }
 }
 
 function playSoundAlert() {
-    // In a real browser environment with user interaction, this would play a chime.
     console.log("DING DOOONG - New Token Called!");
 }
 
 // Start polling
 pollQueueStatus();
-setInterval(pollQueueStatus, 3000); // 3-second unified poll
+setInterval(pollQueueStatus, 3000); 
