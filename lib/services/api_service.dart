@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 
 class ApiService {
   // Use Vercel backend URL
-  static const String baseUrl = 'http://localhost:5000/api/v1';
+  static const String baseUrl = 'https://project-sqms.vercel.app/api/v1';
   String? jwtToken;
 
   void setToken(String token) {

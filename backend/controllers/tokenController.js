@@ -46,13 +46,6 @@ const generateToken = async (req, res, next) => {
       estimatedWaitTime,
     });
 
-    // Broadcast to dashboard / other users that a new token joined
-    req.io.to(`queue_${queueId}`).emit('queue_updated', {
-      action: 'NEW_TOKEN',
-      queueId: queueId,
-      waitingCount: waitingTokensCount + 1
-    });
-
     res.status(201).json(token);
   } catch (error) {
     next(error);

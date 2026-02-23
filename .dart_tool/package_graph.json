@@ -13,8 +13,7 @@
         "flutter",
         "google_fonts",
         "http",
-        "provider",
-        "socket_io_client"
+        "provider"
       ],
       "devDependencies": [
         "flutter_lints",
@@ -76,15 +75,6 @@
         "firebase_core_web",
         "flutter",
         "meta"
-      ]
-    },
-    {
-      "name": "socket_io_client",
-      "version": "2.0.3+1",
-      "dependencies": [
-        "js",
-        "logging",
-        "socket_io_common"
       ]
     },
     {
@@ -279,25 +269,6 @@
       ]
     },
     {
-      "name": "js",
-      "version": "0.6.7",
-      "dependencies": [
-        "meta"
-      ]
-    },
-    {
-      "name": "socket_io_common",
-      "version": "2.0.3",
-      "dependencies": [
-        "logging"
-      ]
-    },
-    {
-      "name": "logging",
-      "version": "1.3.0",
-      "dependencies": []
-    },
-    {
       "name": "web",
       "version": "1.1.1",
       "dependencies": []
@@ -449,6 +420,13 @@
       ]
     },
     {
+      "name": "js",
+      "version": "0.6.7",
+      "dependencies": [
+        "meta"
+      ]
+    },
+    {
       "name": "flutter_web_plugins",
       "version": "0.0.0",
       "dependencies": [
@@ -527,6 +505,11 @@
         "meta",
         "pub_semver"
       ]
+    },
+    {
+      "name": "logging",
+      "version": "1.3.0",
+      "dependencies": []
     },
     {
       "name": "hooks",

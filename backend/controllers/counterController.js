@@ -104,13 +104,6 @@ const callNextToken = async (req, res, next) => {
     counter.servingTokenId = nextToken._id;
     await counter.save();
 
-    // 1. Socket: Broadcast to dashboard/tv display
-    req.io.to(`queue_${nextToken.queueId}`).emit('queue_updated', {
-      action: 'CALLED_NEXT',
-      currentTokenServing: nextToken.tokenNumber,
-      counterName: counter.name
-    });
-
     // 2. FCM & Socket: Notify the person who is CALLED
     if (nextToken.userId.fcmTokens && nextToken.userId.fcmTokens.length > 0) {
       await sendPushNotification(

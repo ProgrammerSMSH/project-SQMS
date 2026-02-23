@@ -53,5 +53,44 @@ const getWaitingTokens = async (req, res, next) => {
   }
 };
 
-module.exports = { getQueues, createQueue, getWaitingTokens };
+// @desc    Get comprehensive active status for a queue (waiting tokens + serving counters)
+// @route   GET /api/v1/queues/:id/active-status
+// @access  Public (or protected depending on requirement, usually public for TV)
+const getActiveStatus = async (req, res, next) => {
+  try {
+    const queueId = req.params.id;
+
+    // 1. Get Waiting Tokens
+    const waitingTokens = await Token.find({ queueId, status: 'WAITING' })
+      .sort({ joinedAt: 1 }) // First in, first out
+      .select('tokenNumber priority'); // Only send necessary data
+
+    // 2. Get Counters actively serving tokens from this queue
+    // We populate the servingTokenId to get its tokenNumber
+    const activeCounters = await Counter.find({ status: 'ACTIVE' })
+        .populate({
+            path: 'servingTokenId',
+            match: { queueId: queueId },
+            select: 'tokenNumber'
+        })
+        .select('name servingTokenId');
+    
+    // Filter out counters that aren't serving this queue or aren't serving anyone
+    const servingData = activeCounters
+        .filter(c => c.servingTokenId !== null)
+        .map(c => ({
+            counterName: c.name,
+            tokenNumber: c.servingTokenId.tokenNumber
+        }));
+
+    res.json({
+        waiting: waitingTokens,
+        serving: servingData
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { getQueues, createQueue, getWaitingTokens, getActiveStatus };
 
