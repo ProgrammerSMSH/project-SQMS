@@ -41,6 +41,9 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+        /* Fallback for when Tailwind fails to load */
+        svg { max-width: 100%; height: auto; }
+        .w-16 { width: 64px; } .h-16 { height: 64px; }
     </style>
 </head>
 <body class="h-screen flex flex-col p-10 gap-10">
@@ -48,7 +51,7 @@
     <header class="flex justify-between items-center px-4">
         <div class="flex items-center gap-6">
             <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-2xl">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
             </div>

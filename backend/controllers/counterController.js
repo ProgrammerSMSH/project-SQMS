@@ -88,6 +88,15 @@ const callNextToken = async (req, res, next) => {
         throw new Error('Unauthorized to manage this counter');
     }
 
+    // Check if the counter is authorized to serve this queue
+    if (queueId && counter.assignedServiceIds && counter.assignedServiceIds.length > 0) {
+        const authorizedIds = counter.assignedServiceIds.map(id => id.toString());
+        if (!authorizedIds.includes(queueId.toString())) {
+            res.status(400);
+            throw new Error('This counter is not authorized to serve this queue');
+        }
+    }
+
     // Previous token logic: if serving, ensure it's completed or no_show'd first.
     // For simplicity, we just forcefully clear it here, or require admin to hit complete.
     // We'll assume admin hit complete/no-show before calling next.
