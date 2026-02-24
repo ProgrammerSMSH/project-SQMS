@@ -219,7 +219,7 @@ const setNoShowToken = async (req, res, next) => {
 // @access  Private/Admin
 const updateCounter = async (req, res, next) => {
   try {
-    const { name, status, assignedStaffId } = req.body;
+    const { name, status, assignedStaffId, assignedServiceIds } = req.body;
     const counter = await Counter.findById(req.params.id);
 
     if (!counter) {
