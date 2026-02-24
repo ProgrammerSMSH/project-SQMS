@@ -8,20 +8,36 @@ SQMS is a premium, full-stack queue management ecosystem designed for modern bus
 
 ---
 
+## 🖼️ Visual Showcase
+
+| User Mobile App | Admin Dashboard |
+| :---: | :---: |
+| ![App Home](screenshots/app_home.png) | ![Admin Dashboard](screenshots/admin_dashboard.png) |
+| *Premium dark theme with real-time tracking.* | *Glassmorphic control center for staff.* |
+
+| Management Panel | TV Public Display |
+| :---: | :---: |
+| ![Management Panel](screenshots/management_panel.png) | ![TV Display](screenshots/tv_display.png) |
+| *Advanced CRUD for staff, counters, and services.* | *Futuristic live status for waiting areas.* |
+
+---
+
 ## ✨ Key Features
 
 ### 🤳 User Mobile App (Flutter)
 - **Smart Queue Joining**: Scan a QR code to join the queue instantly.
 - **Live Position Tracking**: Real-time updates on your position and estimated wait time.
-- **Priority Selective**: Support for **Emergency**, **Senior**, and **General** categories.
+- **Priority Selective**: Support for **Emergency**, **Senior**, **General**, and **Normal** categories.
+- **Battery-Safe Scanner**: Optimized camera lifecycle that shuts down automatically when not in use.
 - **Smart Notifications**: Push notifications via FCM when your turn is approaching.
 - **Premium UI**: Modern dark theme with `Tomorrow` typography and glassmorphic elements.
 
 ### 🛡️ Admin Panel (Web)
-- **Counter Management**: Open/Close/Pause service counters.
-- **Intelligent Calling**: A "Call Next" system that respects strict priority levels.
+- **Role-Based Access**: Specialized dashboards for **Administrators** and **Staff Members**.
+- **Counter Management**: Assign specific staff members to counters and control their status.
+- **Service-Level Restrictions**: Strictly assign counters to one or more specific services.
+- **Style Resilience**: Robust UI that maintains stability even under poor network conditions.
 - **Real-time Oversight**: Monitor waiting lists and active tokens in one view.
-- **Secure Access**: Email/Password authenticated administrative portal.
 
 ### 📺 Live TV Display (Web)
 - **Futuristic Visualization**: Designed for large screens in waiting areas.
@@ -40,6 +56,7 @@ graph TD
     subgraph "Actors"
         Customer["📱 Customer (App)"]
         Admin["👨‍💼 Admin (Web)"]
+        Staff["🧑‍💻 Staff (Web)"]
         TV["📺 Public TV"]
     end
 
@@ -119,8 +136,24 @@ The system enforces a strict priority flow to ensure critical cases are handled 
 1.  **Emergency** (Highest Priority)
 2.  **Senior Citizens**
 3.  **General** (Standard)
+4.  **Normal** (Default)
 
 ---
+
+## ⚙️ Admin & Staff Management Workflow
+
+The SQMS ecosystem provides a robust management layer for supervisors:
+
+1.  **Service Configuration**: Define service categories (e.g., "General Inquiries", "Account Support") and assign them a unique prefix (GN, AC) and priority level.
+2.  **Staff Onboarding**: Create Staff accounts via the Management Panel. These users have restricted access to the system.
+3.  **Counter Assignment**: 
+    - Create a Counter (e.g., "Station 01").
+    - **Link Staff**: Assign a specific Staff member to the counter.
+    - **Link Services**: Select one or more Services that this counter is authorized to serve.
+4.  **Operational Cycle**:
+    - **Staff Login**: Staff members log in to see their specific counter dashboard.
+    - **Call Next**: The system automatically pulls the highest-priority token from the authorized service list.
+    - **TV Sync**: The public display updates instantly to direct the customer to the correct station.
 
 ## 🔑 Default Credentials (First Launch)
 After the first backend deployment, a default admin is automatically created:

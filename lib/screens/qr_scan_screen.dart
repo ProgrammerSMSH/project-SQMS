@@ -25,6 +25,28 @@ class _QRScanScreenState extends State<QRScanScreen> with WidgetsBindingObserver
       detectionSpeed: DetectionSpeed.normal,
       returnImage: false,
     );
+    
+    // Listen to navigation changes to stop camera when not in focus
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<NavigationProvider>().addListener(_onNavChanged);
+      }
+    });
+  }
+
+  void _onNavChanged() {
+    if (!mounted) return;
+    final nav = context.read<NavigationProvider>();
+    // QR Scanner is at index 2
+    if (nav.currentIndex != 2) {
+      if (controller.value.isInitialized && controller.value.isRunning) {
+        controller.stop();
+      }
+    } else {
+      if (controller.value.isInitialized && !controller.value.isRunning) {
+        controller.start();
+      }
+    }
   }
 
   @override
@@ -40,6 +62,11 @@ class _QRScanScreenState extends State<QRScanScreen> with WidgetsBindingObserver
 
   @override
   void dispose() {
+    // Safely remove listener
+    try {
+      context.read<NavigationProvider>().removeListener(_onNavChanged);
+    } catch (_) {}
+    
     WidgetsBinding.instance.removeObserver(this);
     controller.dispose();
     super.dispose();
