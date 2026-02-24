@@ -96,8 +96,39 @@ function renderWaitingList(waitingTokens) {
     }
 }
 
-function playSoundAlert() {
-    console.log("DING DOOONG - New Token Called!");
-}
+// Initialize TV Display
+window.onload = () => {
+    // 1. Check if queue is selected
+    if (!urlParams.has('queueId')) {
+        document.body.innerHTML = `
+            <div class="h-screen flex flex-col items-center justify-center p-10 text-center relative overflow-hidden bg-[#0F0F13]">
+                <div class="absolute inset-0 bg-blue-500/10 blur-[100px] -z-10"></div>
+                <h1 class="font-tomorrow text-5xl mb-6 text-red-500 font-black">NO SERVICE SELECTED</h1>
+                <p class="text-white/50 tracking-widest uppercase font-bold text-xl mb-12">Please launch the TV Display from the Admin Control Panel.</p>
+                <a href="index.html" class="px-8 py-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition font-bold tracking-widest uppercase text-white/80">Go to Admin Panel</a>
+            </div>
+        `;
+        return;
+    }
 
-// Polling is now started via window.onload in the HTML if a queueId is present.
+    // 2. Generate QR Code for this Queue dynamically
+    console.log("Generating QR Code for Queue ID:", displayQueueId);
+    const container = document.getElementById("qrcode-container");
+    if (container) {
+        container.innerHTML = ''; // Clear existing
+        new QRCode(container, {
+            text: `sqms://join/${displayQueueId}`,
+            width: 160,
+            height: 160,
+            colorDark : "#000000",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.H
+        });
+    }
+
+    // 3. Start polling
+    pollQueueStatus();
+    pollAnnouncements();
+    setInterval(pollQueueStatus, 3000); 
+    setInterval(pollAnnouncements, 15000);
+};

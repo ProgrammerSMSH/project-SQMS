@@ -11,7 +11,7 @@ let currentTokenId = null;
 
 // UI Elements
 const counterListEl = document.getElementById('counter-list');
-const queueSelectEl = document.getElementById('queue-select'); // Needs to be added to HTML
+const queueSelector = document.getElementById('queue-selector');
 const btnCallNext = document.getElementById('btn-call-next');
 const btnComplete = document.getElementById('btn-complete');
 const btnNoShow = document.getElementById('btn-noshow');
@@ -123,7 +123,6 @@ async function fetchQueues() {
         if (!res.ok) throw new Error(res.status);
         queues = await res.json();
         
-        const queueSelector = document.getElementById('queue-selector');
         if (queueSelector) {
             queueSelector.innerHTML = '';
             queues.forEach(q => {
@@ -137,8 +136,8 @@ async function fetchQueues() {
             queueSelector.addEventListener('change', (e) => {
                 currentQueueId = e.target.value;
                 updateTvLink();
-                // Immediately fetch new status for the newly selected queue
                 pollActiveStatus();
+                showToast(`Queue switched to: ${queues.find(q => q._id === currentQueueId)?.name}`, 'info');
             });
         }
     } catch (e) {
@@ -159,10 +158,15 @@ function renderCounters() {
     counters.forEach(counter => {
         const li = document.createElement('li');
         const isActive = counter._id === currentCounterId;
-        li.className = `p-3 rounded cursor-pointer border transition-all ${
-            isActive ? 'bg-blue-100 text-blue-800 font-semibold border-l-4 border-blue-600 shadow-sm' : 'hover:bg-gray-50 border-gray-100'
+        li.className = `p-4 rounded-xl cursor-pointer border transition-all ${
+            isActive ? 'active-counter border-blue-500/50 shadow-[0_0_20px_rgba(77,161,255,0.1)]' : 'bg-white/5 border-white/5 hover:bg-white/10'
         }`;
-        li.innerText = `${counter.name} (${counter.status})`;
+        li.innerHTML = `
+            <div class="flex justify-between items-center">
+                <span class="font-tomorrow text-sm tracking-tight ${isActive ? 'text-blue-400' : 'text-white/70'}">${counter.name}</span>
+                <span class="text-[8px] px-2 py-1 rounded bg-black/40 text-white/40 font-black tracking-widest uppercase">${counter.status}</span>
+            </div>
+        `;
         li.onclick = () => selectCounter(counter._id);
         counterListEl.appendChild(li);
     });
@@ -175,6 +179,11 @@ function selectCounter(id) {
         if(counterNameDisp) counterNameDisp.innerText = counter.name;
         currentTokenId = counter.servingTokenId?._id || null;
         currentTokenDisp.innerText = counter.servingTokenId?.tokenNumber || "--";
+        
+        // Add a "pop" animation
+        currentTokenDisp.classList.remove('animate-pulse');
+        void currentTokenDisp.offsetWidth;
+        currentTokenDisp.classList.add('animate-pulse');
     }
     renderCounters();
 }
@@ -224,87 +233,88 @@ function startPolling() {
     setInterval(pollActiveStatus, 3000); // 3-second unified poll
 }
 
-// Rendering
-function renderCounters() {
-    counterListEl.innerHTML = '';
-    counters.forEach(counter => {
-        const li = document.createElement('li');
-        const isActive = counter._id === currentCounterId;
-        li.className = `p-4 rounded-xl cursor-pointer border transition-all ${
-            isActive ? 'active-counter border-blue-500/50 shadow-[0_0_20px_rgba(77,161,255,0.1)]' : 'bg-white/5 border-white/5 hover:bg-white/10'
-        }`;
-        li.innerHTML = `
-            <div class="flex justify-between items-center">
-                <span class="font-tomorrow text-sm tracking-tight ${isActive ? 'text-blue-400' : 'text-white/70'}">${counter.name}</span>
-                <span class="text-[8px] px-2 py-1 rounded bg-black/40 text-white/40 font-black tracking-widest uppercase">${counter.status}</span>
-            </div>
-        `;
-        li.onclick = () => selectCounter(counter._id);
-        counterListEl.appendChild(li);
-    });
-}
-
-function selectCounter(id) {
-    currentCounterId = id;
-    const counter = counters.find(c => c._id === id);
-    if(counter) {
-        if(counterNameDisp) counterNameDisp.innerText = counter.name;
-        currentTokenId = counter.servingTokenId?._id || null;
-        currentTokenDisp.innerText = counter.servingTokenId?.tokenNumber || "--";
+// Helpers
+function setBtnLoading(btn, isLoading, originalText) {
+    if (isLoading) {
+        btn.disabled = true;
+        btn.innerHTML = `<span class="animate-pulse">PROCESSING...</span>`;
+        btn.classList.add('opacity-50', 'cursor-not-allowed');
+    } else {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+        btn.classList.remove('opacity-50', 'cursor-not-allowed');
     }
-    renderCounters();
 }
 
 // Actions
 async function callNextToken() {
-    if (!currentCounterId || !currentQueueId) return alert("Select a counter and queue first.");
-    const btn = btnCallNext;
-    const originalContent = btn.innerHTML;
-    btn.innerHTML = '<span class="animate-pulse">CALLING...</span>';
-    btn.disabled = true;
-
+    if (!currentCounterId || !currentQueueId) return showToast("Select a counter and queue first.", 'error');
+    
+    const originalText = btnCallNext.innerHTML;
     try {
-        const response = await fetch(`${API_URL}/counters/${currentCounterId}/call-next`, {
+        setBtnLoading(btnCallNext, true, originalText);
+        const response = await fetch(`${API_URL}/queues/${currentQueueId}/call-next`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${ADMIN_TOKEN}` },
-            body: JSON.stringify({ queueId: currentQueueId })
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+            },
+            body: JSON.stringify({ counterId: currentCounterId })
         });
-        
-        if (!response.ok) {
-            if (response.status === 401) showLoginModal();
-            else {
-                const errorText = await response.text();
-                // Simple toast-like alert for now
-                alert("Queue Issue: " + errorText);
-            }
+
+        if (response.status === 401) {
+            showLoginModal();
+            return;
+        }
+
+        if (response.status === 404) {
+            showToast("No tokens waiting in this queue.", "info");
+        } else if (!response.ok) {
+            const err = await response.json();
+            throw new Error(err.message || "Failed to call next");
         } else {
             const token = await response.json();
             currentTokenId = token._id;
             currentTokenDisp.innerText = token.tokenNumber;
+            showToast(`Called Token: ${token.tokenNumber}`, 'success');
             pollActiveStatus(); 
         }
     } catch (error) {
-        alert("Connection Error: " + error.message);
+        showToast(error.message, "error");
     } finally {
-        btn.innerHTML = originalContent;
-        btn.disabled = false;
+        setBtnLoading(btnCallNext, false, originalText);
     }
 }
 
-async function handleTokenAction(action) { 
-    if(!currentTokenId || !currentCounterId) return;
+async function handleTokenAction(action) {
+    if (!currentTokenId || !currentCounterId) return showToast("No token currently being served.", 'error');
+    
+    const btn = action === 'no-show' ? btnNoShow : btnComplete;
+    const originalText = btn.innerHTML;
+
     try {
-        const res = await fetch(`${API_URL}/counters/${currentCounterId}/${action}`, { 
-            method: 'POST', headers: { 'Authorization': `Bearer ${ADMIN_TOKEN}` }
+        setBtnLoading(btn, true, originalText);
+        const res = await fetch(`${API_URL}/tokens/${currentTokenId}/${action}`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+            },
+            body: JSON.stringify({ counterId: currentCounterId })
         });
+
         if (!res.ok) {
             if (res.status === 401) showLoginModal();
             else throw new Error(await res.text());
         }
+        showToast(action === 'no-show' ? 'Token marked as No-Show' : 'Token Service Completed!', 'success');
         currentTokenDisp.innerText = "--";
         currentTokenId = null;
+        pollActiveStatus();
     } catch (e) {
-        alert(`Error: ` + e.message);
+        showToast(e.message, 'error');
+    } finally {
+        setBtnLoading(btn, false, originalText);
     }
 }
 

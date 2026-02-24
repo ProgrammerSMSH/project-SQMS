@@ -18,6 +18,16 @@ import 'screens/onboarding_screen.dart';
 import 'screens/signup_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+class NavigationProvider extends ChangeNotifier {
+  int _currentIndex = 0;
+  int get currentIndex => _currentIndex;
+
+  void setIndex(int index) {
+    _currentIndex = index;
+    notifyListeners();
+  }
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
@@ -47,6 +57,7 @@ void main() async {
             return previousSync;
           },
         ),
+        ChangeNotifierProvider(create: (_) => NavigationProvider()),
         Provider<FCMService>(create: (_) => FCMService()),
       ],
       child: const SmartQueueApp(),
@@ -108,7 +119,6 @@ class MainBottomNavScreen extends StatefulWidget {
 }
 
 class _MainBottomNavScreenState extends State<MainBottomNavScreen> {
-  int _currentIndex = 0;
 
   final List<Widget> _screens = [
     const HomeScreen(),
@@ -136,14 +146,15 @@ class _MainBottomNavScreenState extends State<MainBottomNavScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final nav = context.watch<NavigationProvider>();
     return Scaffold(
       body: IndexedStack(
-        index: _currentIndex,
+        index: nav.currentIndex,
         children: _screens,
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (i) => setState(() => _currentIndex = i),
+        currentIndex: nav.currentIndex,
+        onTap: (i) => nav.setIndex(i),
         type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),

@@ -101,6 +101,7 @@ crudForm.addEventListener('submit', async (e) => {
         const data = await res.json();
         if (!res.ok) throw new Error(data.message || 'Action failed');
         
+        showToast(`${getTabSingularName()} ${editingId ? 'updated' : 'created'} successfully!`, 'success');
         closeModal();
         loadData();
     } catch (err) {
@@ -304,6 +305,7 @@ window.deleteItem = async (id) => {
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.message || 'Delete failed');
+        showToast(`${getTabSingularName()} deleted.`, 'success');
         loadData();
     } catch (e) {
         alert(e.message);

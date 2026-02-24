@@ -488,6 +488,12 @@
       "languageVersion": "3.1"
     },
     {
+      "name": "visibility_detector",
+      "rootUri": "file:///D:/flutter_pub_cache/hosted/pub.dev/visibility_detector-0.4.0+2",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "vm_service",
       "rootUri": "file:///D:/flutter_pub_cache/hosted/pub.dev/vm_service-15.0.2",
       "packageUri": "lib/",
