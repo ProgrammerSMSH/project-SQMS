@@ -23,7 +23,7 @@ const tokenSchema = mongoose.Schema(
     },
     priority: {
       type: String,
-      enum: ['GENERAL', 'SENIOR', 'EMERGENCY'],
+      enum: ['GENERAL', 'SENIOR', 'EMERGENCY', 'NORMAL'],
       default: 'GENERAL',
     },
     counterId: {
