@@ -10,7 +10,7 @@ class QueueService {
     return response as List<dynamic>;
   }
 
-  Future<Map<String, dynamic>> generateToken(String queueId, {String priority = 'NORMAL'}) async {
+  Future<Map<String, dynamic>> generateToken(String queueId, {String priority = 'GENERAL'}) async {
     final response = await api.post('/tokens/generate', {
       'queueId': queueId,
       'priority': priority,

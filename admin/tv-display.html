@@ -37,6 +37,7 @@
         }
         .gradient-text {
             background: linear-gradient(135deg, #4DA1FF, #8B5CF6);
+            background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -82,12 +83,9 @@
                 
                 <!-- Bottom Info -->
                 <div class="mt-auto pt-8 border-t border-white/5 text-center">
-                    <p class="text-white/20 text-sm tracking-widest uppercase mb-6 uppercase font-bold">Join the queue via app</p>
-                    <div class="w-48 h-48 bg-white p-4 mx-auto rounded-3xl shadow-2xl relative overflow-hidden group">
-                         <div class="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-transparent"></div>
-                         <div class="w-full h-full border-4 border-black/5 rounded-2xl flex items-center justify-center text-black font-black text-xs leading-tight">
-                             SQMS<br>SCAN ME
-                         </div>
+                    <p class="text-white/20 text-sm tracking-widest uppercase mb-6 font-bold">Join the queue via app</p>
+                    <div id="qrcode-container" class="w-48 h-48 bg-white p-4 mx-auto rounded-3xl shadow-2xl relative overflow-hidden flex items-center justify-center">
+                        <!-- QR Code will be injected here -->
                     </div>
                 </div>
             </div>
@@ -104,6 +102,7 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
     </style>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="js/tv-display.js"></script>
     <script>
         // Simple live timer
@@ -111,6 +110,18 @@
             const now = new Date();
             document.getElementById('live-timer').innerText = now.toLocaleTimeString([], { hour12: false });
         }, 1000);
+
+        // Generate QR Code for this Queue
+        window.onload = () => {
+            const qrcode = new QRCode(document.getElementById("qrcode-container"), {
+                text: `sqms://join/${displayQueueId}`,
+                width: 160,
+                height: 160,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+        }
     </script>
 </body>
 </html>

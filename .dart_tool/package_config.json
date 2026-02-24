@@ -284,6 +284,12 @@
       "languageVersion": "3.5"
     },
     {
+      "name": "mobile_scanner",
+      "rootUri": "file:///D:/flutter_pub_cache/hosted/pub.dev/mobile_scanner-7.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.7"
+    },
+    {
       "name": "native_toolchain_c",
       "rootUri": "file:///D:/flutter_pub_cache/hosted/pub.dev/native_toolchain_c-0.17.4",
       "packageUri": "lib/",
