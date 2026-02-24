@@ -44,10 +44,18 @@ const createQueue = async (req, res, next) => {
 // @access  Public
 const getWaitingTokens = async (req, res, next) => {
   try {
-    const tokens = await Token.find({ 
+    let tokens = await Token.find({ 
       queueId: req.params.id, 
       status: 'WAITING' 
-    }).sort({ joinedAt: 1 });
+    });
+
+    const priorityMap = { 'EMERGENCY': 1, 'SENIOR': 2, 'GENERAL': 3, 'NORMAL': 3 };
+    tokens.sort((a, b) => {
+        const pA = priorityMap[a.priority] || 4;
+        const pB = priorityMap[b.priority] || 4;
+        if (pA !== pB) return pA - pB;
+        return new Date(a.joinedAt) - new Date(b.joinedAt);
+    });
     res.json(tokens);
   } catch (error) {
     next(error);
@@ -62,9 +70,17 @@ const getActiveStatus = async (req, res, next) => {
     const queueId = req.params.id;
 
     // 1. Get Waiting Tokens
-    const waitingTokens = await Token.find({ queueId, status: 'WAITING' })
-      .sort({ joinedAt: 1 }) // First in, first out
-      .select('tokenNumber priority'); // Only send necessary data
+    let waitingTokens = await Token.find({ queueId, status: 'WAITING' })
+      .select('tokenNumber priority joinedAt'); // Need joinedAt for secondary sort
+
+    // Sort by priority then by joinedAt
+    const priorityMap = { 'EMERGENCY': 1, 'SENIOR': 2, 'GENERAL': 3, 'NORMAL': 3 };
+    waitingTokens.sort((a, b) => {
+        const pA = priorityMap[a.priority] || 4;
+        const pB = priorityMap[b.priority] || 4;
+        if (pA !== pB) return pA - pB;
+        return new Date(a.joinedAt) - new Date(b.joinedAt);
+    });
 
     // 2. Get Counters actively serving tokens from this queue
     // We populate the servingTokenId to get its tokenNumber
