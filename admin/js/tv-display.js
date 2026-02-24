@@ -1,8 +1,8 @@
 const API_URL = 'https://project-sqms.vercel.app/api/v1';
 
-// We'll hardcode the queue ID for the TV display for now, 
-// but in a perfect system this would be configurable via URL param or local storage.
-const displayQueueId = '699cb8f138b27de96287b45f'; 
+// Extract queueId from URL or fallback
+const urlParams = new URLSearchParams(window.location.search);
+const displayQueueId = urlParams.get('queueId') || '699cb8f138b27de96287b45f'; 
 
 // State to track changes for animations
 let previousServingTokens = {};
@@ -100,8 +100,4 @@ function playSoundAlert() {
     console.log("DING DOOONG - New Token Called!");
 }
 
-// Start polling
-pollQueueStatus();
-pollAnnouncements();
-setInterval(pollQueueStatus, 3000); 
-setInterval(pollAnnouncements, 15000); // Check announcements every 15s
+// Polling is now started via window.onload in the HTML if a queueId is present.

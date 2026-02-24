@@ -89,7 +89,9 @@ async function initDashboard() {
     // Auto-select first queue
     if (queues.length > 0) {
         currentQueueId = queues[0]._id;
-        if(servingQueueDisp) servingQueueDisp.innerText = `Serving Queue: ${queues[0].name}`;
+        const selector = document.getElementById('queue-selector');
+        if (selector) selector.value = currentQueueId;
+        updateTvLink();
     }
 
     startPolling();
@@ -120,10 +122,34 @@ async function fetchQueues() {
         const res = await fetch(`${API_URL}/queues`);
         if (!res.ok) throw new Error(res.status);
         queues = await res.json();
-        // In a perfect UI, we'd render a dropdown for queues. 
-        // For now, we'll just pick the first one seamlessly.
+        
+        const queueSelector = document.getElementById('queue-selector');
+        if (queueSelector) {
+            queueSelector.innerHTML = '';
+            queues.forEach(q => {
+                const opt = document.createElement('option');
+                opt.value = q._id;
+                opt.textContent = `${q.name} (${q.code})`;
+                queueSelector.appendChild(opt);
+            });
+
+            // Bind change event
+            queueSelector.addEventListener('change', (e) => {
+                currentQueueId = e.target.value;
+                updateTvLink();
+                // Immediately fetch new status for the newly selected queue
+                pollActiveStatus();
+            });
+        }
     } catch (e) {
         console.error("Failed to load queues", e);
+    }
+}
+
+function updateTvLink() {
+    const tvBtn = document.getElementById('open-tv-btn');
+    if (tvBtn && currentQueueId) {
+        tvBtn.href = `tv-display.html?queueId=${currentQueueId}`;
     }
 }
 

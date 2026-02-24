@@ -117,9 +117,19 @@
             <div class="glass w-full h-full flex flex-col items-center justify-center p-12 text-center relative overflow-hidden">
                 <div class="absolute inset-0 bg-blue-500/5 -z-10"></div>
                 
-                <div class="mb-12">
-                    <h3 class="font-tomorrow text-sm text-blue-400 tracking-[8px] uppercase mb-1" id="counter-name-disp">STATION 01</h3>
-                    <p class="text-xs text-white/30 tracking-widest font-bold uppercase" id="serving-queue-disp">READY TO SERVE</p>
+                <div class="mb-12 w-full max-w-sm mx-auto">
+                    <h3 class="font-tomorrow text-sm text-blue-400 tracking-[8px] uppercase mb-4" id="counter-name-disp">STATION 01</h3>
+                    
+                    <div class="bg-white/5 border border-white/10 rounded-xl p-4 flex flex-col gap-3">
+                        <label class="text-[10px] uppercase font-bold tracking-widest text-white/40 text-left">Serving Service (Queue)</label>
+                        <select id="queue-selector" class="w-full bg-[#0F0F13] border border-white/10 text-white rounded-lg p-3 text-sm font-bold tracking-widest uppercase focus:border-blue-500 transition outline-none cursor-pointer">
+                            <option value="">Loading Services...</option>
+                        </select>
+                        <a id="open-tv-btn" href="#" target="_blank" class="mt-2 py-2 flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-widest text-blue-400 hover:text-blue-300 hover:bg-white/5 rounded-lg transition border border-dashed border-blue-500/30">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                            Open TV Display
+                        </a>
+                    </div>
                 </div>
 
                 <div class="mb-16 relative">
