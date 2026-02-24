@@ -189,4 +189,52 @@ const setNoShowToken = async (req, res, next) => {
     }
   };
 
-module.exports = { getCounters, createCounter, updateCounterStatus, callNextToken, completeToken, setNoShowToken };
+// @desc    Update a counter (Admin)
+// @route   PUT /api/v1/counters/:id
+// @access  Private/Admin
+const updateCounter = async (req, res, next) => {
+  try {
+    const { name, status } = req.body;
+    const counter = await Counter.findById(req.params.id);
+
+    if (!counter) {
+      res.status(404);
+      throw new Error('Counter not found');
+    }
+
+    if (name) counter.name = name;
+    if (status) {
+      if (!['ACTIVE', 'INACTIVE', 'CLOSED'].includes(status)) {
+        res.status(400);
+        throw new Error('Invalid status');
+      }
+      counter.status = status;
+    }
+
+    const updatedCounter = await counter.save();
+    res.json(updatedCounter);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Delete a counter (Admin)
+// @route   DELETE /api/v1/counters/:id
+// @access  Private/Admin
+const deleteCounter = async (req, res, next) => {
+  try {
+    const counter = await Counter.findById(req.params.id);
+
+    if (!counter) {
+      res.status(404);
+      throw new Error('Counter not found');
+    }
+
+    await counter.deleteOne();
+    res.json({ message: 'Counter removed' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { getCounters, createCounter, updateCounterStatus, callNextToken, completeToken, setNoShowToken, updateCounter, deleteCounter };

@@ -109,5 +109,58 @@ const getActiveStatus = async (req, res, next) => {
   }
 };
 
-module.exports = { getQueues, createQueue, getWaitingTokens, getActiveStatus };
+// @desc    Update a queue (Admin)
+// @route   PUT /api/v1/queues/:id
+// @access  Private/Admin
+const updateQueue = async (req, res, next) => {
+  try {
+    const { name, code, avgWaitTimePerToken, isActive } = req.body;
+    const queue = await Queue.findById(req.params.id);
+
+    if (!queue) {
+      res.status(404);
+      throw new Error('Queue not found');
+    }
+
+    if (name) queue.name = name;
+    if (code && code !== queue.code) {
+      const exists = await Queue.findOne({ code });
+      if (exists) {
+        res.status(400);
+        throw new Error('Queue code already exists');
+      }
+      queue.code = code;
+    }
+    if (avgWaitTimePerToken !== undefined) queue.avgWaitTimePerToken = avgWaitTimePerToken;
+    if (isActive !== undefined) queue.isActive = isActive;
+
+    const updatedQueue = await queue.save();
+    res.json(updatedQueue);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Delete a queue (Admin)
+// @route   DELETE /api/v1/queues/:id
+// @access  Private/Admin
+const deleteQueue = async (req, res, next) => {
+  try {
+    const queue = await Queue.findById(req.params.id);
+
+    if (!queue) {
+      res.status(404);
+      throw new Error('Queue not found');
+    }
+
+    // Check if tokens are waiting before deleting? 
+    // For simplicity, we just delete or mark inactive. Given CRUD request, we will delete.
+    await queue.deleteOne();
+    res.json({ message: 'Queue removed' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { getQueues, createQueue, getWaitingTokens, getActiveStatus, updateQueue, deleteQueue };
 

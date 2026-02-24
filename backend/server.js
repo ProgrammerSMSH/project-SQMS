@@ -9,6 +9,7 @@ const authRoutes = require('./routes/authRoutes');
 const queueRoutes = require('./routes/queueRoutes');
 const tokenRoutes = require('./routes/tokenRoutes');
 const counterRoutes = require('./routes/counterRoutes');
+const announcementRoutes = require('./routes/announcementRoutes');
 
 dotenv.config();
 connectDB().then(async () => {
@@ -51,6 +52,7 @@ app.use('/api/v1/user/auth', authRoutes); // Legacy bridge for older app builds
 app.use('/api/v1/queues', queueRoutes);
 app.use('/api/v1/tokens', tokenRoutes);
 app.use('/api/v1/counters', counterRoutes);
+app.use('/api/v1/announcements', announcementRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
