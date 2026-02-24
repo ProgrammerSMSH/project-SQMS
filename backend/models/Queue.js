@@ -20,6 +20,10 @@ const queueSchema = mongoose.Schema(
       required: true,
       default: 5, // in minutes
     },
+    lastTokenNumber: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );

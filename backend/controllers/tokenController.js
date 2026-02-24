@@ -27,16 +27,23 @@ const generateToken = async (req, res, next) => {
       throw new Error('You already have an active token in this queue');
     }
 
-    // Count currently waiting tokens to calculate estimated time and token number
+    // Count currently waiting tokens to calculate estimated time
     const waitingTokensCount = await Token.countDocuments({
       queueId,
       status: 'WAITING',
     });
 
-    const tokenNumber = `${queue.code}-${Date.now().toString().slice(-4)}`;
+    // Increment lastTokenNumber atomically
+    const updatedQueue = await Queue.findByIdAndUpdate(
+      queueId,
+      { $inc: { lastTokenNumber: 1 } },
+      { new: true }
+    );
+
+    const tokenNumber = `${queue.code}-${updatedQueue.lastTokenNumber}`;
     
     // Simple estimation: waiting users * avg time
-    const estimatedWaitTime = waitingTokensCount * queue.avgWaitTimePerToken;
+    const estimatedWaitTime = waitingTokensCount * updatedQueue.avgWaitTimePerToken;
 
     const token = await Token.create({
       userId,

@@ -26,15 +26,22 @@ class _QRScanScreenState extends State<QRScanScreen> {
 
     if (code.startsWith('sqms://join/')) {
       setState(() => _isProcessing = true);
+      controller.stop(); // Stop scanning once we find a candidate
       final queueId = code.replaceFirst('sqms://join/', '');
       
       try {
         await context.read<QueueService>().generateToken(queueId);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Joined Queue Successfully! ✅'), backgroundColor: Colors.green),
+            const SnackBar(
+              content: Text('Joined Queue Successfully! ✅ Go to Home to see your token.'), 
+              backgroundColor: Colors.green,
+              duration: Duration(seconds: 4),
+            ),
           );
-          Navigator.of(context).pop(); // Go back to home
+          setState(() => _isProcessing = false);
+          // We stay on the screen but scanning is stopped until they return or we restart it.
+          // To make it better, we could restart scanning after a delay or show a "Done" UI.
         }
       } catch (e) {
         if (mounted) {
@@ -42,6 +49,7 @@ class _QRScanScreenState extends State<QRScanScreen> {
             SnackBar(content: Text('Error joining queue: $e'), backgroundColor: Colors.red),
           );
           setState(() => _isProcessing = false);
+          controller.start(); // Resume scanning on error
         }
       }
     } else {
@@ -100,14 +108,20 @@ class _QRScanScreenState extends State<QRScanScreen> {
                   ),
                 ),
                 IconButton(
-                  icon: ValueListenableBuilder(
-                    valueListenable: controller.torchState,
+                  icon: ValueListenableBuilder<MobileScannerState>(
+                    valueListenable: controller,
                     builder: (context, state, child) {
-                      switch (state) {
+                      switch (state.torchState) {
                         case TorchState.off:
                           return const Icon(Icons.flash_off, color: Colors.white38);
                         case TorchState.on:
                           return const Icon(Icons.flash_on, color: Color(0xFF4DA1FF));
+                        case TorchState.unavailable:
+                          return const Icon(Icons.flash_off, color: Colors.redAccent);
+                        case TorchState.auto:
+                          return const Icon(Icons.flash_auto, color: Colors.white38);
+                        default:
+                          return const Icon(Icons.flash_off, color: Colors.white38);
                       }
                     },
                   ),
