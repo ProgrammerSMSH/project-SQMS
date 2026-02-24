@@ -4,6 +4,7 @@ const API_URL = 'https://project-sqms.vercel.app/api/v1';
 let userToken = localStorage.getItem('admin_token');
 let currentTab = 'services';
 let dataList = [];
+let staffList = []; // Global cache for staff assignment dropdown
 let editingId = null;
 
 // UI Elements
@@ -79,7 +80,13 @@ crudForm.addEventListener('submit', async (e) => {
         payload.isActive = formData.get('isActive') === 'on';
     } else if (currentTab === 'counters') {
         payload.name = formData.get('name');
+        payload.assignedStaffId = formData.get('assignedStaffId') || null;
         if (editingId) payload.status = formData.get('status');
+    } else if (currentTab === 'staff') {
+        payload.name = formData.get('name');
+        payload.email = formData.get('email');
+        if (!editingId) payload.password = formData.get('password');
+        payload.phone = formData.get('phone');
     } else if (currentTab === 'announcements') {
         payload.message = formData.get('message');
         payload.isActive = formData.get('isActive') === 'on';
@@ -115,6 +122,7 @@ function getEndpoint() {
     switch(currentTab) {
         case 'services': return `${API_URL}/queues`;
         case 'counters': return `${API_URL}/counters`;
+        case 'staff': return `${API_URL}/users/staff`;
         case 'announcements': return `${API_URL}/announcements`;
     }
 }
@@ -123,6 +131,7 @@ function getTabSingularName() {
     switch(currentTab) {
         case 'services': return 'Service';
         case 'counters': return 'Counter';
+        case 'staff': return 'Staff Member';
         case 'announcements': return 'Announcement';
     }
 }
@@ -136,8 +145,13 @@ function updateTabHeader() {
             break;
         case 'counters':
             tabTitle.textContent = 'Manage Counters';
-            tabDesc.textContent = 'Configure operator stations and their physical states.';
-            dataTableHead.innerHTML = `<th>Name</th><th>Status</th><th>Currently Serving</th><th class="text-right">Actions</th>`;
+            tabDesc.textContent = 'Configure operator stations and their assigned staff.';
+            dataTableHead.innerHTML = `<th>Name</th><th>Status</th><th>Assigned Staff</th><th>Serving</th><th class="text-right">Actions</th>`;
+            break;
+        case 'staff':
+            tabTitle.textContent = 'Staff Members';
+            tabDesc.textContent = 'Manage staff accounts that can manage specific counters.';
+            dataTableHead.innerHTML = `<th>Name</th><th>Email</th><th>Phone</th><th class="text-right">Actions</th>`;
             break;
         case 'announcements':
             tabTitle.textContent = 'Manage Announcements';
@@ -151,7 +165,13 @@ async function loadData() {
     loadingSpinner.classList.remove('hidden');
     dataBody.innerHTML = '';
     
-    // In counters, we need the token, but GET /counters returns full populates if admin. Let's use it.
+    // Always fetch staff in background if we might need them for assignment
+    if (currentTab === 'counters' || currentTab === 'staff') {
+        try {
+            const sRes = await fetch(`${API_URL}/users/staff`, { headers: { 'Authorization': `Bearer ${userToken}` }});
+            if (sRes.ok) staffList = await sRes.json();
+        } catch(e) {}
+    }
     try {
         const res = await fetch(getEndpoint(), {
             headers: {
@@ -193,10 +213,18 @@ function renderTableOutput() {
         } else if (currentTab === 'counters') {
             const statusColor = item.status === 'ACTIVE' ? 'text-green-400' : (item.status === 'CLOSED' ? 'text-red-400' : 'text-yellow-400');
             const token = item.servingTokenId ? item.servingTokenId.tokenNumber : '--';
+            const staffName = item.assignedStaffId ? item.assignedStaffId.name : '<span class="text-white/20 italic">Unassigned</span>';
             cells = `
                 <td class="font-bold font-tomorrow uppercase">${item.name}</td>
                 <td class="${statusColor} text-xs font-bold tracking-widest uppercase">${item.status}</td>
+                <td class="text-xs">${staffName}</td>
                 <td class="font-tomorrow text-white/50">${token}</td>
+            `;
+        } else if (currentTab === 'staff') {
+            cells = `
+                <td class="font-bold">${item.name}</td>
+                <td class="text-blue-400">${item.email}</td>
+                <td class="text-white/50 text-xs">${item.phone || '--'}</td>
             `;
         } else if (currentTab === 'announcements') {
             const statusBadge = item.isActive ? `<span class="bg-green-500/20 text-green-400 px-2 py-1 rounded border border-green-500/20 text-[10px] uppercase font-bold tracking-widest">Active</span>` : `<span class="bg-red-500/20 text-red-400 px-2 py-1 rounded border border-red-500/20 text-[10px] uppercase font-bold tracking-widest">Inactive</span>`;
@@ -253,18 +281,46 @@ function openModal(title) {
                 <label class="block text-xs uppercase tracking-widest text-white/50 mb-2">Counter Name</label>
                 <input type="text" name="name" required value="${item ? item.name : ''}" class="w-full input-glass rounded-xl p-3 text-sm focus:ring-0">
             </div>
+            <div>
+                <label class="block text-xs uppercase tracking-widest text-white/50 mb-2 mt-4">Assign Staff</label>
+                <select name="assignedStaffId" class="w-full input-glass rounded-xl p-3 text-sm focus:ring-0 [&>option]:text-black">
+                    <option value="">No Staff Assigned</option>
+                    ${staffList.map(s => `<option value="${s._id}" ${item && item.assignedStaffId && item.assignedStaffId._id === s._id ? 'selected' : ''}>${s.name} (${s.email})</option>`).join('')}
+                </select>
+            </div>
         `;
         if (editingId) {
             fieldsHtml += `
             <div>
-                <label class="block text-xs uppercase tracking-widest text-white/50 mb-2 mt-2">Status</label>
+                <label class="block text-xs uppercase tracking-widest text-white/50 mb-2 mt-4">Status</label>
                 <select name="status" class="w-full input-glass rounded-xl p-3 text-sm focus:ring-0 [&>option]:text-black">
                     <option value="ACTIVE" ${item.status === 'ACTIVE' ? 'selected' : ''}>ACTIVE</option>
-                    <option value="INACTIVE" ${item.status === 'INACTIVE' ? 'selected' : ''}>INACTIVE</option>
+                    <option value="PAUSED" ${item.status === 'PAUSED' ? 'selected' : ''}>PAUSED</option>
                     <option value="CLOSED" ${item.status === 'CLOSED' ? 'selected' : ''}>CLOSED</option>
                 </select>
             </div>`;
         }
+    } else if (currentTab === 'staff') {
+        fieldsHtml = `
+            <div>
+                <label class="block text-xs uppercase tracking-widest text-white/50 mb-2">Staff Name</label>
+                <input type="text" name="name" required value="${item ? item.name : ''}" class="w-full input-glass rounded-xl p-3 text-sm focus:ring-0">
+            </div>
+            <div>
+                <label class="block text-xs uppercase tracking-widest text-white/50 mb-2 mt-4">Email Address</label>
+                <input type="email" name="email" required value="${item ? item.email : ''}" class="w-full input-glass rounded-xl p-3 text-sm focus:ring-0">
+            </div>
+            ${!editingId ? `
+            <div>
+                <label class="block text-xs uppercase tracking-widest text-white/50 mb-2 mt-4">Password</label>
+                <input type="password" name="password" required class="w-full input-glass rounded-xl p-3 text-sm focus:ring-0">
+            </div>
+            ` : ''}
+            <div>
+                <label class="block text-xs uppercase tracking-widest text-white/50 mb-2 mt-4">Phone (Optional)</label>
+                <input type="text" name="phone" value="${item ? item.phone || '' : ''}" class="w-full input-glass rounded-xl p-3 text-sm focus:ring-0">
+            </div>
+        `;
     } else if (currentTab === 'announcements') {
         fieldsHtml = `
             <div>

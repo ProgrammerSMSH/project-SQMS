@@ -8,6 +8,7 @@ let queues = [];
 let currentCounterId = null; 
 let currentQueueId = null;
 let currentTokenId = null;
+let currentUser = JSON.parse(localStorage.getItem('user_info')) || null;
 
 // UI Elements
 const counterListEl = document.getElementById('counter-list');
@@ -61,7 +62,9 @@ async function handleLogin(email, password) {
 
         const data = await response.json();
         ADMIN_TOKEN = data.token;
+        currentUser = data; // Includes role, name, etc.
         localStorage.setItem('admin_token', ADMIN_TOKEN);
+        localStorage.setItem('user_info', JSON.stringify(data));
         
         hideLoginModal();
         initDashboard();
@@ -81,8 +84,21 @@ async function initDashboard() {
     await fetchCounters();
     await fetchQueues();
     
-    // Auto-select first active counter if available, else first counter
-    if (counters.length > 0) {
+    // Hide Management link if not admin
+    const settingsLink = document.querySelector('a[href="management.html"]');
+    if (settingsLink && currentUser?.role !== 'ADMIN') {
+        settingsLink.classList.add('hidden');
+    }
+
+    // Role-based counter selection
+    if (currentUser?.role === 'STAFF') {
+        const myCounter = counters.find(c => c.assignedStaffId && c.assignedStaffId._id === currentUser._id);
+        if (myCounter) {
+            selectCounter(myCounter._id);
+        } else {
+            showToast("No counter assigned to your account.", "error");
+        }
+    } else if (counters.length > 0) {
         selectCounter(counters[0]._id);
     }
     
@@ -155,19 +171,40 @@ function updateTvLink() {
 // Rendering
 function renderCounters() {
     counterListEl.innerHTML = '';
+    const isStaff = currentUser?.role === 'STAFF';
+    
     counters.forEach(counter => {
         const li = document.createElement('li');
         const isActive = counter._id === currentCounterId;
-        li.className = `p-4 rounded-xl cursor-pointer border transition-all ${
-            isActive ? 'active-counter border-blue-500/50 shadow-[0_0_20px_rgba(77,161,255,0.1)]' : 'bg-white/5 border-white/5 hover:bg-white/10'
+        const isMine = counter.assignedStaffId && counter.assignedStaffId._id === currentUser?._id;
+        
+        // If staff, only highlight their assigned counter, others are disabled
+        let clickHandler = () => selectCounter(counter._id);
+        let opacity = 'opacity-100';
+        
+        if (isStaff) {
+            if (isMine) {
+                // Keep it active/clickable
+            } else {
+                clickHandler = null;
+                opacity = 'opacity-30 grayscale cursor-not-allowed';
+            }
+        }
+
+        li.className = `p-4 rounded-xl border transition-all ${opacity} ${
+            isActive ? 'active-counter border-blue-500/50 shadow-[0_0_20px_rgba(77,161,255,0.1)]' : 'bg-white/5 border-white/5 ' + (clickHandler ? 'hover:bg-white/10 cursor-pointer' : '')
         }`;
+        
         li.innerHTML = `
             <div class="flex justify-between items-center">
-                <span class="font-tomorrow text-sm tracking-tight ${isActive ? 'text-blue-400' : 'text-white/70'}">${counter.name}</span>
+                <div class="flex flex-col">
+                    <span class="font-tomorrow text-sm tracking-tight ${isActive ? 'text-blue-400' : 'text-white/70'}">${counter.name}</span>
+                    ${isMine ? '<span class="text-[7px] text-blue-400 font-bold uppercase tracking-widest mt-1">YOUR COUNTER</span>' : ''}
+                </div>
                 <span class="text-[8px] px-2 py-1 rounded bg-black/40 text-white/40 font-black tracking-widest uppercase">${counter.status}</span>
             </div>
         `;
-        li.onclick = () => selectCounter(counter._id);
+        if (clickHandler) li.onclick = clickHandler;
         counterListEl.appendChild(li);
     });
 }
@@ -320,7 +357,9 @@ async function handleTokenAction(action) {
 
 function handleLogout() {
     localStorage.removeItem('admin_token');
+    localStorage.removeItem('user_info');
     ADMIN_TOKEN = '';
+    currentUser = null;
     location.reload();
 }
 
