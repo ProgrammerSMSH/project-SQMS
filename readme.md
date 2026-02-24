@@ -1,4 +1,4 @@
-# SQMS — Smart Queue Management System 🚀
+# SQMS - Smart Queue Management System 🚀
 
 SQMS is a high-end, easy-to-use system for managing customer queues. It includes a **Mobile App** for customers, a **Control Panel** for staff, and a **Live TV Display** for waiting areas.
 
