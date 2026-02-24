@@ -25,6 +25,9 @@ const servingQueueDisp = document.getElementById('serving-queue-disp');
 function checkAuth() {
     if (!ADMIN_TOKEN) {
         showLoginModal();
+    } else if (!currentUser) {
+        // Migration/Refresh fallback: if token exists but user info is missing (old session)
+        handleLogout(); 
     } else {
         initDashboard();
     }
@@ -92,11 +95,18 @@ async function initDashboard() {
 
     // Role-based counter selection
     if (currentUser?.role === 'STAFF') {
-        const myCounter = counters.find(c => c.assignedStaffId && c.assignedStaffId._id === currentUser._id);
+        const myCounter = counters.find(c => {
+            if (!c.assignedStaffId) return false;
+            const staffId = (typeof c.assignedStaffId === 'object' && c.assignedStaffId !== null) 
+                            ? c.assignedStaffId._id 
+                            : c.assignedStaffId;
+            return String(staffId) === String(currentUser?._id);
+        });
+
         if (myCounter) {
             selectCounter(myCounter._id);
         } else {
-            showToast("No counter assigned to your account.", "error");
+            showToast("No counter assigned to your account. Please ask an Admin to assign you to a station.", "error");
         }
     } else if (counters.length > 0) {
         selectCounter(counters[0]._id);
@@ -176,7 +186,11 @@ function renderCounters() {
     counters.forEach(counter => {
         const li = document.createElement('li');
         const isActive = counter._id === currentCounterId;
-        const isMine = counter.assignedStaffId && counter.assignedStaffId._id === currentUser?._id;
+        
+        const staffId = (counter.assignedStaffId && typeof counter.assignedStaffId === 'object') 
+                        ? counter.assignedStaffId._id 
+                        : counter.assignedStaffId;
+        const isMine = String(staffId) === String(currentUser?._id);
         
         // If staff, only highlight their assigned counter, others are disabled
         let clickHandler = () => selectCounter(counter._id);

@@ -4,7 +4,7 @@ const { getCounters, createCounter, updateCounterStatus, callNextToken, complete
 const { protect, admin, adminOrStaff } = require('../middlewares/authMiddleware');
 
 router.route('/')
-  .get(protect, admin, getCounters)
+  .get(protect, adminOrStaff, getCounters)
   .post(protect, admin, createCounter);
 
 router.put('/:id/status', protect, adminOrStaff, updateCounterStatus);
