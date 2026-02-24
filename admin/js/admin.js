@@ -151,12 +151,30 @@ async function fetchQueues() {
         
         if (queueSelector) {
             queueSelector.innerHTML = '';
-            queues.forEach(q => {
+            
+            // Filter services if staff
+            let visibleQueues = queues;
+            if (currentUser?.role === 'STAFF' && currentCounterId) {
+                const myCounter = counters.find(c => c._id === currentCounterId);
+                if (myCounter && myCounter.assignedServiceIds && myCounter.assignedServiceIds.length > 0) {
+                    const authorizedIds = myCounter.assignedServiceIds.map(sid => (sid._id || sid).toString());
+                    visibleQueues = queues.filter(q => authorizedIds.includes(q._id.toString()));
+                }
+            }
+
+            if (visibleQueues.length === 0) {
                 const opt = document.createElement('option');
-                opt.value = q._id;
-                opt.textContent = `${q.name} (${q.code})`;
+                opt.value = "";
+                opt.textContent = "No Authorized Services";
                 queueSelector.appendChild(opt);
-            });
+            } else {
+                visibleQueues.forEach(q => {
+                    const opt = document.createElement('option');
+                    opt.value = q._id;
+                    opt.textContent = `${q.name} (${q.code})`;
+                    queueSelector.appendChild(opt);
+                });
+            }
 
             // Bind change event
             queueSelector.addEventListener('change', (e) => {
@@ -231,6 +249,9 @@ function selectCounter(id) {
         currentTokenId = counter.servingTokenId?._id || null;
         currentTokenDisp.innerText = counter.servingTokenId?.tokenNumber || "--";
         
+        // Re-filter queues if counter changes (especially for admins switching)
+        fetchQueues();
+
         // Add a "pop" animation
         currentTokenDisp.classList.remove('animate-pulse');
         void currentTokenDisp.offsetWidth;
@@ -304,13 +325,13 @@ async function callNextToken() {
     const originalText = btnCallNext.innerHTML;
     try {
         setBtnLoading(btnCallNext, true, originalText);
-        const response = await fetch(`${API_URL}/queues/${currentQueueId}/call-next`, {
+        const response = await fetch(`${API_URL}/counters/${currentCounterId}/call-next`, {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
             },
-            body: JSON.stringify({ counterId: currentCounterId })
+            body: JSON.stringify({ queueId: currentQueueId })
         });
 
         if (response.status === 401) {
@@ -345,13 +366,12 @@ async function handleTokenAction(action) {
 
     try {
         setBtnLoading(btn, true, originalText);
-        const res = await fetch(`${API_URL}/tokens/${currentTokenId}/${action}`, {
+        const res = await fetch(`${API_URL}/counters/${currentCounterId}/${action}`, {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
-            },
-            body: JSON.stringify({ counterId: currentCounterId })
+            }
         });
 
         if (!res.ok) {

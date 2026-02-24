@@ -5,6 +5,7 @@ let userToken = localStorage.getItem('admin_token');
 let currentTab = 'services';
 let dataList = [];
 let staffList = []; // Global cache for staff assignment dropdown
+let queueList = []; // Global cache for service assignment checkboxes
 let editingId = null;
 
 // UI Elements
@@ -81,6 +82,12 @@ crudForm.addEventListener('submit', async (e) => {
     } else if (currentTab === 'counters') {
         payload.name = formData.get('name');
         payload.assignedStaffId = formData.get('assignedStaffId') || null;
+        
+        // Multi-select for services
+        const selectedServices = [];
+        formData.getAll('assignedServiceIds').forEach(id => selectedServices.push(id));
+        payload.assignedServiceIds = selectedServices;
+
         if (editingId) payload.status = formData.get('status');
     } else if (currentTab === 'staff') {
         payload.name = formData.get('name');
@@ -170,6 +177,13 @@ async function loadData() {
         try {
             const sRes = await fetch(`${API_URL}/users/staff`, { headers: { 'Authorization': `Bearer ${userToken}` }});
             if (sRes.ok) staffList = await sRes.json();
+        } catch(e) {}
+    }
+    // Always fetch services in background for counter assignment
+    if (currentTab === 'counters') {
+        try {
+            const qRes = await fetch(`${API_URL}/queues`, { headers: { 'Authorization': `Bearer ${userToken}` }});
+            if (qRes.ok) queueList = await qRes.json();
         } catch(e) {}
     }
     try {
@@ -285,8 +299,23 @@ function openModal(title) {
                 <label class="block text-xs uppercase tracking-widest text-white/50 mb-2 mt-4">Assign Staff</label>
                 <select name="assignedStaffId" class="w-full input-glass rounded-xl p-3 text-sm focus:ring-0 [&>option]:text-black">
                     <option value="">No Staff Assigned</option>
-                    ${staffList.map(s => `<option value="${s._id}" ${item && item.assignedStaffId && item.assignedStaffId._id === s._id ? 'selected' : ''}>${s.name} (${s.email})</option>`).join('')}
+                    ${staffList.map(s => `<option value="${s._id}" ${item && item.assignedStaffId && (item.assignedStaffId._id || item.assignedStaffId) === s._id ? 'selected' : ''}>${s.name} (${s.email})</option>`).join('')}
                 </select>
+            </div>
+            <div>
+                <label class="block text-xs uppercase tracking-widest text-white/50 mb-2 mt-4">Authorized Services</label>
+                <div class="grid grid-cols-2 gap-2 bg-white/5 p-4 rounded-xl border border-white/5 max-h-32 overflow-y-auto">
+                    ${queueList.map(q => {
+                        const isChecked = item && item.assignedServiceIds && item.assignedServiceIds.some(sid => (sid._id || sid) === q._id);
+                        return `
+                            <label class="flex items-center gap-2 cursor-pointer hover:bg-white/5 p-1 rounded transition">
+                                <input type="checkbox" name="assignedServiceIds" value="${q._id}" ${isChecked ? 'checked' : ''} class="w-4 h-4 rounded border-gray-600 bg-gray-700 text-blue-500">
+                                <span class="text-[10px] uppercase font-bold tracking-tight">${q.name}</span>
+                            </label>
+                        `;
+                    }).join('')}
+                </div>
+                <p class="text-[9px] text-white/20 mt-2 italic uppercase">Staff will only see these services.</p>
             </div>
         `;
         if (editingId) {

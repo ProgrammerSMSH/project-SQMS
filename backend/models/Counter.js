@@ -21,6 +21,10 @@ const counterSchema = mongoose.Schema(
       ref: 'User',
       default: null,
     },
+    assignedServiceIds: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Queue'
+    }],
     servingTokenId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Token',

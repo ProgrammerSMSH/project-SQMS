@@ -14,7 +14,10 @@ const checkCounterAccess = (user, counter) => {
 // @access  Private/Admin
 const getCounters = async (req, res, next) => {
   try {
-    const counters = await Counter.find({}).populate('servingTokenId').populate('assignedStaffId', 'name email');
+    const counters = await Counter.find({})
+      .populate('servingTokenId')
+      .populate('assignedStaffId', 'name email')
+      .populate('assignedServiceIds', 'name code');
     res.json(counters);
   } catch (error) {
     next(error);
@@ -26,8 +29,8 @@ const getCounters = async (req, res, next) => {
 // @access  Private/Admin
 const createCounter = async (req, res, next) => {
   try {
-    const { name, assignedStaffId } = req.body;
-    const counter = await Counter.create({ name, assignedStaffId });
+    const { name, assignedStaffId, assignedServiceIds } = req.body;
+    const counter = await Counter.create({ name, assignedStaffId, assignedServiceIds });
     res.status(201).json(counter);
   } catch (error) {
     next(error);
@@ -226,6 +229,7 @@ const updateCounter = async (req, res, next) => {
 
     if (name) counter.name = name;
     if (assignedStaffId !== undefined) counter.assignedStaffId = assignedStaffId;
+    if (assignedServiceIds !== undefined) counter.assignedServiceIds = assignedServiceIds;
     if (status) {
       if (!['ACTIVE', 'PAUSED', 'CLOSED', 'INACTIVE'].includes(status)) {
         res.status(400);
