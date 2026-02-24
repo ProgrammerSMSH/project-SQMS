@@ -16,6 +16,11 @@ const counterSchema = mongoose.Schema(
       ref: 'User',
       default: null,
     },
+    assignedStaffId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      default: null,
+    },
     servingTokenId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Token',

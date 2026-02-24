@@ -103,19 +103,24 @@ const authAdmin = async (req, res, next) => {
     try {
       const { email, password } = req.body;
   
-      const user = await User.findOne({ email, role: 'ADMIN' });
+      const user = await User.findOne({ email });
   
       if (user && (await user.matchPassword(password))) {
-        res.json({
-          _id: user._id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          token: generateToken(user._id),
-        });
+        if (user.role === 'ADMIN' || user.role === 'STAFF') {
+          res.json({
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            token: generateToken(user._id),
+          });
+        } else {
+          res.status(401);
+          throw new Error('Unauthorized role access');
+        }
       } else {
         res.status(401);
-        throw new Error('Invalid Admin credentials');
+        throw new Error('Invalid credentials');
       }
     } catch (error) {
       next(error);

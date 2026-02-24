@@ -37,4 +37,13 @@ const admin = (req, res, next) => {
   }
 };
 
-module.exports = { protect, admin };
+const adminOrStaff = (req, res, next) => {
+  if (req.user && (req.user.role === 'ADMIN' || req.user.role === 'STAFF')) {
+    next();
+  } else {
+    res.status(401);
+    next(new Error('Not authorized, Admin or Staff role required'));
+  }
+};
+
+module.exports = { protect, admin, adminOrStaff };

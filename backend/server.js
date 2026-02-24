@@ -10,6 +10,7 @@ const queueRoutes = require('./routes/queueRoutes');
 const tokenRoutes = require('./routes/tokenRoutes');
 const counterRoutes = require('./routes/counterRoutes');
 const announcementRoutes = require('./routes/announcementRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 dotenv.config();
 connectDB().then(async () => {
@@ -53,6 +54,7 @@ app.use('/api/v1/queues', queueRoutes);
 app.use('/api/v1/tokens', tokenRoutes);
 app.use('/api/v1/counters', counterRoutes);
 app.use('/api/v1/announcements', announcementRoutes);
+app.use('/api/v1/users', userRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

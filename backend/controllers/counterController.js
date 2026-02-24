@@ -2,12 +2,19 @@ const Counter = require('../models/Counter');
 const Token = require('../models/Token');
 const { sendPushNotification } = require('../utils/fcmService');
 
+// Internal Helper: Check if user can manage this counter
+const checkCounterAccess = (user, counter) => {
+    if (user.role === 'ADMIN') return true;
+    if (user.role === 'STAFF' && counter.assignedStaffId && counter.assignedStaffId.toString() === user._id.toString()) return true;
+    return false;
+};
+
 // @desc    Get all counters
 // @route   GET /api/v1/counters
 // @access  Private/Admin
 const getCounters = async (req, res, next) => {
   try {
-    const counters = await Counter.find({}).populate('servingTokenId');
+    const counters = await Counter.find({}).populate('servingTokenId').populate('assignedStaffId', 'name email');
     res.json(counters);
   } catch (error) {
     next(error);
@@ -19,8 +26,8 @@ const getCounters = async (req, res, next) => {
 // @access  Private/Admin
 const createCounter = async (req, res, next) => {
   try {
-    const { name } = req.body;
-    const counter = await Counter.create({ name });
+    const { name, assignedStaffId } = req.body;
+    const counter = await Counter.create({ name, assignedStaffId });
     res.status(201).json(counter);
   } catch (error) {
     next(error);
@@ -71,6 +78,11 @@ const callNextToken = async (req, res, next) => {
     if (!counter || counter.status !== 'ACTIVE') {
       res.status(400);
       throw new Error('Counter not active or not found');
+    }
+
+    if (!checkCounterAccess(req.user, counter)) {
+        res.status(401);
+        throw new Error('Unauthorized to manage this counter');
     }
 
     // Previous token logic: if serving, ensure it's completed or no_show'd first.
@@ -147,6 +159,11 @@ const completeToken = async (req, res, next) => {
       throw new Error('Counter is not serving any token');
     }
 
+    if (!checkCounterAccess(req.user, counter)) {
+        res.status(401);
+        throw new Error('Unauthorized to manage this counter');
+    }
+
     const token = await Token.findById(counter.servingTokenId);
     if (token) {
         token.status = 'COMPLETED';
@@ -172,6 +189,11 @@ const setNoShowToken = async (req, res, next) => {
       if (!counter || !counter.servingTokenId) {
         res.status(400);
         throw new Error('Counter is not serving any token');
+      }
+
+      if (!checkCounterAccess(req.user, counter)) {
+        res.status(401);
+        throw new Error('Unauthorized to manage this counter');
       }
   
       const token = await Token.findById(counter.servingTokenId);
@@ -203,8 +225,9 @@ const updateCounter = async (req, res, next) => {
     }
 
     if (name) counter.name = name;
+    if (assignedStaffId !== undefined) counter.assignedStaffId = assignedStaffId;
     if (status) {
-      if (!['ACTIVE', 'INACTIVE', 'CLOSED'].includes(status)) {
+      if (!['ACTIVE', 'PAUSED', 'CLOSED', 'INACTIVE'].includes(status)) {
         res.status(400);
         throw new Error('Invalid status');
       }
