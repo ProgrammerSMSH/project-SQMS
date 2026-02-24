@@ -21,11 +21,31 @@ async function pollQueueStatus() {
     }
 }
 
+async function pollAnnouncements() {
+    try {
+        const res = await fetch(`${API_URL}/announcements/active`);
+        if (!res.ok) return;
+        const announcements = await res.json();
+        
+        const tickerContainer = document.getElementById('ticker-container');
+        const ticker = document.getElementById('announcement-ticker');
+        
+        if (announcements.length > 0) {
+            const combinedMessage = announcements.map(a => a.message).join('    &nbsp;&nbsp;•&nbsp;&nbsp;    ');
+            ticker.innerHTML = combinedMessage;
+            tickerContainer.classList.remove('hidden');
+        } else {
+            tickerContainer.classList.add('hidden');
+        }
+    } catch (e) {
+        console.error("Announcement Polling Error:", e);
+    }
+}
+
 function renderActiveCounters(servingData) {
     const grid = document.getElementById('active-counters-grid');
     if (!grid) return;
     grid.innerHTML = '';
-
     servingData.forEach((serving, index) => {
         const hasChanged = previousServingTokens[serving.counterName] !== serving.tokenNumber;
         const animClass = hasChanged ? 'call-flash' : '';
@@ -82,4 +102,6 @@ function playSoundAlert() {
 
 // Start polling
 pollQueueStatus();
+pollAnnouncements();
 setInterval(pollQueueStatus, 3000); 
+setInterval(pollAnnouncements, 15000); // Check announcements every 15s

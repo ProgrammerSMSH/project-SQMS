@@ -92,6 +92,17 @@
         </div>
     </div>
 
+    <!-- Announcement Ticker -->
+    <div id="ticker-container" class="glass w-full py-4 px-6 mt-auto overflow-hidden relative shrink-0 hidden">
+        <div class="absolute inset-0 bg-blue-500/10 -z-10"></div>
+        <div class="flex items-center gap-6">
+            <span class="font-tomorrow text-sm tracking-[5px] uppercase text-blue-400 font-black whitespace-nowrap z-10 px-4 py-1 rounded bg-[#0F0F13] border border-blue-500/30 shadow-[0_0_15px_rgba(77,161,255,0.2)]">NOTICE</span>
+            <marquee id="announcement-ticker" class="text-white font-medium tracking-wider text-xl" scrollamount="6">
+                <!-- Injected via JS -->
+            </marquee>
+        </div>
+    </div>
+
     <!-- Background Decoration -->
     <div class="fixed top-[-10%] right-[-10%] w-[800px] h-[800px] bg-blue-600/5 blur-[150px] -z-10 rounded-full"></div>
     <div class="fixed bottom-[-10%] left-[-10%] w-[800px] h-[800px] bg-purple-600/5 blur-[150px] -z-10 rounded-full"></div>

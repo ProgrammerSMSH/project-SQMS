@@ -62,7 +62,7 @@ class _TokenHistoryScreenState extends State<TokenHistoryScreen> {
                         final dateStr = item['createdAt']?.toString().split('T').first ?? 'Past'; 
 
                         final isCompleted = status == 'COMPLETED';
-                        final isNoShow = status == 'NO_SHOW';
+                        final isNoShow = status == 'NO SHOW';
 
                         Color statusColor = Colors.grey;
                         IconData statusIcon = Icons.cancel;
