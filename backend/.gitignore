@@ -1,1 +1,4 @@
 .vercel
+.dart_tool
+backend/.env
+
