@@ -24,12 +24,15 @@ class _QRScanScreenState extends State<QRScanScreen> with WidgetsBindingObserver
     controller = MobileScannerController(
       detectionSpeed: DetectionSpeed.normal,
       returnImage: false,
+      autoStart: false, // Don't start automatically
     );
     
     // Listen to navigation changes to stop camera when not in focus
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         context.read<NavigationProvider>().addListener(_onNavChanged);
+        // Check initial state
+        _onNavChanged();
       }
     });
   }
@@ -39,24 +42,41 @@ class _QRScanScreenState extends State<QRScanScreen> with WidgetsBindingObserver
     final nav = context.read<NavigationProvider>();
     // QR Scanner is at index 2
     if (nav.currentIndex != 2) {
-      if (controller.value.isInitialized && controller.value.isRunning) {
-        controller.stop();
-      }
+      _stopCamera();
     } else {
-      if (controller.value.isInitialized && !controller.value.isRunning) {
-        controller.start();
+      _startCamera();
+    }
+  }
+
+  Future<void> _startCamera() async {
+    try {
+      if (!controller.value.isRunning) {
+        await controller.start();
       }
+    } catch (e) {
+      debugPrint('Error starting camera: $e');
+    }
+  }
+
+  Future<void> _stopCamera() async {
+    try {
+      if (controller.value.isRunning) {
+        await controller.stop();
+      }
+    } catch (e) {
+      debugPrint('Error stopping camera: $e');
     }
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (controller.value.isInitialized) {
-      if (state == AppLifecycleState.resumed) {
-        controller.start();
-      } else if (state == AppLifecycleState.inactive || state == AppLifecycleState.paused) {
-        controller.stop();
+    if (state == AppLifecycleState.resumed) {
+      final nav = context.read<NavigationProvider>();
+      if (nav.currentIndex == 2) {
+        _startCamera();
       }
+    } else if (state == AppLifecycleState.inactive || state == AppLifecycleState.paused) {
+      _stopCamera();
     }
   }
 
@@ -90,7 +110,7 @@ class _QRScanScreenState extends State<QRScanScreen> with WidgetsBindingObserver
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Joined Queue Successfully! ✅ Go to Home to see your token.'), 
+              content: Text('Joined Queue Successfully!  Go to Home to see your token.'), 
               backgroundColor: Colors.green,
               duration: Duration(seconds: 4),
             ),
@@ -122,14 +142,11 @@ class _QRScanScreenState extends State<QRScanScreen> with WidgetsBindingObserver
       key: const Key('qr-scanner-visibility-key'),
       onVisibilityChanged: (visibilityInfo) {
         var visiblePercentage = visibilityInfo.visibleFraction * 100;
+        final nav = context.read<NavigationProvider>();
         if (visiblePercentage < 1) {
-          if (controller.value.isInitialized) {
-            controller.stop();
-          }
-        } else {
-          if (controller.value.isInitialized) {
-            controller.start();
-          }
+          _stopCamera();
+        } else if (nav.currentIndex == 2) {
+          _startCamera();
         }
       },
       child: Scaffold(
