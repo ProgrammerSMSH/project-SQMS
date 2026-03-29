@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SQMS | Core Technical Mechanism</title>
+    <title>SQMS | Visual System Flows</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tomorrow:wght@700;900&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -30,29 +31,22 @@
         .neon-text-blue {
             text-shadow: 0 0 20px rgba(77, 161, 255, 0.5);
         }
-        .code-block {
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 1.5rem;
-            font-size: 0.8rem;
-            font-family: 'Fira Code', 'Courier New', monospace;
-            color: #A5D6FF;
-            overflow-x: auto;
-            position: relative;
+        .flow-section {
+            padding: 3rem;
+            border-radius: 32px;
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 4rem;
         }
-        .code-label {
-            position: absolute;
-            top: 0;
-            right: 0;
-            padding: 4px 12px;
-            background: var(--accent-blue);
-            color: black;
-            font-size: 10px;
-            font-weight: 900;
-            text-transform: uppercase;
-            border-bottom-left-radius: 8px;
-            border-top-right-radius: 12px;
+        .diagram-container {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(77, 161, 255, 0.1);
+            border-radius: 24px;
+            padding: 2rem;
+            margin-top: 2rem;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
         }
         .sidebar-link.active {
             background: rgba(77, 161, 255, 0.1);
@@ -62,9 +56,30 @@
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+        
+        /* Mermaid Dark Theme Overrides */
+        .mermaid {
+            background: transparent !important;
+            filter: drop-shadow(0 0 10px rgba(77, 161, 255, 0.2));
+        }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden">
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            themeVariables: {
+                primaryColor: '#4DA1FF',
+                primaryTextColor: '#fff',
+                primaryBorderColor: '#4DA1FF',
+                lineColor: '#8B5CF6',
+                secondaryColor: '#8B5CF6',
+                tertiaryColor: '#1a1a24'
+            }
+        });
+    </script>
+
     <!-- Background Glows -->
     <div class="fixed top-0 right-0 w-[500px] h-[500px] bg-blue-600/5 blur-[150px] -z-10"></div>
     <div class="fixed bottom-0 left-0 w-[500px] h-[500px] bg-purple-600/5 blur-[150px] -z-10"></div>
@@ -72,150 +87,149 @@
     <!-- Sidebar Navigation -->
     <aside class="w-72 glass m-4 mr-2 p-6 flex flex-col gap-8">
         <div class="flex items-center gap-3">
-            <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
+            <div class="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
             </div>
-            <h1 class="font-tomorrow text-xl tracking-tighter uppercase">SQMS <span class="text-blue-400">ENGINE</span></h1>
+            <h1 class="font-tomorrow text-xl tracking-tighter uppercase leading-none">Vis <span class="text-blue-400">Flow</span></h1>
         </div>
 
-        <nav class="flex-grow flex flex-col gap-2 overflow-y-auto">
-            <p class="text-[10px] font-black uppercase tracking-[3px] text-white/30 mb-2 px-2">Mechanism</p>
-            <a href="#token-logic" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">Token Generation</a>
-            <a href="#call-logic" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">Call-Next Logic</a>
-            <a href="#sync-logic" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">Real-time Sync</a>
+        <nav class="flex-grow flex flex-col gap-2 overflow-y-auto custom-scrollbar">
+            <p class="text-[10px] font-black uppercase tracking-[3px] text-white/30 mb-2 px-2">Visual Journeys</p>
+            <a href="#patient-visual" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">Patient Visual</a>
+            <a href="#staff-visual" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">Staff Visual</a>
+            <a href="#tv-visual" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">TV Sync Visual</a>
             
-            <p class="text-[10px] font-black uppercase tracking-[3px] text-white/30 mt-6 mb-2 px-2">Algorithms</p>
-            <a href="#priority-algo" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">Priority Sorting</a>
-            
-            <p class="text-[10px] font-black uppercase tracking-[3px] text-white/30 mt-6 mb-2 px-2">System Support</p>
-            <a href="../index.html" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-                Back Dashboard
-            </a>
+            <p class="text-[10px] font-black uppercase tracking-[3px] text-white/30 mt-6 mb-2 px-2">Core Engine</p>
+            <a href="#admin-visual" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">Admin Logic</a>
+            <a href="#db-visual" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">Data Flow</a>
+            <a href="#alert-visual" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">Alert Pipeline</a>
         </nav>
+
+        <div class="mt-auto pt-6 border-t border-white/10">
+            <a href="../index.html" class="flex items-center justify-center gap-2 py-3 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 rounded-xl text-xs font-bold uppercase transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                Dashboard
+            </a>
+        </div>
     </aside>
 
     <!-- Main Content Area -->
     <main class="flex-grow glass m-4 ml-2 overflow-y-auto p-12 custom-scrollbar relative">
-        <div id="token-logic" class="max-w-4xl mx-auto mb-20 section">
-            <span class="text-[10px] font-black text-blue-400 tracking-[5px] uppercase mb-4 block">Engine Part 1</span>
-            <h2 class="font-tomorrow text-5xl mb-6 neon-text-blue">Token Mechanism</h2>
-            <p class="text-white/60 text-lg leading-relaxed mb-8">
-                How tokens are generated with strict data integrity to avoid double-numbering.
-            </p>
-            
-            <div class="space-y-6">
-                <div class="p-8 glass bg-white/5 border-white/10">
-                    <h4 class="font-bold mb-4">Atomic Incrementation</h4>
-                    <p class="text-sm text-white/40 mb-6">Using MongoDB's <code>$inc</code> operator, the system ensures that token numbers are unique even if multiple patients register at the exact same microsecond.</p>
-                    <div class="code-block">
-                        <div class="code-label">Backend Logic</div>
-const updatedQueue = await Queue.findByIdAndUpdate(
-    queueId,
-    { $inc: { lastTokenNumber: 1 } },
-    { new: true }
-);
-const tokenNumber = `${queue.code}-${updatedQueue.lastTokenNumber}`;
-                    </div>
+        <header class="mb-20 max-w-4xl mx-auto text-center">
+            <span class="text-[10px] font-black text-blue-400 tracking-[10px] uppercase mb-4 block">Visualized Architecture</span>
+            <h2 class="font-tomorrow text-6xl mb-6 neon-text-blue uppercase">System Mapping</h2>
+            <p class="text-white/40 text-lg max-w-2xl mx-auto">Understanding the SQMS architecture through interactive visualizations and sequence maps.</p>
+        </header>
+
+        <section id="patient-visual" class="max-w-5xl mx-auto section flow-section">
+            <h3 class="font-tomorrow text-3xl text-blue-400 mb-6">Patient Flow Visualization</h3>
+            <p class="text-white/40 text-sm mb-10 leading-relaxed">This map shows how a patient's mobile device interacts with the SQMS server infrastructure to secure a spot in the queue.</p>
+            <div class="diagram-container">
+                <div class="mermaid">
+                    sequenceDiagram
+                        participant P as Patient Mobile App
+                        participant S as Node.js API
+                        participant D as MongoDB Cloud
+                        P->>S: Request Token (Join Queue)
+                        S->>D: Check Active Tokens
+                        D-->>S: No active tokens found
+                        S->>D: Increment Token & Save New Entry
+                        D-->>S: Token Generated (T-001)
+                        S-->>P: Deliver Token ID
+                        Note right of P: UI shows wait time
                 </div>
             </div>
-        </div>
+        </section>
 
-        <div id="call-logic" class="max-w-4xl mx-auto mb-20 section">
-            <h2 class="font-tomorrow text-3xl mb-12 flex items-center gap-4 text-blue-400">
-                <span class="w-12 h-1 bg-blue-500"></span>
-                The "Call Next" Pipeline
-            </h2>
-            <p class="text-white/60 text-sm mb-8">When a clinician clicks "Call Next", the system executes a complex multi-step validation and notification pipeline.</p>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="space-y-4">
-                    <div class="p-6 bg-white/5 rounded-2xl border border-white/10">
-                        <h4 class="font-bold text-xs uppercase text-blue-400 mb-2">1. Auth & Validation</h4>
-                        <p class="text-[11px] text-white/40">Verify clinician's JWT session, counter status (must be ACTIVE), and authorization to serve the requested Medical Department.</p>
-                    </div>
-                    <div class="p-6 bg-white/5 rounded-2xl border border-white/10">
-                        <h4 class="font-bold text-xs uppercase text-blue-400 mb-2">2. Token Selection</h4>
-                        <p class="text-[11px] text-white/40">Execute the <strong>Priority-First Search</strong> to find the most suitable patient token in the database.</p>
-                    </div>
-                </div>
-                <div class="space-y-4">
-                    <div class="p-6 bg-white/5 rounded-2xl border border-white/10">
-                        <h4 class="font-bold text-xs uppercase text-green-400 mb-2">3. State Mutation</h4>
-                        <p class="text-[11px] text-white/40">Atomically update Token status to <code>SERVING</code> and assign the target <code>counterId</code>.</p>
-                    </div>
-                    <div class="p-6 bg-white/5 rounded-2xl border border-white/10">
-                        <h4 class="font-bold text-xs uppercase text-purple-400 mb-2">4. Notification Blast</h4>
-                        <p class="text-[11px] text-white/40">Trigger Firebase FCM to the called patient's mobile device and broadcast Socket.io event to all TVs.</p>
-                    </div>
+        <section id="staff-visual" class="max-w-5xl mx-auto section flow-section">
+            <h3 class="font-tomorrow text-3xl text-purple-400 mb-6">Staff Control Visualization</h3>
+            <p class="text-white/40 text-sm mb-10 leading-relaxed">Visualizing the real-time pipeline from a clinical room action to the public waiting area display.</p>
+            <div class="diagram-container">
+                <div class="mermaid">
+                    sequenceDiagram
+                        participant D as Doctor Console
+                        participant S as Node.js Engine
+                        participant T as Waiting TV Display
+                        D->>S: Trigger 'Call Next'
+                        Note over S: Priority Tier Check Logic
+                        S->>S: Match: Senior Patient (P-05)
+                        S->>T: Broadcast 'Called' Event (Socket.io)
+                        T-->>T: Play Audio Alert & Update Screen
+                        S-->>D: Display Patient Record
                 </div>
             </div>
-        </div>
+        </section>
 
-        <div id="priority-algo" class="max-w-4xl mx-auto mb-20 section">
-            <h2 class="font-tomorrow text-3xl mb-12 flex items-center gap-4 text-purple-400">
-                <span class="w-12 h-1 bg-purple-500"></span>
-                Priority Search Algorithm
-            </h2>
-            <div class="space-y-8">
-                <p class="text-white/60 text-sm">To ensure patients with urgent needs are seen first, the engine uses a <strong>Tiered Search Loop</strong>.</p>
-                <div class="code-block">
-                    <div class="code-label">Algorithm View</div>
-const priorities = ['EMERGENCY', 'SENIOR', 'GENERAL', 'NORMAL'];
-let nextToken = null;
-
-for (let p of priorities) {
-    let query = { status: 'WAITING', priority: p };
-    if (queueId) query.queueId = queueId;
-
-    nextToken = await Token.findOne(query)
-        .sort({ joinedAt: 1 }) // First-come, first-served within tier
-        .populate('userId');
-        
-    if (nextToken) break; // First matching priority wins
-}
-                </div>
-                <div class="p-6 glass border-purple-500/10">
-                    <h5 class="font-bold text-sm text-purple-400 mb-2">Why this works:</h5>
-                    <p class="text-xs text-white/40 leading-relaxed">It guarantees that an "Emergency" patient will ALWAYS be called before any "General" patient, regardless of when they arrived. Within the same priority tier, the system respects the <code>joinedAt</code> timestamp for fairness.</p>
+        <section id="tv-visual" class="max-w-5xl mx-auto section flow-section">
+            <h3 class="font-tomorrow text-3xl text-yellow-400 mb-6">TV Synchronization Flow</h3>
+            <p class="text-white/40 text-sm mb-10 leading-relaxed">Architecture of how display endpoints maintain high-speed connectivity.</p>
+            <div class="diagram-container">
+                <div class="mermaid">
+                    graph LR
+                        A[Server] -- Socket.io --> B(TV 01 Lounge)
+                        A -- Socket.io --> C(TV 02 Hallway)
+                        A -- Socket.io --> D(TV 03 Lab)
+                        style A fill:#4DA1FF,stroke:#fff,stroke-width:2px,color:#000
+                        style B fill:#1a1a24,stroke:#4DA1FF,color:#fff
+                        style C fill:#1a1a24,stroke:#4DA1FF,color:#fff
+                        style D fill:#1a1a24,stroke:#4DA1FF,color:#fff
                 </div>
             </div>
-        </div>
+        </section>
 
-        <div id="sync-logic" class="max-w-4xl mx-auto mb-20 section">
-            <h2 class="font-tomorrow text-3xl mb-12 flex items-center gap-4 text-green-400">
-                <span class="w-12 h-1 bg-green-500"></span>
-                Real-time Sync Mechanism
-            </h2>
-            <div class="p-10 glass border-white/10 relative overflow-hidden">
-                <div class="absolute -right-20 -bottom-20 w-64 h-64 bg-green-500/10 blur-3xl"></div>
-                <h3 class="text-2xl font-bold mb-6">Synchronization Engine</h3>
-                <div class="space-y-6 text-sm text-white/50">
-                    <p>The system maintains a <strong>Persistent Socket Connection</strong> between the backend and all display endpoints.</p>
-                    <div class="flex items-center gap-6">
-                        <div class="flex-1 p-4 bg-white/5 rounded-xl text-center">
-                            <span class="font-bold text-green-400 block mb-1">EVENT EMIT</span>
-                            <span class="text-[9px] uppercase tracking-widest">Backend Logic</span>
-                        </div>
-                        <div class="text-white/20">➔</div>
-                        <div class="flex-1 p-4 bg-white/5 rounded-xl text-center">
-                            <span class="font-bold text-blue-400 block mb-1">CLIENT LISTEN</span>
-                            <span class="text-[9px] uppercase tracking-widest">TV Display</span>
-                        </div>
-                        <div class="text-white/20">➔</div>
-                        <div class="flex-1 p-4 bg-white/5 rounded-xl text-center">
-                            <span class="font-bold text-purple-400 block mb-1">UI REFRESH</span>
-                            <span class="text-[9px] uppercase tracking-widest">Dashboard</span>
-                        </div>
-                    </div>
-                    <p class="mt-8 italic text-xs">This ensures that when a clinician in <b>Clinic Room 5</b> calls "Token-001", the <b>Waiting Area TV</b> updates in less than 200ms without any manual page refresh.</p>
+        <section id="admin-visual" class="max-w-5xl mx-auto section flow-section">
+            <h3 class="font-tomorrow text-3xl text-green-400 mb-6">Admin Configuration Logic</h3>
+            <p class="text-white/40 text-sm mb-10 leading-relaxed">Flow chart of how administrative rules are pushed to the live system.</p>
+            <div class="diagram-container">
+                <div class="mermaid">
+                    graph TD
+                        A[Admin Web UI] -->|POST Settings| B(API Auth Layer)
+                        B -->|Validate Schema| C{Rules Valid?}
+                        C -->|Yes| D[Update Mongoose Model]
+                        C -->|No| E[Return Error 400]
+                        D --> F[Broadcast to All Staff Dashboards]
+                        style A fill:#4DA1FF,color:#000
+                        style D fill:#8B5CF6,color:#fff
+                        style C fill:#fff,color:#000
                 </div>
             </div>
-        </div>
+        </section>
+
+        <section id="db-visual" class="max-w-5xl mx-auto section flow-section">
+            <h3 class="font-tomorrow text-3xl text-pink-400 mb-6">Data Persistence Flow</h3>
+            <p class="text-white/40 text-sm mb-10 leading-relaxed">How state is managed across multiple data collections in the cloud.</p>
+            <div class="diagram-container">
+                <div class="mermaid">
+                    graph LR
+                        Request --> UsersColl[(Users Collection)]
+                        Request --> TokensColl[(Tokens Collection)]
+                        Request --> QueuesColl[(Queues Collection)]
+                        style UsersColl fill:#1a1a24,stroke:#pink,color:#fff
+                        style TokensColl fill:#1a1a24,stroke:#pink,color:#fff
+                        style QueuesColl fill:#1a1a24,stroke:#pink,color:#fff
+                </div>
+            </div>
+        </section>
+
+        <section id="alert-visual" class="max-w-5xl mx-auto section flow-section">
+            <h3 class="font-tomorrow text-3xl text-red-400 mb-6">Patient Alert Pipeline</h3>
+            <p class="text-white/40 text-sm mb-10 leading-relaxed">Technical path for delivering high-priority push notifications to mobile devices.</p>
+            <div class="diagram-container">
+                <div class="mermaid">
+                    graph LR
+                        A[Trigger Event] --> B[FCM Service Utility]
+                        B --> C{Active Token?}
+                        C -->|Yes| D[Google Firebase Platform]
+                        D --> E[Patient Lockscreen Alert]
+                        style A fill:#4DA1FF,color:#000
+                        style D fill:#FF6B6B,color:#fff
+                </div>
+            </div>
+        </section>
 
         <!-- Footer -->
         <footer class="mt-20 pt-10 border-t border-white/5 text-center text-white/20 text-xs text-uppercase tracking-widest">
-            &copy; 2026 SQMS Technical Deep-Dive | Advanced Queue Management Architecture
+            &copy; 2026 SQMS Visual Intelligence Center | Interactive Mapping v3.1
         </footer>
     </main>
 
