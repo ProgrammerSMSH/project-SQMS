@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SQMS | Patient Healthcare Guide</title>
+    <title>SQMS | Core Technical Mechanism</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tomorrow:wght@700;900&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -30,17 +30,29 @@
         .neon-text-blue {
             text-shadow: 0 0 20px rgba(77, 161, 255, 0.5);
         }
-        .gradient-bullet {
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            font-weight: 800;
+        .code-block {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
             font-size: 0.8rem;
-            flex-shrink: 0;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            color: #A5D6FF;
+            overflow-x: auto;
+            position: relative;
+        }
+        .code-label {
+            position: absolute;
+            top: 0;
+            right: 0;
+            padding: 4px 12px;
+            background: var(--accent-blue);
+            color: black;
+            font-size: 10px;
+            font-weight: 900;
+            text-transform: uppercase;
+            border-bottom-left-radius: 8px;
+            border-top-right-radius: 12px;
         }
         .sidebar-link.active {
             background: rgba(77, 161, 255, 0.1);
@@ -61,160 +73,149 @@
     <aside class="w-72 glass m-4 mr-2 p-6 flex flex-col gap-8">
         <div class="flex items-center gap-3">
             <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
             </div>
-            <h1 class="font-tomorrow text-xl tracking-tighter uppercase">Patient <span class="text-blue-400">Docs</span></h1>
+            <h1 class="font-tomorrow text-xl tracking-tighter uppercase">SQMS <span class="text-blue-400">ENGINE</span></h1>
         </div>
 
         <nav class="flex-grow flex flex-col gap-2 overflow-y-auto">
-            <p class="text-[10px] font-black uppercase tracking-[3px] text-white/30 mb-2 px-2">Core System</p>
-            <a href="#mechanism" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                System Mechanism
-            </a>
-            <a href="#workflow" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-                Patient Workflow
-            </a>
-
-            <p class="text-[10px] font-black uppercase tracking-[3px] text-white/30 mt-6 mb-2 px-2">Staff Guide</p>
-            <a href="#staff-use" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                System Use (Staff)
-            </a>
-            <a href="#clinics" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-                Managing Clinics
+            <p class="text-[10px] font-black uppercase tracking-[3px] text-white/30 mb-2 px-2">Mechanism</p>
+            <a href="#token-logic" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">Token Generation</a>
+            <a href="#call-logic" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">Call-Next Logic</a>
+            <a href="#sync-logic" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">Real-time Sync</a>
+            
+            <p class="text-[10px] font-black uppercase tracking-[3px] text-white/30 mt-6 mb-2 px-2">Algorithms</p>
+            <a href="#priority-algo" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">Priority Sorting</a>
+            
+            <p class="text-[10px] font-black uppercase tracking-[3px] text-white/30 mt-6 mb-2 px-2">System Support</p>
+            <a href="../index.html" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                Back Dashboard
             </a>
         </nav>
-
-        <div class="mt-auto pt-6 border-t border-white/10">
-            <a href="../index.html" class="flex items-center justify-center gap-2 py-3 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 rounded-xl text-xs font-bold uppercase transition">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-                Back to Dashboard
-            </a>
-        </div>
     </aside>
 
     <!-- Main Content Area -->
     <main class="flex-grow glass m-4 ml-2 overflow-y-auto p-12 custom-scrollbar relative">
-        <div id="mechanism" class="max-w-4xl mx-auto mb-20 section">
-            <span class="text-[10px] font-black text-blue-400 tracking-[5px] uppercase mb-4 block">System Core</span>
-            <h2 class="font-tomorrow text-5xl mb-6 neon-text-blue">System Mechanism</h2>
+        <div id="token-logic" class="max-w-4xl mx-auto mb-20 section">
+            <span class="text-[10px] font-black text-blue-400 tracking-[5px] uppercase mb-4 block">Engine Part 1</span>
+            <h2 class="font-tomorrow text-5xl mb-6 neon-text-blue">Token Mechanism</h2>
             <p class="text-white/60 text-lg leading-relaxed mb-8">
-                The SQMS healthcare mechanism ensures that patients are served in the correct order while clinicians maintain full control over their consultation rooms.
+                How tokens are generated with strict data integrity to avoid double-numbering.
             </p>
-            <div class="grid grid-cols-2 gap-6">
-                <div class="p-6 bg-white/5 border border-white/10 rounded-2xl">
-                    <h4 class="font-tomorrow text-blue-400 mb-3 uppercase text-xs tracking-widest">Token Generation</h4>
-                    <p class="text-sm text-white/50">When a patient arrives, a unique token is generated for their specific department (e.g., Cardiology, General Medicine). This token is tied to their position in the live queue.</p>
-                </div>
-                <div class="p-6 bg-white/5 border border-white/10 rounded-2xl">
-                    <h4 class="font-tomorrow text-purple-400 mb-3 uppercase text-xs tracking-widest">Real-time Sync</h4>
-                    <p class="text-sm text-white/50">The system uses a high-speed websocket mechanism to sync tokens across the Admin Dashboard (Staff) and the TV Display (Patients) instantly.</p>
+            
+            <div class="space-y-6">
+                <div class="p-8 glass bg-white/5 border-white/10">
+                    <h4 class="font-bold mb-4">Atomic Incrementation</h4>
+                    <p class="text-sm text-white/40 mb-6">Using MongoDB's <code>$inc</code> operator, the system ensures that token numbers are unique even if multiple patients register at the exact same microsecond.</p>
+                    <div class="code-block">
+                        <div class="code-label">Backend Logic</div>
+const updatedQueue = await Queue.findByIdAndUpdate(
+    queueId,
+    { $inc: { lastTokenNumber: 1 } },
+    { new: true }
+);
+const tokenNumber = `${queue.code}-${updatedQueue.lastTokenNumber}`;
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div id="workflow" class="max-w-4xl mx-auto mb-20 section">
-            <h2 class="font-tomorrow text-3xl mb-12 flex items-center gap-4">
+        <div id="call-logic" class="max-w-4xl mx-auto mb-20 section">
+            <h2 class="font-tomorrow text-3xl mb-12 flex items-center gap-4 text-blue-400">
                 <span class="w-12 h-1 bg-blue-500"></span>
-                Patient Workflow
+                The "Call Next" Pipeline
             </h2>
-            <div class="space-y-12">
-                <div class="flex gap-8 items-start">
-                    <div class="gradient-bullet mt-1">1</div>
-                    <div>
-                        <h4 class="text-xl font-bold mb-2">Registration</h4>
-                        <p class="text-white/50 text-sm">Patient arrives at the reception and receives a printed or digital token number for their consultation.</p>
+            <p class="text-white/60 text-sm mb-8">When a clinician clicks "Call Next", the system executes a complex multi-step validation and notification pipeline.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="space-y-4">
+                    <div class="p-6 bg-white/5 rounded-2xl border border-white/10">
+                        <h4 class="font-bold text-xs uppercase text-blue-400 mb-2">1. Auth & Validation</h4>
+                        <p class="text-[11px] text-white/40">Verify clinician's JWT session, counter status (must be ACTIVE), and authorization to serve the requested Medical Department.</p>
+                    </div>
+                    <div class="p-6 bg-white/5 rounded-2xl border border-white/10">
+                        <h4 class="font-bold text-xs uppercase text-blue-400 mb-2">2. Token Selection</h4>
+                        <p class="text-[11px] text-white/40">Execute the <strong>Priority-First Search</strong> to find the most suitable patient token in the database.</p>
                     </div>
                 </div>
-                <div class="flex gap-8 items-start">
-                    <div class="gradient-bullet mt-1">2</div>
-                    <div>
-                        <h4 class="text-xl font-bold mb-2">Waiting Area</h4>
-                        <p class="text-white/50 text-sm">Patients wait in the lounge, monitoring the TV Display which shows "Now Serving" and "Upcoming" tokens.</p>
+                <div class="space-y-4">
+                    <div class="p-6 bg-white/5 rounded-2xl border border-white/10">
+                        <h4 class="font-bold text-xs uppercase text-green-400 mb-2">3. State Mutation</h4>
+                        <p class="text-[11px] text-white/40">Atomically update Token status to <code>SERVING</code> and assign the target <code>counterId</code>.</p>
                     </div>
-                </div>
-                <div class="flex gap-8 items-start">
-                    <div class="gradient-bullet mt-1">3</div>
-                    <div>
-                        <h4 class="text-xl font-bold mb-2">The Call</h4>
-                        <p class="text-white/50 text-sm">When the clinician is ready, the system announces the token number via the TV Display and highlights the assigned room/clinic.</p>
-                    </div>
-                </div>
-                <div class="flex gap-8 items-start">
-                    <div class="gradient-bullet mt-1">4</div>
-                    <div>
-                        <h4 class="text-xl font-bold mb-2">Consultation & Exit</h4>
-                        <p class="text-white/50 text-sm">After the consultation, the clinician marks the token as "Complete", and the system automatically prepares to call the next patient.</p>
+                    <div class="p-6 bg-white/5 rounded-2xl border border-white/10">
+                        <h4 class="font-bold text-xs uppercase text-purple-400 mb-2">4. Notification Blast</h4>
+                        <p class="text-[11px] text-white/40">Trigger Firebase FCM to the called patient's mobile device and broadcast Socket.io event to all TVs.</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div id="staff-use" class="max-w-4xl mx-auto mb-20 section">
-            <h2 class="font-tomorrow text-3xl mb-12 flex items-center gap-4">
-                <span class="w-12 h-1 bg-green-500"></span>
-                System Use (Medical Staff)
-            </h2>
-            <div class="glass p-8 bg-blue-500/5 border-blue-500/10">
-                <h4 class="font-bold mb-6 text-blue-400">Daily Staff Workflow</h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div class="space-y-4">
-                        <div class="flex gap-4">
-                            <div class="w-2 h-2 rounded-full bg-blue-500 mt-2"></div>
-                            <div>
-                                <p class="font-bold text-sm">Open Admin Panel</p>
-                                <p class="text-xs text-white/40 italic">Log in with your secure clinician credentials.</p>
-                            </div>
-                        </div>
-                        <div class="flex gap-4">
-                            <div class="w-2 h-2 rounded-full bg-blue-500 mt-2"></div>
-                            <div>
-                                <p class="font-bold text-sm">Select Your Clinic Room</p>
-                                <p class="text-xs text-white/40 italic">Ensure you are assigned to the correct room number.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="space-y-4">
-                        <div class="flex gap-4">
-                            <div class="w-2 h-2 rounded-full bg-green-500 mt-2"></div>
-                            <div>
-                                <p class="font-bold text-sm">Click "Call Next"</p>
-                                <p class="text-xs text-white/40 italic">This triggers the TV announcement for the patient.</p>
-                            </div>
-                        </div>
-                        <div class="flex gap-4">
-                            <div class="w-2 h-2 rounded-full bg-red-500 mt-2"></div>
-                            <div>
-                                <p class="font-bold text-sm">Handle "No Shows"</p>
-                                <p class="text-xs text-white/40 italic">Mark patient as absent if they do not arrive within 5 minutes.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="clinics" class="max-w-4xl mx-auto mb-20 section">
-            <h2 class="font-tomorrow text-3xl mb-12 flex items-center gap-4">
+        <div id="priority-algo" class="max-w-4xl mx-auto mb-20 section">
+            <h2 class="font-tomorrow text-3xl mb-12 flex items-center gap-4 text-purple-400">
                 <span class="w-12 h-1 bg-purple-500"></span>
-                Managing Clinics
+                Priority Search Algorithm
             </h2>
-            <div class="p-8 border border-white/10 rounded-3xl">
-                <p class="text-white/60 mb-6">Administrators can re-assign clinics to different departments dynamically through the <strong>Settings</strong> menu.</p>
-                <div class="flex gap-4">
-                    <span class="px-4 py-2 bg-white/5 rounded-full text-[10px] font-bold uppercase tracking-widest text-blue-400">Cardiology</span>
-                    <span class="px-4 py-2 bg-white/5 rounded-full text-[10px] font-bold uppercase tracking-widest text-purple-400">Pediatrics</span>
-                    <span class="px-4 py-2 bg-white/5 rounded-full text-[10px] font-bold uppercase tracking-widest text-green-400">General Medicine</span>
+            <div class="space-y-8">
+                <p class="text-white/60 text-sm">To ensure patients with urgent needs are seen first, the engine uses a <strong>Tiered Search Loop</strong>.</p>
+                <div class="code-block">
+                    <div class="code-label">Algorithm View</div>
+const priorities = ['EMERGENCY', 'SENIOR', 'GENERAL', 'NORMAL'];
+let nextToken = null;
+
+for (let p of priorities) {
+    let query = { status: 'WAITING', priority: p };
+    if (queueId) query.queueId = queueId;
+
+    nextToken = await Token.findOne(query)
+        .sort({ joinedAt: 1 }) // First-come, first-served within tier
+        .populate('userId');
+        
+    if (nextToken) break; // First matching priority wins
+}
+                </div>
+                <div class="p-6 glass border-purple-500/10">
+                    <h5 class="font-bold text-sm text-purple-400 mb-2">Why this works:</h5>
+                    <p class="text-xs text-white/40 leading-relaxed">It guarantees that an "Emergency" patient will ALWAYS be called before any "General" patient, regardless of when they arrived. Within the same priority tier, the system respects the <code>joinedAt</code> timestamp for fairness.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="sync-logic" class="max-w-4xl mx-auto mb-20 section">
+            <h2 class="font-tomorrow text-3xl mb-12 flex items-center gap-4 text-green-400">
+                <span class="w-12 h-1 bg-green-500"></span>
+                Real-time Sync Mechanism
+            </h2>
+            <div class="p-10 glass border-white/10 relative overflow-hidden">
+                <div class="absolute -right-20 -bottom-20 w-64 h-64 bg-green-500/10 blur-3xl"></div>
+                <h3 class="text-2xl font-bold mb-6">Synchronization Engine</h3>
+                <div class="space-y-6 text-sm text-white/50">
+                    <p>The system maintains a <strong>Persistent Socket Connection</strong> between the backend and all display endpoints.</p>
+                    <div class="flex items-center gap-6">
+                        <div class="flex-1 p-4 bg-white/5 rounded-xl text-center">
+                            <span class="font-bold text-green-400 block mb-1">EVENT EMIT</span>
+                            <span class="text-[9px] uppercase tracking-widest">Backend Logic</span>
+                        </div>
+                        <div class="text-white/20">➔</div>
+                        <div class="flex-1 p-4 bg-white/5 rounded-xl text-center">
+                            <span class="font-bold text-blue-400 block mb-1">CLIENT LISTEN</span>
+                            <span class="text-[9px] uppercase tracking-widest">TV Display</span>
+                        </div>
+                        <div class="text-white/20">➔</div>
+                        <div class="flex-1 p-4 bg-white/5 rounded-xl text-center">
+                            <span class="font-bold text-purple-400 block mb-1">UI REFRESH</span>
+                            <span class="text-[9px] uppercase tracking-widest">Dashboard</span>
+                        </div>
+                    </div>
+                    <p class="mt-8 italic text-xs">This ensures that when a clinician in <b>Clinic Room 5</b> calls "Token-001", the <b>Waiting Area TV</b> updates in less than 200ms without any manual page refresh.</p>
                 </div>
             </div>
         </div>
 
         <!-- Footer -->
-        <footer class="mt-20 pt-10 border-t border-white/5 text-center text-white/20 text-xs">
-            &copy; 2026 SQMS Healthcare System. Secure Administrative Console.
+        <footer class="mt-20 pt-10 border-t border-white/5 text-center text-white/20 text-xs text-uppercase tracking-widest">
+            &copy; 2026 SQMS Technical Deep-Dive | Advanced Queue Management Architecture
         </footer>
     </main>
 
