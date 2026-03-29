@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SQMS | Documentation & System Guide</title>
+    <title>SQMS | Patient Healthcare Guide</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tomorrow:wght@700;900&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -61,36 +61,30 @@
     <aside class="w-72 glass m-4 mr-2 p-6 flex flex-col gap-8">
         <div class="flex items-center gap-3">
             <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
             </div>
-            <h1 class="font-tomorrow text-xl tracking-tighter">SQMS <span class="text-blue-400">DOCS</span></h1>
+            <h1 class="font-tomorrow text-xl tracking-tighter uppercase">Patient <span class="text-blue-400">Docs</span></h1>
         </div>
 
         <nav class="flex-grow flex flex-col gap-2 overflow-y-auto">
-            <p class="text-[10px] font-black uppercase tracking-[3px] text-white/30 mb-2 px-2">Setup Guide</p>
-            <a href="#intro" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-                Introduction
+            <p class="text-[10px] font-black uppercase tracking-[3px] text-white/30 mb-2 px-2">Core System</p>
+            <a href="#mechanism" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                System Mechanism
             </a>
-            <a href="#quickstart" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                Quick Start
+            <a href="#workflow" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                Patient Workflow
             </a>
 
-            <p class="text-[10px] font-black uppercase tracking-[3px] text-white/30 mt-6 mb-2 px-2">System Workflows</p>
-            <a href="#counters" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-                Managing Counters
+            <p class="text-[10px] font-black uppercase tracking-[3px] text-white/30 mt-6 mb-2 px-2">Staff Guide</p>
+            <a href="#staff-use" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                System Use (Staff)
             </a>
-            <a href="#serving" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                Serving Customers
-            </a>
-            <a href="#tv-display" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                TV Display Setup
+            <a href="#clinics" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                Managing Clinics
             </a>
         </nav>
 
@@ -104,133 +98,127 @@
 
     <!-- Main Content Area -->
     <main class="flex-grow glass m-4 ml-2 overflow-y-auto p-12 custom-scrollbar relative">
-        <div id="intro" class="max-w-4xl mx-auto mb-20 section">
-            <span class="text-[10px] font-black text-blue-400 tracking-[5px] uppercase mb-4 block">Official Guide</span>
-            <h2 class="font-tomorrow text-5xl mb-6 neon-text-blue">Welcome to SQMS</h2>
+        <div id="mechanism" class="max-w-4xl mx-auto mb-20 section">
+            <span class="text-[10px] font-black text-blue-400 tracking-[5px] uppercase mb-4 block">System Core</span>
+            <h2 class="font-tomorrow text-5xl mb-6 neon-text-blue">System Mechanism</h2>
             <p class="text-white/60 text-lg leading-relaxed mb-8">
-                The Smart Queue Management System (SQMS) is built to make customer flow smooth and easy. This documentation will help you setup your admin dashboard and start serving people in minutes.
+                The SQMS healthcare mechanism ensures that patients are served in the correct order while clinicians maintain full control over their consultation rooms.
             </p>
-            <div class="grid grid-cols-3 gap-4">
+            <div class="grid grid-cols-2 gap-6">
                 <div class="p-6 bg-white/5 border border-white/10 rounded-2xl">
-                    <h3 class="font-tomorrow text-blue-400 mb-2">Fast</h3>
-                    <p class="text-xs text-white/40">Real-time updates across all displays.</p>
+                    <h4 class="font-tomorrow text-blue-400 mb-3 uppercase text-xs tracking-widest">Token Generation</h4>
+                    <p class="text-sm text-white/50">When a patient arrives, a unique token is generated for their specific department (e.g., Cardiology, General Medicine). This token is tied to their position in the live queue.</p>
                 </div>
                 <div class="p-6 bg-white/5 border border-white/10 rounded-2xl">
-                    <h3 class="font-tomorrow text-purple-400 mb-2">Simple</h3>
-                    <p class="text-xs text-white/40">Designed for easy administrative use.</p>
-                </div>
-                <div class="p-6 bg-white/5 border border-white/10 rounded-2xl">
-                    <h3 class="font-tomorrow text-green-400 mb-2">Reliable</h3>
-                    <p class="text-xs text-white/40">Secure access and persistent sessions.</p>
+                    <h4 class="font-tomorrow text-purple-400 mb-3 uppercase text-xs tracking-widest">Real-time Sync</h4>
+                    <p class="text-sm text-white/50">The system uses a high-speed websocket mechanism to sync tokens across the Admin Dashboard (Staff) and the TV Display (Patients) instantly.</p>
                 </div>
             </div>
         </div>
 
-        <div id="quickstart" class="max-w-4xl mx-auto mb-20 section">
+        <div id="workflow" class="max-w-4xl mx-auto mb-20 section">
             <h2 class="font-tomorrow text-3xl mb-12 flex items-center gap-4">
                 <span class="w-12 h-1 bg-blue-500"></span>
-                Quick Start Guide
+                Patient Workflow
             </h2>
-            
             <div class="space-y-12">
-                <div class="flex gap-6">
-                    <div class="gradient-bullet">1</div>
+                <div class="flex gap-8 items-start">
+                    <div class="gradient-bullet mt-1">1</div>
                     <div>
-                        <h4 class="text-xl font-bold mb-2">Login to Admin</h4>
-                        <p class="text-white/50 text-sm mb-4">Open the admin page and enter your credentials. If you don't have them, contact your system owner.</p>
-                        <div class="p-4 bg-black/40 border border-dashed border-white/20 rounded-xl text-xs font-mono text-blue-400">
-                            URL: app.sqms.com/admin
+                        <h4 class="text-xl font-bold mb-2">Registration</h4>
+                        <p class="text-white/50 text-sm">Patient arrives at the reception and receives a printed or digital token number for their consultation.</p>
+                    </div>
+                </div>
+                <div class="flex gap-8 items-start">
+                    <div class="gradient-bullet mt-1">2</div>
+                    <div>
+                        <h4 class="text-xl font-bold mb-2">Waiting Area</h4>
+                        <p class="text-white/50 text-sm">Patients wait in the lounge, monitoring the TV Display which shows "Now Serving" and "Upcoming" tokens.</p>
+                    </div>
+                </div>
+                <div class="flex gap-8 items-start">
+                    <div class="gradient-bullet mt-1">3</div>
+                    <div>
+                        <h4 class="text-xl font-bold mb-2">The Call</h4>
+                        <p class="text-white/50 text-sm">When the clinician is ready, the system announces the token number via the TV Display and highlights the assigned room/clinic.</p>
+                    </div>
+                </div>
+                <div class="flex gap-8 items-start">
+                    <div class="gradient-bullet mt-1">4</div>
+                    <div>
+                        <h4 class="text-xl font-bold mb-2">Consultation & Exit</h4>
+                        <p class="text-white/50 text-sm">After the consultation, the clinician marks the token as "Complete", and the system automatically prepares to call the next patient.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="staff-use" class="max-w-4xl mx-auto mb-20 section">
+            <h2 class="font-tomorrow text-3xl mb-12 flex items-center gap-4">
+                <span class="w-12 h-1 bg-green-500"></span>
+                System Use (Medical Staff)
+            </h2>
+            <div class="glass p-8 bg-blue-500/5 border-blue-500/10">
+                <h4 class="font-bold mb-6 text-blue-400">Daily Staff Workflow</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-4">
+                        <div class="flex gap-4">
+                            <div class="w-2 h-2 rounded-full bg-blue-500 mt-2"></div>
+                            <div>
+                                <p class="font-bold text-sm">Open Admin Panel</p>
+                                <p class="text-xs text-white/40 italic">Log in with your secure clinician credentials.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="w-2 h-2 rounded-full bg-blue-500 mt-2"></div>
+                            <div>
+                                <p class="font-bold text-sm">Select Your Clinic Room</p>
+                                <p class="text-xs text-white/40 italic">Ensure you are assigned to the correct room number.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex gap-4">
+                            <div class="w-2 h-2 rounded-full bg-green-500 mt-2"></div>
+                            <div>
+                                <p class="font-bold text-sm">Click "Call Next"</p>
+                                <p class="text-xs text-white/40 italic">This triggers the TV announcement for the patient.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="w-2 h-2 rounded-full bg-red-500 mt-2"></div>
+                            <div>
+                                <p class="font-bold text-sm">Handle "No Shows"</p>
+                                <p class="text-xs text-white/40 italic">Mark patient as absent if they do not arrive within 5 minutes.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-
-                <div class="flex gap-6">
-                    <div class="gradient-bullet">2</div>
-                    <div>
-                        <h4 class="text-xl font-bold mb-2">Select your Counter</h4>
-                        <p class="text-white/50 text-sm">Once logged in, your counter (Station 01, 02, etc.) will be automatically identified. Check the left sidebar to see all active counters.</p>
-                    </div>
-                </div>
-
-                <div class="flex gap-6">
-                    <div class="gradient-bullet">3</div>
-                    <div>
-                        <h4 class="text-xl font-bold mb-2">Set Serving Service</h4>
-                        <p class="text-white/50 text-sm">Use the dropdown menu in the center to select which service you are serving today (e.g., General Inquiries, Technical Support).</p>
-                    </div>
-                </div>
             </div>
         </div>
 
-        <div id="counters" class="max-w-4xl mx-auto mb-20 section">
+        <div id="clinics" class="max-w-4xl mx-auto mb-20 section">
             <h2 class="font-tomorrow text-3xl mb-12 flex items-center gap-4">
                 <span class="w-12 h-1 bg-purple-500"></span>
-                Managing Counters
+                Managing Clinics
             </h2>
-            <div class="glass p-8 border-white/5 overflow-hidden relative">
-                <div class="absolute -right-20 -top-20 w-64 h-64 bg-purple-500/10 blur-3xl"></div>
-                <h4 class="font-bold mb-4">Counter Information</h4>
-                <ul class="space-y-4 text-sm text-white/70">
-                    <li class="flex items-center gap-3">
-                        <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-                        <strong>Active Counters:</strong> Numbers shown in the left list are currently online.
-                    </li>
-                    <li class="flex items-center gap-3">
-                        <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-                        <strong>Status:</strong> Pulse animation means the counter is ready to call next.
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <div id="serving" class="max-w-4xl mx-auto mb-20 section">
-            <h2 class="font-tomorrow text-3xl mb-12 flex items-center gap-4">
-                <span class="w-12 h-1 bg-green-500"></span>
-                Serving Customers
-            </h2>
-            <div class="grid grid-cols-2 gap-8">
-                <div class="space-y-6">
-                    <div class="p-6 bg-white/5 rounded-2xl border border-white/10">
-                        <h5 class="text-xs font-black text-blue-400 uppercase tracking-widest mb-3">Action 1</h5>
-                        <h4 class="font-bold mb-2">Call Next</h4>
-                        <p class="text-xs text-white/40">Click the large "CALL NEXT" button to bring the next person from the queue. The TV will announce their number.</p>
-                    </div>
-                    <div class="p-6 bg-white/5 rounded-2xl border border-white/10">
-                        <h5 class="text-xs font-black text-green-400 uppercase tracking-widest mb-3">Action 2</h5>
-                        <h4 class="font-bold mb-2">Complete</h4>
-                        <p class="text-xs text-white/40">When finished, click "COMPLETE" to close the current token and prepare for the next.</p>
-                    </div>
+            <div class="p-8 border border-white/10 rounded-3xl">
+                <p class="text-white/60 mb-6">Administrators can re-assign clinics to different departments dynamically through the <strong>Settings</strong> menu.</p>
+                <div class="flex gap-4">
+                    <span class="px-4 py-2 bg-white/5 rounded-full text-[10px] font-bold uppercase tracking-widest text-blue-400">Cardiology</span>
+                    <span class="px-4 py-2 bg-white/5 rounded-full text-[10px] font-bold uppercase tracking-widest text-purple-400">Pediatrics</span>
+                    <span class="px-4 py-2 bg-white/5 rounded-full text-[10px] font-bold uppercase tracking-widest text-green-400">General Medicine</span>
                 </div>
-                <div class="p-8 glass bg-red-500/5 border-red-500/10 flex flex-col justify-center">
-                    <h5 class="text-xs font-black text-red-400 uppercase tracking-widest mb-4">Special Case</h5>
-                    <h4 class="text-xl font-bold mb-4">No Show?</h4>
-                    <p class="text-sm text-white/50 leading-relaxed">
-                        If a customer doesn't arrive within 2 minutes, click the <strong>NO SHOW</strong> button. This will mark them as absent and remove them from the active display.
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <div id="tv-display" class="max-w-4xl mx-auto mb-20 section">
-            <h2 class="font-tomorrow text-3xl mb-12 flex items-center gap-4">
-                <span class="w-12 h-1 bg-yellow-500"></span>
-                TV Display Setup
-            </h2>
-            <div class="p-10 glass border-white/10 text-center">
-                <h3 class="text-2xl font-bold mb-4">Syncing your TV</h3>
-                <p class="text-white/40 text-sm mb-8 mx-auto max-w-md">The TV display should be opened on a large screen in the waiting area. It stays in sync with all counters automatically.</p>
-                <button class="px-8 py-4 gradient-btn rounded-xl font-bold uppercase tracking-widest text-xs">Test TV Connection</button>
             </div>
         </div>
 
         <!-- Footer -->
         <footer class="mt-20 pt-10 border-t border-white/5 text-center text-white/20 text-xs">
-            &copy; 2026 SQMS Premium. All system logs are recorded.
+            &copy; 2026 SQMS Healthcare System. Secure Administrative Console.
         </footer>
     </main>
 
     <script>
-        // Simple Intersection Observer for sidebar highlighting
         const sections = document.querySelectorAll('.section');
         const navLinks = document.querySelectorAll('.sidebar-link');
 
