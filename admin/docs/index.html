@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SQMS | Visual System Flows</title>
+    <title>SQMS | Visual Narratives & Flows</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tomorrow:wght@700;900&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
@@ -43,7 +43,7 @@
             border: 1px solid rgba(77, 161, 255, 0.1);
             border-radius: 24px;
             padding: 2rem;
-            margin-top: 2rem;
+            margin: 2rem 0;
             overflow: hidden;
             display: flex;
             justify-content: center;
@@ -53,11 +53,20 @@
             border-left: 4px solid var(--accent-blue);
             color: var(--accent-blue);
         }
+        .narrative-p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 2rem;
+            font-style: italic;
+            border-left: 4px solid var(--accent-blue);
+            padding-left: 1.5rem;
+            background: rgba(77, 161, 255, 0.02);
+        }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
         
-        /* Mermaid Dark Theme Overrides */
         .mermaid {
             background: transparent !important;
             filter: drop-shadow(0 0 10px rgba(77, 161, 255, 0.2));
@@ -94,10 +103,10 @@
         </div>
 
         <nav class="flex-grow flex flex-col gap-2 overflow-y-auto custom-scrollbar">
-            <p class="text-[10px] font-black uppercase tracking-[3px] text-white/30 mb-2 px-2">Visual Journeys</p>
-            <a href="#patient-visual" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">Patient Visual</a>
-            <a href="#staff-visual" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">Staff Visual</a>
-            <a href="#tv-visual" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">TV Sync Visual</a>
+            <p class="text-[10px] font-black uppercase tracking-[3px] text-white/30 mb-2 px-2">Narratives</p>
+            <a href="#patient-visual" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">Patient Story</a>
+            <a href="#staff-visual" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">Staff Story</a>
+            <a href="#tv-visual" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">TV Display Story</a>
             
             <p class="text-[10px] font-black uppercase tracking-[3px] text-white/30 mt-6 mb-2 px-2">Core Engine</p>
             <a href="#admin-visual" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">Admin Logic</a>
@@ -116,14 +125,14 @@
     <!-- Main Content Area -->
     <main class="flex-grow glass m-4 ml-2 overflow-y-auto p-12 custom-scrollbar relative">
         <header class="mb-20 max-w-4xl mx-auto text-center">
-            <span class="text-[10px] font-black text-blue-400 tracking-[10px] uppercase mb-4 block">Visualized Architecture</span>
-            <h2 class="font-tomorrow text-6xl mb-6 neon-text-blue uppercase">System Mapping</h2>
-            <p class="text-white/40 text-lg max-w-2xl mx-auto">Understanding the SQMS architecture through interactive visualizations and sequence maps.</p>
+            <span class="text-[10px] font-black text-blue-400 tracking-[10px] uppercase mb-4 block">Visual Narratives</span>
+            <h2 class="font-tomorrow text-6xl mb-6 neon-text-blue uppercase">How it Works</h2>
+            <p class="text-white/40 text-lg max-w-2xl mx-auto">Combining visual maps with simple stories to explain every part of the SQMS system.</p>
         </header>
 
         <section id="patient-visual" class="max-w-5xl mx-auto section flow-section">
-            <h3 class="font-tomorrow text-3xl text-blue-400 mb-6">Patient Flow Visualization</h3>
-            <p class="text-white/40 text-sm mb-10 leading-relaxed">This map shows how a patient's mobile device interacts with the SQMS server infrastructure to secure a spot in the queue.</p>
+            <h3 class="font-tomorrow text-3xl text-blue-400 mb-6 uppercase">Patient Joining Journey</h3>
+            <p class="narrative-p">In this part, we show how a patient uses their phone to join the waitlist. First, the phone asks the system for a spot. The system checks if the patient is already there. If everything is okay, it gives them a new number. Then, the phone shows the patient how long they need to wait to see the doctor.</p>
             <div class="diagram-container">
                 <div class="mermaid">
                     sequenceDiagram
@@ -139,11 +148,23 @@
                         Note right of P: UI shows wait time
                 </div>
             </div>
+            <div class="mt-10 space-y-4 text-white/40 text-sm">
+                <p>1. First, the patient opens the mobile app on their phone to start the process.</p>
+                <p>2. They look for the department they want to visit, like the heart clinic or general doctor.</p>
+                <p>3. The patient clicks the button to join the digital queue from anywhere inside the hospital.</p>
+                <p>4. The app sends a small request to the Node.js server to ask for a new token ID.</p>
+                <p>5. The server checks the database to see if the patient already has an active token there.</p>
+                <p>6. If everything is okay, the server calculates the next available token number for that clinic.</p>
+                <p>7. The server updates the record in the MongoDB database to save the patient's information safely.</p>
+                <p>8. A unique code is assigned so the system knows exactly which patient is currently waiting.</p>
+                <p>9. The patient immediately sees their new token number appearing on their mobile phone screen.</p>
+                <p>10. Finally, the app shows the current position and estimated waiting time so the patient stays calm.</p>
+            </div>
         </section>
 
         <section id="staff-visual" class="max-w-5xl mx-auto section flow-section">
-            <h3 class="font-tomorrow text-3xl text-purple-400 mb-6">Staff Control Visualization</h3>
-            <p class="text-white/40 text-sm mb-10 leading-relaxed">Visualizing the real-time pipeline from a clinical room action to the public waiting area display.</p>
+            <h3 class="font-tomorrow text-3xl text-purple-400 mb-6 uppercase">Clinician Calling Story</h3>
+            <p class="narrative-p">This section explains how the doctor calls the next patient. The doctor clicks a button on their screen. The computer checks who has been waiting longest. It then sends a loud chime to the big TV screen in the hallway to call the patient's number. At the same time, the doctor sees all the patient's information on their own screen.</p>
             <div class="diagram-container">
                 <div class="mermaid">
                     sequenceDiagram
@@ -158,11 +179,23 @@
                         S-->>D: Display Patient Record
                 </div>
             </div>
+            <div class="mt-10 space-y-4 text-white/40 text-sm">
+                <p>1. The doctor or medical staff logs into the Premium Dashboard using their clinic credentials.</p>
+                <p>2. They verify which clinic room they are sitting in, such as "Clinic Room 5" or "Room 10".</p>
+                <p>3. When the doctor is ready for the next patient, they click the large "Call Next" button.</p>
+                <p>4. The web dashboard sends an instruction to the API layer of the Node.js server to fetch a patient.</p>
+                <p>5. The server runs a priority check to see if any emergency or senior patients are waiting first.</p>
+                <p>6. It picks the patient who has been waiting the longest in the highest priority category available.</p>
+                <p>7. The server marks that specific token as "Currently Serving" in the central MongoDB database.</p>
+                <p>8. The database updates the clinic status so other staff can see the room is now occupied.</p>
+                <p>9. The server then sends a signal to the Public TV to announce the new token number loudly.</p>
+                <p>10. Finally, the staff's dashboard shows the patient's details so the doctor knows who is entering the room.</p>
+            </div>
         </section>
 
         <section id="tv-visual" class="max-w-5xl mx-auto section flow-section">
-            <h3 class="font-tomorrow text-3xl text-yellow-400 mb-6">TV Synchronization Flow</h3>
-            <p class="text-white/40 text-sm mb-10 leading-relaxed">Architecture of how display endpoints maintain high-speed connectivity.</p>
+            <h3 class="font-tomorrow text-3xl text-yellow-400 mb-6 uppercase">TV Display Update Flow</h3>
+            <p class="narrative-p">This part shows how the big TV screens in the hospital stay up to date. The main computer sends messages to all the TVs at the same time. This way, whether a TV is in the hallway, the lab, or the lounge, they all show the same patient numbers. Everything happens instantly, so no patient goes to the wrong room.</p>
             <div class="diagram-container">
                 <div class="mermaid">
                     graph LR
@@ -175,11 +208,23 @@
                         style D fill:#1a1a24,stroke:#4DA1FF,color:#fff
                 </div>
             </div>
+            <div class="mt-10 space-y-4 text-white/40 text-sm">
+                <p>1. The Public TV display is connected to the internet and stays open in the main waiting area lounge.</p>
+                <p>2. It maintains a constant connection to the server so it can receive updates without refreshing.</p>
+                <p>3. When a token is called, the TV hears a special "Update" event sent by the Node.js server.</p>
+                <p>4. The screen immediately changes to show the token number in large, bright colors on the board.</p>
+                <p>5. An automated voice or a pleasant chime sound plays to catch the attention of the patients waiting.</p>
+                <p>6. The TV also shows which clinic room the patient should go to, like "Room 3" or "Doctor A".</p>
+                <p>7. In the sidebar of the TV, the next few tokens are shown so people can get ready for their turn.</p>
+                <p>8. If a patient does not show up, the TV removes that token number after the staff clicks "No Show".</p>
+                <p>9. The TV also displays helpful health tips or news between calling patients to keep people informed.</p>
+                <p>10. This real-time synchronization makes sure that nobody misses their appointment or goes to the wrong room.</p>
+            </div>
         </section>
 
         <section id="admin-visual" class="max-w-5xl mx-auto section flow-section">
-            <h3 class="font-tomorrow text-3xl text-green-400 mb-6">Admin Configuration Logic</h3>
-            <p class="text-white/40 text-sm mb-10 leading-relaxed">Flow chart of how administrative rules are pushed to the live system.</p>
+            <h3 class="font-tomorrow text-3xl text-green-400 mb-6 uppercase">Admin Management Process</h3>
+            <p class="narrative-p">This guide explains how the system manager sets everything up. The manager uses a special website to add new departments or change the rules. The system checks to make sure the manager is allowed to make these changes. If okay, it saves the new rules and tells all the doctors' computers about the changes right away.</p>
             <div class="diagram-container">
                 <div class="mermaid">
                     graph TD
@@ -193,11 +238,23 @@
                         style C fill:#fff,color:#000
                 </div>
             </div>
+            <div class="mt-10 space-y-4 text-white/40 text-sm">
+                <p>1. The administrator enters the secure system management area to configure the hospital settings.</p>
+                <p>2. They can create new departments easily, such as adding a "Dental Care" section to the queue.</p>
+                <p>3. The admin changes how many tokens can be issued per hour to prevent the clinic from being too busy.</p>
+                <p>4. When they save a change, the request goes through a security layer to ensure only admins can do this.</p>
+                <p>5. The Node.js server receives the new settings and validates the data for any common errors.</p>
+                <p>6. The server then writes these new rules and department codes into the MongoDB cloud database.</p>
+                <p>7. All active staff dashboards receive an update automatically so they know about the new department.</p>
+                <p>8. The admin can also reset the token counter at the end of the day to start fresh tomorrow morning.</p>
+                <p>9. They can monitor live reports to see how many patients each doctor served during the day.</p>
+                <p>10. This flow ensures the whole hospital system stays organized and works perfectly for everyone involved.</p>
+            </div>
         </section>
 
         <section id="db-visual" class="max-w-5xl mx-auto section flow-section">
-            <h3 class="font-tomorrow text-3xl text-pink-400 mb-6">Data Persistence Flow</h3>
-            <p class="text-white/40 text-sm mb-10 leading-relaxed">How state is managed across multiple data collections in the cloud.</p>
+            <h3 class="font-tomorrow text-3xl text-pink-400 mb-6 uppercase">Cloud Data Story</h3>
+            <p class="narrative-p">Here we explain how we keep all patient data safe in the cloud. Think of it as a giant, super-fast digital filing cabinet. Every time something happens, like a patient arriving, the computer writes it down in a file. This cabinet is hidden and locked so that only the hospital computer can read the information.</p>
             <div class="diagram-container">
                 <div class="mermaid">
                     graph LR
@@ -209,11 +266,23 @@
                         style QueuesColl fill:#1a1a24,stroke:#pink,color:#fff
                 </div>
             </div>
+            <div class="mt-10 space-y-4 text-white/40 text-sm">
+                <p>1. All the data from the app and dashboards is sent to the MongoDB cloud database for safe storage.</p>
+                <p>2. MongoDB is a high-speed database that allows the system to save thousands of tokens very quickly.</p>
+                <p>3. Every time a patient joins or a staff member calls someone, a new log is created in the cloud.</p>
+                <p>4. This data is stored in "Collections" so the server can find it again in just a few milliseconds.</p>
+                <p>5. Using a cloud database means that the hospital does not need to maintain its own physical data server.</p>
+                <p>6. The system uses secure SSL encryption when sending data back and forth to keep patient info private.</p>
+                <p>7. If the server ever goes offline, the cloud data stays safe and can be accessed when the server restarts.</p>
+                <p>8. The database also stores the history of how long each patient had to wait before being served.</p>
+                <p>9. Advanced indexing is used so that the system doesn't slow down even with millions of past records.</p>
+                <p>10. This central storage engine is the brain of the system that keeps everything running smoothly and securely.</p>
+            </div>
         </section>
 
         <section id="alert-visual" class="max-w-5xl mx-auto section flow-section">
-            <h3 class="font-tomorrow text-3xl text-red-400 mb-6">Patient Alert Pipeline</h3>
-            <p class="text-white/40 text-sm mb-10 leading-relaxed">Technical path for delivering high-priority push notifications to mobile devices.</p>
+            <h3 class="font-tomorrow text-3xl text-red-400 mb-6 uppercase">Mobile Alert Story</h3>
+            <p class="narrative-p">This part tells the story of how your phone tells you it's almost your turn. The main computer monitors the list and sees when you are next. It sends a message through the air directly to your phone. Your phone buzzez to tell you to come back to the waiting room. This way, you don't have to watch the screen the whole time.</p>
             <div class="diagram-container">
                 <div class="mermaid">
                     graph LR
@@ -225,11 +294,23 @@
                         style D fill:#FF6B6B,color:#fff
                 </div>
             </div>
+            <div class="mt-10 space-y-4 text-white/40 text-sm">
+                <p>1. When a patient's turn is coming soon, the server sends a "Near Ready" alert to their phone.</p>
+                <p>2. The system calculates when there are only 3 people ahead of that patient in the current queue.</p>
+                <p>3. A request is sent to the Google Firebase Cloud platform to route the message to the mobile app.</p>
+                <p>4. The patient's phone vibrates or plays a notification sound to let them know their turn is close.</p>
+                <p>5. When the clinician finally calls the token, a second critical alert is sent to the patient's phone.</p>
+                <p>6. This message tells them exactly which door or clinic room they should enter right now.</p>
+                <p>7. Even if the app is closed, the push notification will appear on the patient's lock screen.</p>
+                <p>8. This prevents patients from standing in long lines and lets them wait comfortably in the coffee shop.</p>
+                <p>9. The notification system is linked to the unique token ID so no wrong alerts are ever sent out.</p>
+                <p>10. Using this cloud alert flow, the hospital creates a premium experience that respects every patient's time.</p>
+            </div>
         </section>
 
         <!-- Footer -->
         <footer class="mt-20 pt-10 border-t border-white/5 text-center text-white/20 text-xs text-uppercase tracking-widest">
-            &copy; 2026 SQMS Visual Intelligence Center | Interactive Mapping v3.1
+            &copy; 2026 SQMS Visual Narratives | Easy English Guide v4.0
         </footer>
     </main>
 
