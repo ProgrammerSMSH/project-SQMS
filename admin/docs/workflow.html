@@ -3,24 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SQMS | Technical Inspector Lab</title>
+    <title>SQMS | Maximum Perfection Workflow Simulator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tomorrow:wght@700;900&family=Inter:wght@400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #0F0F13;
+            --bg-color: #050507;
             --accent-blue: #4DA1FF;
             --accent-purple: #8B5CF6;
             --accent-green: #10B981;
             --accent-red: #EF4444;
-            --glass-bg: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-bg: rgba(255, 255, 255, 0.02);
+            --glass-border: rgba(255, 255, 255, 0.05);
         }
         body {
             background-color: var(--bg-color);
             color: white;
             font-family: 'Inter', sans-serif;
             overflow: hidden;
+            background-image: 
+                linear-gradient(rgba(77, 161, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(77, 161, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: grid-move 20s linear infinite;
+        }
+        @keyframes grid-move {
+            0% { background-position: 0 0; }
+            100% { background-position: 50px 50px; }
         }
         .font-tomorrow { font-family: 'Tomorrow', sans-serif; }
         .font-mono { font-family: 'Fira Code', monospace; }
@@ -39,184 +48,169 @@
             justify-content: center;
             text-align: center;
             z-index: 10;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
-            border: 1px solid var(--glass-border);
+            background: rgba(0,0,0,0.4);
+        }
+        .node:hover {
+            border-color: rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.05);
+        }
+        .node:hover .tech-tooltip {
+            opacity: 1; transform: translateX(-50%) translateY(0);
+        }
+        .tech-tooltip {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            background: gold;
+            color: black;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 8px;
+            font-weight: 900;
+            text-transform: uppercase;
+            white-space: nowrap;
+            opacity: 0;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
         }
         .node.active {
-            transform: scale(1.05);
-            border-color: var(--accent-blue);
-            box-shadow: 0 0 40px rgba(77, 161, 255, 0.2);
+            transform: scale(1.05); border-color: var(--accent-blue);
+            box-shadow: 0 0 50px rgba(77, 161, 255, 0.1);
         }
-        .node.processing {
-            animation: pulse-border 1.5s infinite;
-        }
+        .node.processing { animation: pulse-border 1.5s infinite; }
         @keyframes pulse-border {
             0% { border-color: var(--glass-border); }
             50% { border-color: var(--accent-blue); box-shadow: 0 0 20px rgba(77, 161, 255, 0.2); }
             100% { border-color: var(--glass-border); }
         }
         .line-svg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 5;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 5;
         }
-        .data-packet {
-            fill: var(--accent-blue);
-            filter: drop-shadow(0 0 8px var(--accent-blue));
+        .running-light {
+            stroke-dasharray: 10, 100;
+            stroke-dashoffset: 0;
+            animation: dash 3s linear infinite;
+            stroke: rgba(77, 161, 255, 0.2);
             visibility: hidden;
         }
-        .data-packet.animating {
-            visibility: visible;
+        .running-light.active { visibility: visible; }
+        @keyframes dash {
+            to { stroke-dashoffset: -110; }
         }
+        .data-packet {
+            fill: var(--accent-blue); filter: drop-shadow(0 0 10px var(--accent-blue));
+            visibility: hidden;
+        }
+        .data-packet.animating { visibility: visible; }
         .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            margin-top: 12px;
-            transition: all 0.3s ease;
+            width: 8px; height: 8px; border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1); margin-top: 12px;
         }
-        .status-dot.active {
-            background: var(--accent-green);
-            box-shadow: 0 0 10px var(--accent-green);
-        }
-        .story-card {
-            transition: all 0.3s ease;
-            opacity: 0.2;
-            transform: translateX(10px);
-        }
-        .story-card.active {
-            opacity: 1;
-            transform: translateX(0);
-            border-left: 4px solid var(--accent-blue);
-            background: rgba(77, 161, 255, 0.08);
-        }
-        .notification-toast {
-            position: absolute;
-            top: -60px;
-            left: 50%;
-            transform: translateX(-50%) scale(0.9);
-            padding: 8px 16px;
-            background: var(--accent-blue);
-            color: black;
-            border-radius: 12px;
-            font-size: 10px;
-            font-weight: 800;
-            text-transform: uppercase;
-            white-space: nowrap;
-            opacity: 0;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            pointer-events: none;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-        }
-        .notification-toast.show {
-            opacity: 1;
-            transform: translateX(-50%) scale(1);
-            top: -80px;
-        }
+        .status-dot.active { background: var(--accent-green); box-shadow: 0 0 10px var(--accent-green); }
+        .story-card { transition: all 0.3s ease; opacity: 0.1; }
+        .story-card.active { opacity: 1; border-left: 4px solid var(--accent-blue); background: rgba(77, 161, 255, 0.05); }
         .technical-label {
-            position: absolute;
-            bottom: -60px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 250px;
-            padding: 8px 12px;
-            background: rgba(0,0,0,0.8);
-            border: 1px solid var(--glass-border);
-            border-radius: 8px;
-            font-family: 'Fira Code', monospace;
-            font-size: 8px;
-            color: rgba(255,255,255,0.7);
-            white-space: pre-wrap;
-            opacity: 0;
-            transition: all 0.3s ease;
-            pointer-events: none;
+            position: absolute; bottom: -80px; left: 50%; transform: translateX(-50%);
+            width: 250px; padding: 10px; background: rgba(0,0,0,0.9);
+            border: 1px solid var(--glass-border); border-radius: 12px;
+            font-family: 'Fira Code', monospace; font-size: 8px; color: rgba(255,255,255,0.6);
+            opacity: 0; transition: all 0.3s ease; white-space: pre-wrap;
         }
-        .technical-label.show {
-            opacity: 1;
-            bottom: -75px;
-            border-color: var(--accent-blue);
+        .technical-label.show { opacity: 1; bottom: -95px; border-color: var(--accent-blue); }
+        .console-window {
+            height: 120px; background: rgba(0,0,0,0.8); border: 1px solid var(--glass-border);
+            border-radius: 16px; margin-top: 2rem; font-family: 'Fira Code', monospace; font-size: 9px;
+            color: #10B981; padding: 1rem; overflow-y: auto;
         }
+        .success-pulse {
+            position: fixed; inset: 0; background: var(--accent-green); opacity: 0; pointer-events: none; z-index: 50;
+            transition: opacity 1s ease;
+        }
+        .success-pulse.show { opacity: 0.05; animation: flash 1s forwards; }
+        @keyframes flash { 0% { opacity: 0.1; } 100% { opacity: 0; } }
         ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
-        
-        .mode-btn { position: relative; overflow: hidden; }
-        .mode-btn::after {
-            content: ''; position: absolute; bottom: 0; left: 0;
-            width: 100%; height: 2px;
-            background: var(--accent-blue); transform: scaleX(0); transition: transform 0.3s ease;
-        }
-        .mode-btn.active::after { transform: scaleX(1); }
     </style>
 </head>
-<body class="h-screen flex flex-col p-8">
+<body class="h-screen flex flex-col p-8 select-none">
+    <div class="success-pulse" id="global-pulse"></div>
+
     <!-- Header -->
-    <header class="flex justify-between items-center mb-8 shrink-0">
+    <header class="flex justify-between items-center mb-8 shrink-0 z-20">
         <div class="flex items-center gap-4">
-            <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/20">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+            <div class="relative">
+                <div class="absolute inset-0 bg-blue-500 blur-xl opacity-20 animate-pulse"></div>
+                <div class="w-14 h-14 bg-gradient-to-br from-blue-600 to-purple-700 rounded-2xl flex items-center justify-center relative border border-white/20">
+                    <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                </div>
             </div>
             <div>
-                <h1 class="font-tomorrow text-2xl uppercase tracking-tighter leading-none">Sim <span class="text-blue-400 text-shadow-blue">Lab</span></h1>
-                <p class="text-[9px] uppercase tracking-[4px] text-white/20 font-black mt-1">Full-Stack Technical Inspector</p>
+                <h1 class="font-tomorrow text-3xl uppercase tracking-tighter leading-none italic">Sim <span class="text-blue-400">Perfect</span></h1>
+                <p class="text-[9px] uppercase tracking-[6px] text-white/20 font-black mt-1">Advanced Full-Stack Visualizer v3.0</p>
             </div>
         </div>
-        <div class="flex gap-2 p-1 glass rounded-2xl">
-            <button id="sim-join" class="mode-btn px-6 py-2 rounded-xl hover:bg-white/5 transition text-[10px] font-black tracking-widest uppercase text-blue-400 active">Join Queue Flow</button>
-            <button id="sim-call" class="mode-btn px-6 py-2 rounded-xl hover:bg-white/5 transition text-[10px] font-black tracking-widest uppercase text-purple-400">Call Next Flow</button>
+        <div class="flex gap-2 p-1 glass rounded-2xl bg-black/60 shadow-2xl">
+            <button id="sim-join" class="px-6 py-2 rounded-xl hover:bg-white/5 transition text-[10px] font-black tracking-widest uppercase text-blue-400 bg-blue-500/5 border border-blue-500/10">Join Flow</button>
+            <button id="sim-call" class="px-6 py-2 rounded-xl hover:bg-white/5 transition text-[10px] font-black tracking-widest uppercase text-purple-400">Call Flow</button>
             <div class="w-px bg-white/10 mx-2"></div>
-            <a href="index.html" class="px-6 py-2 rounded-xl hover:bg-white/5 transition text-[10px] font-black tracking-widest uppercase text-white/60">Close Inspector</a>
+            <a href="index.html" class="px-6 py-2 rounded-xl hover:bg-white/5 transition text-[10px] font-black tracking-widest uppercase text-white/60">Lab Exit</a>
         </div>
     </header>
 
-    <div class="flex-grow flex gap-8 overflow-hidden">
-        <!-- Main Simulation Area -->
-        <main class="flex-grow glass relative overflow-hidden flex items-center justify-center border-white/5 bg-black/30">
-            <!-- SVG Paths -->
+    <div class="flex-grow flex gap-8 overflow-hidden z-20">
+        <!-- Main Simulation -->
+        <main class="flex-grow glass relative overflow-hidden flex items-center justify-center border-white/5 bg-black/40">
             <svg class="line-svg" id="simulation-svg">
-                <defs>
-                    <filter id="glow">
-                        <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-                        <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
-                    </filter>
-                </defs>
-                <path id="path-app-server" d="M 220,320 L 410,320" stroke="rgba(255,255,255,0.03)" stroke-width="2" fill="none" />
-                <path id="path-server-db" d="M 550,320 L 740,320" stroke="rgba(255,255,255,0.03)" stroke-width="2" fill="none" />
-                <path id="path-server-tv" d="M 480,250 L 480,120 L 740,120" stroke="rgba(255,255,255,0.03)" stroke-width="2" fill="none" />
-                <path id="path-staff-server" d="M 220,120 L 410,120 L 410,250" stroke="rgba(255,255,255,0.03)" stroke-width="2" fill="none" />
-                <circle id="packet" r="6" class="data-packet" filter="url(#glow)" />
+                <defs><filter id="packet-glow"><feGaussianBlur stdDeviation="4"/><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+                <!-- Ghost Paths -->
+                <path class="ghost-path" id="p-app-server" d="M 220,320 L 410,320" stroke="rgba(255,255,255,0.02)" stroke-width="1.5" fill="none" />
+                <path class="ghost-path" id="p-server-db" d="M 550,320 L 740,320" stroke="rgba(255,255,255,0.02)" stroke-width="1.5" fill="none" />
+                <path class="ghost-path" id="p-server-tv" d="M 480,250 L 480,120 L 740,120" stroke="rgba(255,255,255,0.02)" stroke-width="1.5" fill="none" />
+                <path class="ghost-path" id="p-staff-server" d="M 220,120 L 410,120 L 410,250" stroke="rgba(255,255,255,0.02)" stroke-width="1.5" fill="none" />
+                
+                <!-- Running Lights -->
+                <path class="running-light" id="light-app-server" d="M 220,320 L 410,320" stroke-width="2" fill="none" />
+                <path class="running-light" id="light-server-db" d="M 550,320 L 740,320" stroke-width="2" fill="none" />
+                <path class="running-light" id="light-server-tv" d="M 480,250 L 480,120 L 740,120" stroke-width="2" fill="none" />
+                <path class="running-light" id="light-staff-server" d="M 220,120 L 410,120 L 410,250" stroke-width="2" fill="none" />
+
+                <!-- Data Packet -->
+                <circle id="packet" r="7" class="data-packet" filter="url(#packet-glow)" />
             </svg>
 
-            <!-- Nodes -->
+            <!-- Nodes with Tech Hover -->
             <div id="node-app" class="node glass absolute left-[80px] bottom-[120px]">
-                <div id="toast-app" class="notification-toast">Token Called!</div>
+                <div class="tech-tooltip">Flutter / Dart / FCM</div>
+                <div id="toast-app" class="notification-toast">Packet Received</div>
                 <div id="label-app" class="technical-label"></div>
                 <svg class="w-10 h-10 text-blue-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
-                <span class="text-[10px] font-black uppercase tracking-widest">Patient App</span>
+                <span class="text-[10px] font-black uppercase tracking-widest">Client App</span>
                 <div class="status-dot"></div>
             </div>
 
             <div id="node-staff" class="node glass absolute left-[80px] top-[120px]">
+                <div class="tech-tooltip">React / Tailwind / JWT</div>
                 <div id="label-staff" class="technical-label"></div>
                 <svg class="w-10 h-10 text-purple-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                <span class="text-[10px] font-black uppercase tracking-widest">Staff Portal</span>
+                <span class="text-[10px] font-black uppercase tracking-widest">Dash Port</span>
                 <div class="status-dot"></div>
             </div>
 
             <div id="node-server" class="node glass absolute left-[410px] top-[250px]">
+                <div class="tech-tooltip">Node.js 20 / Express</div>
                 <div id="label-server" class="technical-label"></div>
                 <svg class="w-10 h-10 text-white mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"/></svg>
-                <span class="text-[10px] font-black uppercase tracking-widest">Node Engine</span>
+                <span class="text-[10px] font-black uppercase tracking-widest">Core API</span>
                 <div class="status-dot"></div>
             </div>
 
             <div id="node-db" class="node glass absolute right-[80px] bottom-[120px]">
+                <div class="tech-tooltip">Mongoose / Atlas</div>
                 <div id="label-db" class="technical-label"></div>
                 <svg class="w-10 h-10 text-pink-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg>
                 <span class="text-[10px] font-black uppercase tracking-widest">MongoDB</span>
@@ -224,79 +218,64 @@
             </div>
 
             <div id="node-tv" class="node glass absolute right-[80px] top-[120px]">
+                <div class="tech-tooltip">Socket.io / HTML5</div>
                 <div id="label-tv" class="technical-label"></div>
-                <svg class="w-10 h-10 text-yellow-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                <span class="text-[10px] font-black uppercase tracking-widest">Public Display</span>
+                <svg class="w-10 h-10 text-yellow-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                <span class="text-[10px] font-black uppercase tracking-widest">TV Display</span>
                 <div class="status-dot"></div>
             </div>
-
-            <!-- Background Decorations -->
-            <div class="absolute inset-x-20 inset-y-10 border border-white/5 rounded-[80px] pointer-events-none"></div>
-            <div class="absolute bottom-10 left-10 text-[10px] text-white/5 font-black uppercase tracking-[15px]">Technical Inspector Simulation v2.0</div>
         </main>
 
-        <!-- Dynamic Story Sidebar -->
-        <aside class="w-[380px] flex flex-col gap-4">
-            <h2 class="font-tomorrow text-xs tracking-widest uppercase text-white/40 px-2 flex justify-between">
-                <span>Inspector Logs</span>
-                <span id="sim-status" class="text-blue-500 font-black">STBY</span>
-            </h2>
-            <div class="glass flex-grow p-6 overflow-y-auto space-y-4 custom-scrollbar" id="story-panel">
-                <!-- Simulation story points (same as before) -->
-                <div class="story-card active p-4 glass rounded-xl join-step" id="j-step-0">
-                    <h3 class="text-[10px] font-black uppercase text-blue-400 mb-2">Patient Initiates Join</h3>
-                    <p class="text-[11px] text-white/50 leading-relaxed">System is on standby. Technical labels will activate on each node showing internal payloads.</p>
-                </div>
-                <div class="story-card p-4 glass rounded-xl join-step" id="j-step-1"><h3 class="text-[10px] font-black uppercase text-white">Event: Dispatch Token Request</h3></div>
-                <div class="story-card p-4 glass rounded-xl join-step" id="j-step-2"><h3 class="text-[10px] font-black uppercase text-white">Server: Auth & Logic Extraction</h3></div>
-                <div class="story-card p-4 glass rounded-xl join-step" id="j-step-3"><h3 class="text-[10px] font-black uppercase text-white">DB: Mongoose Atomic Write</h3></div>
-                <div class="story-card p-4 glass rounded-xl join-step" id="j-step-4"><h3 class="text-[10px] font-black uppercase text-white">App: Receive Response</h3></div>
+        <!-- Sidebar Timeline & Console -->
+        <aside class="w-[420px] flex flex-col gap-4">
+            <div class="glass flex-grow p-6 overflow-y-auto space-y-4 shadow-inner custom-scrollbar" id="story-panel">
+                <header class="mb-4"><h3 class="text-[10px] font-black tracking-widest text-white/40 uppercase">Architecture Timeline</h3></header>
+                <div class="story-card active p-4 glass rounded-xl join-step" id="j-step-0"><h3 class="text-[10px] font-black uppercase text-blue-400">Simulation Ready</h3><p class="text-[11px] text-white/50 leading-relaxed italic">Maximum Perfection Lab Initiated. Select a flow in slow-mode.</p></div>
+                <div class="story-card p-4 glass rounded-xl join-step" id="j-step-1"><h3 class="text-[10px] font-black uppercase text-white">Event: Token Request Handshake</h3></div>
+                <div class="story-card p-4 glass rounded-xl join-step" id="j-step-2"><h3 class="text-[10px] font-black uppercase text-white">Server: Logical Extract & Auth</h3></div>
+                <div class="story-card p-4 glass rounded-xl join-step" id="j-step-3"><h3 class="text-[10px] font-black uppercase text-white">DB: Atomic Mongoose Write</h3></div>
+                <div class="story-card p-4 glass rounded-xl join-step" id="j-step-4"><h3 class="text-[10px] font-black uppercase text-white">Client: Response Serialization</h3></div>
+                <div class="story-card p-4 glass rounded-xl call-step" id="c-step-0"><h3 class="text-[10px] font-black uppercase text-purple-400">Staff: Call Next Command</h3></div>
+                <div class="story-card p-4 glass rounded-xl call-step" id="c-step-1"><h3 class="text-[10px] font-black uppercase text-white">Server: Priority Ranking Search</h3></div>
+                <div class="story-card p-4 glass rounded-xl call-step" id="c-step-2"><h3 class="text-[10px] font-black uppercase text-white">DB: State Mutation SELLING</h3></div>
+                <div class="story-card p-4 glass rounded-xl call-step" id="c-step-3"><h3 class="text-[10px] font-black uppercase text-white">Live: WebSocket Socket.io Alert</h3></div>
+                <div class="story-card p-4 glass rounded-xl call-step" id="c-step-4"><h3 class="text-[10px] font-black uppercase text-white">Patient: Cloud FCM Push Alert</h3></div>
+            </div>
 
-                <div class="story-card p-4 glass rounded-xl call-step" id="c-step-0"><h3 class="text-[10px] font-black uppercase text-purple-400">Clinician: Call Next Request</h3></div>
-                <div class="story-card p-4 glass rounded-xl call-step" id="c-step-1"><h3 class="text-[10px] font-black uppercase text-white">Server: Priority Ranking Engine</h3></div>
-                <div class="story-card p-4 glass rounded-xl call-step" id="c-step-2"><h3 class="text-[10px] font-black uppercase text-white">DB: Token State Mutation</h3></div>
-                <div class="story-card p-4 glass rounded-xl call-step" id="c-step-3"><h3 class="text-[10px] font-black uppercase text-white">Live: Socket.io Broadcast</h3></div>
-                <div class="story-card p-4 glass rounded-xl call-step" id="c-step-4"><h3 class="text-[10px] font-black uppercase text-white">Alert: FCM Push Notification</h3></div>
+            <!-- Enhanced Console -->
+            <div class="console-window custom-scrollbar" id="terminal-logs">
+                <div class="flex justify-between mb-2 pb-2 border-b border-white/5"><span class="text-white/20 uppercase font-black tracking-widest text-[8px]">RAW SYSTEM LOGS</span><span class="text-green-500/50 blink text-[8px]">LIVE</span></div>
+                <div id="console-output" class="space-y-1">
+                    <p class="text-white/20">[INFO] Lab Infrastructure Online: 14:16:27</p>
+                    <p class="text-white/20">[INFO] Waiting for simulation trigger...</p>
+                </div>
             </div>
         </aside>
     </div>
 
     <script>
-        const btnJoin = document.getElementById('sim-join');
-        const btnCall = document.getElementById('sim-call');
+        const output = document.getElementById('console-output');
+        const pulse = document.getElementById('global-pulse');
         const packet = document.getElementById('packet');
+        const simStatus = document.getElementById('sim-status');
         const storyCards = document.querySelectorAll('.story-card');
         const nodes = document.querySelectorAll('.node');
-        const simStatus = document.getElementById('sim-status');
-        const appToast = document.getElementById('toast-app');
 
-        let isAnimating = false;
-
-        const setNodeLabel = (nodeId, text) => {
-            const label = document.getElementById(`label-${nodeId.split('-')[1]}`);
-            if (text) {
-                label.textContent = text;
-                label.classList.add('show');
-            } else {
-                label.classList.remove('show');
-            }
+        const log = (msg, level = 'INFO') => {
+            const p = document.createElement('p');
+            const time = new Date().toLocaleTimeString('en-GB', { hour12: false });
+            p.innerHTML = `<span class="text-white/20">${time} [${level}]</span> ${msg}`;
+            output.appendChild(p);
+            p.scrollIntoView();
         };
 
-        const resetSimulation = () => {
-            isAnimating = false;
-            packet.classList.remove('animating');
-            nodes.forEach(n => {
-                n.classList.remove('active', 'processing');
-                n.querySelector('.status-dot').classList.remove('active');
-            });
-            document.querySelectorAll('.technical-label').forEach(l => l.classList.remove('show'));
-            storyCards.forEach(c => c.classList.remove('active'));
-            appToast.classList.remove('show');
-            simStatus.textContent = 'STBY';
-            simStatus.className = 'text-blue-500 font-black';
+        const togglePathLights = (pathId, state) => {
+            const light = document.getElementById(`light-${pathId.split('-').slice(1).join('-')}`);
+            if (state) light.classList.add('active'); else light.classList.remove('active');
         };
 
-        const animatePacket = (pathId, duration = 3000, reverse = false) => {
+        const animatePacket = (pathId, duration = 3500, reverse = false) => {
+            togglePathLights(pathId, true);
             return new Promise(resolve => {
                 const path = document.getElementById(pathId);
                 const pathLength = path.getTotalLength();
@@ -306,106 +285,101 @@
                     if (!start) start = timestamp;
                     const progress = (timestamp - start) / duration;
                     if (progress <= 1) {
-                        const actualProgress = reverse ? (1 - progress) : progress;
-                        const point = path.getPointAtLength(actualProgress * pathLength);
-                        packet.setAttribute('cx', point.x); packet.setAttribute('cy', point.y);
+                        const actual = reverse ? (1 - progress) : progress;
+                        const pt = path.getPointAtLength(actual * pathLength);
+                        packet.setAttribute('cx', pt.x); packet.setAttribute('cy', pt.y);
                         requestAnimationFrame(animate);
-                    } else resolve();
+                    } else { togglePathLights(pathId, false); resolve(); }
                 };
                 requestAnimationFrame(animate);
             });
         };
 
-        const setActiveStep = (stepId) => {
-            storyCards.forEach(card => card.classList.remove('active'));
-            const card = document.getElementById(stepId);
-            card.classList.add('active');
-            card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        };
-
-        const setNodeState = (nodeId, status = 'active', labelText = '') => {
+        const setNodeState = (nodeId, status = 'active', technical = '', message = '') => {
+            nodes.forEach(n => { n.classList.remove('active', 'processing'); n.querySelector('.status-dot').classList.remove('active'); });
             const n = document.getElementById(nodeId);
-            n.classList.add('active');
-            if (status === 'processing') n.classList.add('processing');
+            n.classList.add('active'); if (status === 'processing') n.classList.add('processing');
             n.querySelector('.status-dot').classList.add('active');
-            if (labelText) setNodeLabel(nodeId, labelText);
+            const label = n.querySelector('.technical-label');
+            if (technical) { label.textContent = technical; label.classList.add('show'); } else { label.classList.remove('show'); }
+            if (message) log(message);
         };
 
-        // Workflow: Join Queue
-        btnJoin.addEventListener('click', async () => {
-            if (isAnimating) return; isAnimating = true; resetSimulation();
-            btnJoin.classList.add('active'); btnCall.classList.remove('active');
-            simStatus.textContent = 'RUNNING: JOIN INSPECTOR';
+        const runSim = async (type) => {
+            isAnimating = true;
+            document.querySelectorAll('.technical-label').forEach(l => l.classList.remove('show'));
+            if (type === 'join') {
+                log('Initiating Join Queue Handshake Sequence');
+                // Step 1
+                document.getElementById('j-step-1').classList.add('active');
+                setNodeState('node-app', 'active', 'SENDING JSON:\n{ deptId: "MED-01" }\nHeaders: { "x-auth": "...jwt..." }', 'Requesting new token for Cardiology');
+                await animatePacket('p-app-server', 3500);
+                // Step 2
+                document.getElementById('j-step-1').classList.remove('active');
+                document.getElementById('j-step-2').classList.add('active');
+                setNodeState('node-server', 'processing', 'AUTH: JWT VALID\nSTATE: Fetching last number...\nALGO: Calcluating wait time...', 'Verifying clinician access and queue status');
+                await new Promise(r => setTimeout(r, 4500));
+                // Step 3
+                document.getElementById('j-step-2').classList.remove('active');
+                document.getElementById('j-step-3').classList.add('active');
+                await animatePacket('p-server-db', 2500);
+                setNodeState('node-db', 'processing', 'QUERY: updateMany()\nCMD: { $inc: { lastTokenNum: 1 } }\nTRANS: Atomic Lock Set', 'Writing and locking record in Atlas Cluster');
+                await new Promise(r => setTimeout(r, 4500));
+                // Step 4
+                await animatePacket('p-server-db', 2500, true);
+                document.getElementById('j-step-3').classList.remove('active');
+                document.getElementById('j-step-4').classList.add('active');
+                setNodeState('node-server', 'active', 'HTTP 201 CREATED\nBody: { token: "MED-11" }', 'Response serialized and compressed');
+                await animatePacket('p-app-server', 2500, true);
+                setNodeState('node-app', 'active', 'UI: RENDER_TOKEN\nDATA: token="MED-11"\nDELAY: 15 mins', 'Client UI state updated locally');
+            } else {
+                log('Initiating Call Next High-Priority Pulse');
+                // Call Flow Logic (similar delays for perfection)
+                document.getElementById('c-step-0').classList.add('active');
+                setNodeState('node-staff', 'active', 'API_CALL: callNext()\nPayload: { room: 5 }', 'Clinician triggering next patient scan');
+                await animatePacket('p-staff-server', 3500);
+                document.getElementById('c-step-0').classList.remove('active');
+                document.getElementById('c-step-1').classList.add('active');
+                setNodeState('node-server', 'processing', 'QUERY: findOne({ status: "WAITING" })\nSORT: { priority: "EMERGENCY" }', 'Priority engine scanning for urgent tokens');
+                await new Promise(r => setTimeout(r, 4500));
+                document.getElementById('c-step-1').classList.remove('active');
+                document.getElementById('c-step-2').classList.add('active');
+                await animatePacket('p-server-db', 2500);
+                setNodeState('node-db', 'processing', 'UPDATE: { $set: { status: "SERVING" } }', 'Persistent state mutation in MongoDB');
+                await new Promise(r => setTimeout(r, 4000));
+                document.getElementById('c-step-2').classList.remove('active');
+                document.getElementById('c-step-3').classList.add('active');
+                setNodeState('node-server', 'processing', 'SOCKET.IO: emit("view_refresh")\nEvent: BROADCAST_ALL', 'WebSocket broadcast dispatched to all display endpoints');
+                await animatePacket('p-server-tv', 3500);
+                setNodeState('node-tv', 'active', 'REFRESH: updateDisplay()\nSTATUS: PLAYING_CHIME', 'Public display updated and chime triggered');
+                document.getElementById('c-step-3').classList.remove('active');
+                document.getElementById('c-step-4').classList.add('active');
+                await new Promise(r => setTimeout(r, 3000));
+                setNodeState('node-server', 'active', 'FIREBASE_FCM: push_notify()\nTopic: "patient_token_alert"', 'Firebase Relay sending push to mobile device');
+                await animatePacket('p-app-server', 3000, true);
+                setNodeState('node-app', 'active', 'ALERT: TOKEN_CALLED\nMSG: Proceed to Room 5', 'Mobile haptics and lockscreen alert fired');
+            }
 
-            // 1. Dispatch
-            setActiveStep('j-step-1');
-            setNodeState('node-app', 'active', 'SENDING REQUEST:\nPOST /api/v1/tokens\nPayload: { dept: "A-01" }\nHeaders: { Auth: "JWT_SECURE" }');
-            await animatePacket('path-app-server', 3000);
+            log('Simulation successfully concluded. Dispatching pulse.', 'SUCCESS');
+            pulse.classList.add('show'); await new Promise(r => setTimeout(r, 1000)); pulse.classList.remove('show');
+            setTimeout(() => { isAnimating = false; resetSimulation(); }, 6000);
+        };
 
-            // 2. Logic
-            setActiveStep('j-step-2');
-            setNodeState('node-server', 'processing', 'INSPECTING PAYLOAD:\nVerify JWT token...\nFetch dept details...\nCalculate estimatedWaitTime');
-            await new Promise(r => setTimeout(r, 4500));
+        const resetSimulation = () => {
+            packet.classList.remove('animating');
+            nodes.forEach(n => { n.classList.remove('active', 'processing'); n.querySelector('.status-dot').classList.remove('active'); });
+            document.querySelectorAll('.technical-label').forEach(l => l.classList.remove('show'));
+            storyCards.forEach(c => c.classList.remove('active'));
+            document.getElementById('j-step-0').classList.add('active');
+            log('Lab state reset to standby.');
+        };
 
-            // 3. DB Write
-            setActiveStep('j-step-3');
-            await animatePacket('path-server-db', 2500);
-            setNodeState('node-db', 'processing', 'MONGOOSE COMMAND:\nQueue.findOneAndUpdate(\n  { _id: "A-01" },\n  { $inc: { lastTokenNum: 1 } }\n)');
-            await new Promise(r => setTimeout(r, 4500));
+        document.getElementById('sim-join').onclick = () => { if(!isAnimating) runSim('join'); };
+        document.getElementById('sim-call').onclick = () => { if(!isAnimating) runSim('call'); };
+        let isAnimating = false;
 
-            // 4. Response
-            await animatePacket('path-server-db', 2500, true);
-            setActiveStep('j-step-4');
-            setNodeState('node-server', 'active', 'HTTP RESPONSE:\nStatus: 201 Created\nBody: { token: "A-125", pos: 4 }');
-            await animatePacket('path-app-server', 2500, true);
-            setNodeState('node-app', 'active', 'UI UPDATING:\nDisplay Token: A-125\nWait Time: 12 mins');
-
-            await new Promise(r => setTimeout(r, 7000)); resetSimulation();
-        });
-
-        // Workflow: Call Next
-        btnCall.addEventListener('click', async () => {
-            if (isAnimating) return; isAnimating = true; resetSimulation();
-            btnCall.classList.add('active'); btnJoin.classList.remove('active');
-            simStatus.textContent = 'RUNNING: CALL INSPECTOR';
-            simStatus.className = 'text-purple-500 font-black';
-
-            // 1. Staff Request
-            setActiveStep('c-step-0');
-            setNodeState('node-staff', 'active', 'API CALL:\nPOST /api/v1/call-next\nRoomID: "CR-05"\nStaff: "Dr. Smith"');
-            await animatePacket('path-staff-server', 3000);
-
-            // 2. Priority Search
-            setActiveStep('c-step-1');
-            setNodeState('node-server', 'processing', 'QUERY PIPELINE:\nMatch: { status: "WAITING" }\nSort: { priority: "EMERGNCY", joinedAt: 1 }');
-            await new Promise(r => setTimeout(r, 4500));
-
-            // 3. DB Mutation
-            setActiveStep('c-step-2');
-            await animatePacket('path-server-db', 2500);
-            setNodeState('node-db', 'processing', 'DB UPDATE:\nToken.updateOne(\n  { _id: "T-05" },\n  { $set: { status: "SERVING" } }\n)');
-            await new Promise(r => setTimeout(r, 4500));
-
-            // 4. TV Sync
-            setActiveStep('c-step-3');
-            setNodeState('node-server', 'processing', 'SOCKET.IO EVENT:\nio.emit("update_view", {\n  num: "A-125", room: "05"\n})');
-            await animatePacket('path-server-tv', 3000);
-            setNodeState('node-tv', 'active', 'UI REFRESH:\nShow large "A-125"\nPlay "chime.mp3"\nUpdate sidebar list');
-            await new Promise(r => setTimeout(r, 4500));
-
-            // 5. Patient Alert
-            setActiveStep('c-step-4');
-            setNodeState('node-server', 'active', 'FIREBASE FCM:\nSend Push to DeviceID "D-99"\nBody: "Room 5 Calling..."');
-            await animatePacket('path-app-server', 3000, true);
-            setNodeState('node-app', 'active', 'NOTIFICATION:\nDisplay Banner over lockscreen\nTrigger phone vibration');
-            appToast.classList.add('show');
-
-            await new Promise(r => setTimeout(r, 8000)); resetSimulation();
-        });
-
-        // Init
         window.onload = () => {
-            const path = document.getElementById('path-app-server');
+            const path = document.getElementById('p-app-server');
             const pt = path.getPointAtLength(0);
             packet.setAttribute('cx', pt.x); packet.setAttribute('cy', pt.y);
         };
