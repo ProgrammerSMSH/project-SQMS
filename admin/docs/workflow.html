@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQMS | Interactive Workflow Simulation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tomorrow:wght@700;900&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0F0F13;
+            --accent-blue: #4DA1FF;
+            --accent-purple: #8B5CF6;
+            --accent-green: #10B981;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+        body {
+            background-color: var(--bg-color);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+        }
+        .font-tomorrow { font-family: 'Tomorrow', sans-serif; }
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+        }
+        .node {
+            width: 120px;
+            height: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            z-index: 10;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+        .node.active {
+            transform: scale(1.1);
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 30px rgba(77, 161, 255, 0.3);
+        }
+        .node.processing {
+            animation: pulse-border 1.5s infinite;
+        }
+        @keyframes pulse-border {
+            0% { border-color: var(--glass-border); }
+            50% { border-color: var(--accent-blue); box-shadow: 0 0 20px rgba(77, 161, 255, 0.2); }
+            100% { border-color: var(--glass-border); }
+        }
+        .line-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+        .data-packet {
+            fill: var(--accent-blue);
+            filter: drop-shadow(0 0 8px var(--accent-blue));
+            visibility: hidden;
+        }
+        .data-packet.animating {
+            visibility: visible;
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            margin-top: 8px;
+        }
+        .status-dot.active {
+            background: var(--accent-green);
+            box-shadow: 0 0 10px var(--accent-green);
+        }
+        .story-card {
+            transition: all 0.3s ease;
+            opacity: 0.3;
+            transform: translateX(20px);
+        }
+        .story-card.active {
+            opacity: 1;
+            transform: translateX(0);
+            border-left: 4px solid var(--accent-blue);
+            background: rgba(77, 161, 255, 0.05);
+        }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+    </style>
+</head>
+<body class="h-screen flex flex-col p-8">
+    <!-- Header -->
+    <header class="flex justify-between items-center mb-8 shrink-0">
+        <div class="flex items-center gap-4">
+            <div class="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+            </div>
+            <div>
+                <h1 class="font-tomorrow text-xl uppercase tracking-tighter leading-none">Sim <span class="text-blue-400">Flow</span></h1>
+                <p class="text-[9px] uppercase tracking-[3px] text-white/30 font-bold mt-1">SQMS Multi-Node Simulator</p>
+            </div>
+        </div>
+        <div class="flex gap-4">
+            <button id="sim-join" class="px-6 py-2 rounded-full glass hover:bg-white/10 transition text-[10px] font-black tracking-widest uppercase text-blue-400 border border-blue-500/20">Simulation: Join Queue</button>
+            <a href="index.html" class="px-6 py-2 rounded-full glass hover:bg-white/10 transition text-[10px] font-black tracking-widest uppercase">Back to Docs</a>
+        </div>
+    </header>
+
+    <div class="flex-grow flex gap-8 overflow-hidden">
+        <!-- Main Simulation Area -->
+        <main class="flex-grow glass relative overflow-hidden flex items-center justify-center">
+            <!-- SVG Paths -->
+            <svg class="line-svg" id="simulation-svg">
+                <!-- Path 1: App to Server -->
+                <path id="path-app-server" d="M 200,300 L 450,300" stroke="rgba(255,255,255,0.05)" stroke-width="2" fill="none" />
+                <!-- Path 2: Server to DB -->
+                <path id="path-server-db" d="M 550,300 L 800,300" stroke="rgba(255,255,255,0.05)" stroke-width="2" fill="none" />
+                <!-- Path 3: Server to TV -->
+                <path id="path-server-tv" d="M 500,250 L 500,100 L 800,100" stroke="rgba(255,255,255,0.05)" stroke-width="2" fill="none" />
+                
+                <!-- Data Packets -->
+                <circle id="packet" r="4" class="data-packet" />
+            </svg>
+
+            <!-- Nodes -->
+            <div id="node-app" class="node glass absolute left-[140px] top-[240px]">
+                <svg class="w-8 h-8 text-blue-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                <span class="text-[10px] font-bold uppercase tracking-widest">Patient App</span>
+                <div class="status-dot"></div>
+            </div>
+
+            <div id="node-server" class="node glass absolute left-[440px] top-[240px]">
+                <svg class="w-8 h-8 text-purple-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"/></svg>
+                <span class="text-[10px] font-bold uppercase tracking-widest">Node.js API</span>
+                <div class="status-dot"></div>
+            </div>
+
+            <div id="node-db" class="node glass absolute left-[740px] top-[240px]">
+                <svg class="w-8 h-8 text-pink-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg>
+                <span class="text-[10px] font-bold uppercase tracking-widest">MongoDB</span>
+                <div class="status-dot"></div>
+            </div>
+
+            <div id="node-tv" class="node glass absolute left-[740px] top-[40px]">
+                <svg class="w-8 h-8 text-yellow-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                <span class="text-[10px] font-bold uppercase tracking-widest">Public TV</span>
+                <div class="status-dot"></div>
+            </div>
+
+            <!-- Background Decorations -->
+            <div class="absolute inset-x-20 inset-y-10 border border-white/5 rounded-[60px] pointer-events-none"></div>
+            <div class="absolute bottom-10 left-10 text-[10px] text-white/10 font-black uppercase tracking-[10px]">Architecture Simulation v1.0</div>
+        </main>
+
+        <!-- Dynamic Story Sidebar -->
+        <aside class="w-[350px] flex flex-col gap-4">
+            <h2 class="font-tomorrow text-sm tracking-widest uppercase text-white/40 px-2">Stage Timeline</h2>
+            <div class="glass flex-grow p-6 overflow-y-auto space-y-4 custom-scrollbar" id="story-panel">
+                <div class="story-card p-4 glass rounded-xl active" id="step-idle">
+                    <h3 class="text-xs font-bold uppercase text-blue-400 mb-1">System Standby</h3>
+                    <p class="text-[11px] text-white/40 leading-relaxed">The internal system is ready. Click the "Simulate" button to begin a journey through the SQMS engine.</p>
+                </div>
+                <div class="story-card p-4 glass rounded-xl" id="step-request">
+                    <h3 class="text-xs font-bold uppercase text-white mb-1">Phase 1: API Request</h3>
+                    <p class="text-[11px] text-white/40 leading-relaxed">Patient clicks "Join" in the app. A secure JSON request with JWT headers is sent to the Node.js API layer.</p>
+                </div>
+                <div class="story-card p-4 glass rounded-xl" id="step-process">
+                    <h3 class="text-xs font-bold uppercase text-white mb-1">Phase 2: Validation</h3>
+                    <p class="text-[11px] text-white/40 leading-relaxed">The server performs an auth check and validates the request body. It calculates the next available token number.</p>
+                </div>
+                <div class="story-card p-4 glass rounded-xl" id="step-db">
+                    <h3 class="text-xs font-bold uppercase text-white mb-1">Phase 3: Persistence</h3>
+                    <p class="text-[11px] text-white/40 leading-relaxed">The server creates a new entry in MongoDB. It atomically increments the queue counter to ensure no duplicate numbers.</p>
+                </div>
+                <div class="story-card p-4 glass rounded-xl" id="step-response">
+                    <h3 class="text-xs font-bold uppercase text-white mb-1">Phase 4: Response</h3>
+                    <p class="text-[11px] text-white/40 leading-relaxed">Success! The server sends the generated Token ID back to the Patient App for display.</p>
+                </div>
+                <div class="story-card p-4 glass rounded-xl" id="step-sync">
+                    <h3 class="text-xs font-bold uppercase text-white mb-1">Phase 5: Live Sync</h3>
+                    <p class="text-[11px] text-white/40 leading-relaxed">System-wide event broadcast via Socket.io. The Public TV and Staff dashboards receive an instant update.</p>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <script>
+        const btnSimJoin = document.getElementById('sim-join');
+        const packet = document.getElementById('packet');
+        const storyCards = document.querySelectorAll('.story-card');
+        const nodes = document.querySelectorAll('.node');
+
+        const animatePacket = (pathId, duration = 1000) => {
+            return new Promise(resolve => {
+                const path = document.getElementById(pathId);
+                const pathLength = path.getTotalLength();
+                packet.classList.add('animating');
+                
+                let start = null;
+                const animate = (timestamp) => {
+                    if (!start) start = timestamp;
+                    const progress = (timestamp - start) / duration;
+                    
+                    if (progress <= 1) {
+                        const point = path.getPointAtLength(progress * pathLength);
+                        packet.setAttribute('cx', point.x);
+                        packet.setAttribute('cy', point.y);
+                        requestAnimationFrame(animate);
+                    } else {
+                        resolve();
+                    }
+                };
+                requestAnimationFrame(animate);
+            });
+        };
+
+        const setActiveStep = (stepId) => {
+            storyCards.forEach(card => card.classList.remove('active'));
+            document.getElementById(stepId).classList.add('active');
+            document.getElementById(stepId).scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        };
+
+        const setActiveNode = (nodeId, status = 'processing') => {
+            nodes.forEach(n => {
+                n.classList.remove('active', 'processing');
+                n.querySelector('.status-dot').classList.remove('active');
+            });
+            if (nodeId) {
+                const n = document.getElementById(nodeId);
+                n.classList.add('active', status);
+                n.querySelector('.status-dot').classList.add('active');
+            }
+        };
+
+        btnSimJoin.addEventListener('click', async () => {
+            if (btnSimJoin.disabled) return;
+            btnSimJoin.disabled = true;
+            btnSimJoin.textContent = 'Simulating...';
+
+            // 1. Request
+            setActiveStep('step-request');
+            setActiveNode('node-app');
+            await animatePacket('path-app-server', 1200);
+
+            // 2. Process
+            setActiveStep('step-process');
+            setActiveNode('node-server', 'processing');
+            await new Promise(r => setTimeout(r, 1500));
+
+            // 3. Database
+            setActiveStep('step-db');
+            await animatePacket('path-server-db', 1000);
+            setActiveNode('node-db', 'processing');
+            await new Promise(r => setTimeout(r, 1200));
+
+            // 4. Response
+            setActiveStep('step-response');
+            setActiveNode('node-server');
+            
+            // Reverse path for response (backwards movement sim)
+            const reversePath = (pathId) => {
+                const path = document.getElementById(pathId);
+                const pathLength = path.getTotalLength();
+                return new Promise(resolve => {
+                    let start = null;
+                    const animate = (timestamp) => {
+                        if (!start) start = timestamp;
+                        const progress = (timestamp - start) / 1000;
+                        if (progress <= 1) {
+                            const point = path.getPointAtLength((1 - progress) * pathLength);
+                            packet.setAttribute('cx', point.x);
+                            packet.setAttribute('cy', point.y);
+                            requestAnimationFrame(animate);
+                        } else resolve();
+                    };
+                    requestAnimationFrame(animate);
+                });
+            };
+
+            await reversePath('path-server-db');
+            await reversePath('path-app-server');
+            setActiveNode('node-app', 'active');
+            await new Promise(r => setTimeout(r, 800));
+
+            // 5. Live Sync (Broadcast)
+            setActiveStep('step-sync');
+            setActiveNode('node-server', 'processing');
+            await animatePacket('path-server-tv', 1000);
+            setActiveNode('node-tv', 'active');
+
+            // Reset
+            await new Promise(r => setTimeout(r, 3000));
+            setActiveStep('step-idle');
+            setActiveNode(null);
+            packet.classList.remove('animating');
+            btnSimJoin.disabled = false;
+            btnSimJoin.textContent = 'Simulation: Join Queue';
+        });
+
+        // Initialize packet position
+        window.onload = () => {
+            const path = document.getElementById('path-app-server');
+            const pt = path.getPointAtLength(0);
+            packet.setAttribute('cx', pt.x);
+            packet.setAttribute('cy', pt.y);
+        };
+    </script>
+</body>
+</html>
