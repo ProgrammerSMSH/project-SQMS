@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQMS | Documentation & System Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tomorrow:wght@700;900&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0F0F13;
+            --accent-blue: #4DA1FF;
+            --accent-purple: #8B5CF6;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+        body {
+            background-color: var(--bg-color);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .font-tomorrow { font-family: 'Tomorrow', sans-serif; }
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+        }
+        .neon-text-blue {
+            text-shadow: 0 0 20px rgba(77, 161, 255, 0.5);
+        }
+        .gradient-bullet {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: 800;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+        .sidebar-link.active {
+            background: rgba(77, 161, 255, 0.1);
+            border-left: 4px solid var(--accent-blue);
+            color: var(--accent-blue);
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+    <!-- Background Glows -->
+    <div class="fixed top-0 right-0 w-[500px] h-[500px] bg-blue-600/5 blur-[150px] -z-10"></div>
+    <div class="fixed bottom-0 left-0 w-[500px] h-[500px] bg-purple-600/5 blur-[150px] -z-10"></div>
+
+    <!-- Sidebar Navigation -->
+    <aside class="w-72 glass m-4 mr-2 p-6 flex flex-col gap-8">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+            </div>
+            <h1 class="font-tomorrow text-xl tracking-tighter">SQMS <span class="text-blue-400">DOCS</span></h1>
+        </div>
+
+        <nav class="flex-grow flex flex-col gap-2 overflow-y-auto">
+            <p class="text-[10px] font-black uppercase tracking-[3px] text-white/30 mb-2 px-2">Setup Guide</p>
+            <a href="#intro" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                Introduction
+            </a>
+            <a href="#quickstart" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                Quick Start
+            </a>
+
+            <p class="text-[10px] font-black uppercase tracking-[3px] text-white/30 mt-6 mb-2 px-2">System Workflows</p>
+            <a href="#counters" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                Managing Counters
+            </a>
+            <a href="#serving" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                Serving Customers
+            </a>
+            <a href="#tv-display" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/5 transition text-sm font-semibold flex items-center gap-3">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                TV Display Setup
+            </a>
+        </nav>
+
+        <div class="mt-auto pt-6 border-t border-white/10">
+            <a href="../index.html" class="flex items-center justify-center gap-2 py-3 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 rounded-xl text-xs font-bold uppercase transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                Back to Dashboard
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow glass m-4 ml-2 overflow-y-auto p-12 custom-scrollbar relative">
+        <div id="intro" class="max-w-4xl mx-auto mb-20 section">
+            <span class="text-[10px] font-black text-blue-400 tracking-[5px] uppercase mb-4 block">Official Guide</span>
+            <h2 class="font-tomorrow text-5xl mb-6 neon-text-blue">Welcome to SQMS</h2>
+            <p class="text-white/60 text-lg leading-relaxed mb-8">
+                The Smart Queue Management System (SQMS) is built to make customer flow smooth and easy. This documentation will help you setup your admin dashboard and start serving people in minutes.
+            </p>
+            <div class="grid grid-cols-3 gap-4">
+                <div class="p-6 bg-white/5 border border-white/10 rounded-2xl">
+                    <h3 class="font-tomorrow text-blue-400 mb-2">Fast</h3>
+                    <p class="text-xs text-white/40">Real-time updates across all displays.</p>
+                </div>
+                <div class="p-6 bg-white/5 border border-white/10 rounded-2xl">
+                    <h3 class="font-tomorrow text-purple-400 mb-2">Simple</h3>
+                    <p class="text-xs text-white/40">Designed for easy administrative use.</p>
+                </div>
+                <div class="p-6 bg-white/5 border border-white/10 rounded-2xl">
+                    <h3 class="font-tomorrow text-green-400 mb-2">Reliable</h3>
+                    <p class="text-xs text-white/40">Secure access and persistent sessions.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="quickstart" class="max-w-4xl mx-auto mb-20 section">
+            <h2 class="font-tomorrow text-3xl mb-12 flex items-center gap-4">
+                <span class="w-12 h-1 bg-blue-500"></span>
+                Quick Start Guide
+            </h2>
+            
+            <div class="space-y-12">
+                <div class="flex gap-6">
+                    <div class="gradient-bullet">1</div>
+                    <div>
+                        <h4 class="text-xl font-bold mb-2">Login to Admin</h4>
+                        <p class="text-white/50 text-sm mb-4">Open the admin page and enter your credentials. If you don't have them, contact your system owner.</p>
+                        <div class="p-4 bg-black/40 border border-dashed border-white/20 rounded-xl text-xs font-mono text-blue-400">
+                            URL: app.sqms.com/admin
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex gap-6">
+                    <div class="gradient-bullet">2</div>
+                    <div>
+                        <h4 class="text-xl font-bold mb-2">Select your Counter</h4>
+                        <p class="text-white/50 text-sm">Once logged in, your counter (Station 01, 02, etc.) will be automatically identified. Check the left sidebar to see all active counters.</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-6">
+                    <div class="gradient-bullet">3</div>
+                    <div>
+                        <h4 class="text-xl font-bold mb-2">Set Serving Service</h4>
+                        <p class="text-white/50 text-sm">Use the dropdown menu in the center to select which service you are serving today (e.g., General Inquiries, Technical Support).</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="counters" class="max-w-4xl mx-auto mb-20 section">
+            <h2 class="font-tomorrow text-3xl mb-12 flex items-center gap-4">
+                <span class="w-12 h-1 bg-purple-500"></span>
+                Managing Counters
+            </h2>
+            <div class="glass p-8 border-white/5 overflow-hidden relative">
+                <div class="absolute -right-20 -top-20 w-64 h-64 bg-purple-500/10 blur-3xl"></div>
+                <h4 class="font-bold mb-4">Counter Information</h4>
+                <ul class="space-y-4 text-sm text-white/70">
+                    <li class="flex items-center gap-3">
+                        <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                        <strong>Active Counters:</strong> Numbers shown in the left list are currently online.
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                        <strong>Status:</strong> Pulse animation means the counter is ready to call next.
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="serving" class="max-w-4xl mx-auto mb-20 section">
+            <h2 class="font-tomorrow text-3xl mb-12 flex items-center gap-4">
+                <span class="w-12 h-1 bg-green-500"></span>
+                Serving Customers
+            </h2>
+            <div class="grid grid-cols-2 gap-8">
+                <div class="space-y-6">
+                    <div class="p-6 bg-white/5 rounded-2xl border border-white/10">
+                        <h5 class="text-xs font-black text-blue-400 uppercase tracking-widest mb-3">Action 1</h5>
+                        <h4 class="font-bold mb-2">Call Next</h4>
+                        <p class="text-xs text-white/40">Click the large "CALL NEXT" button to bring the next person from the queue. The TV will announce their number.</p>
+                    </div>
+                    <div class="p-6 bg-white/5 rounded-2xl border border-white/10">
+                        <h5 class="text-xs font-black text-green-400 uppercase tracking-widest mb-3">Action 2</h5>
+                        <h4 class="font-bold mb-2">Complete</h4>
+                        <p class="text-xs text-white/40">When finished, click "COMPLETE" to close the current token and prepare for the next.</p>
+                    </div>
+                </div>
+                <div class="p-8 glass bg-red-500/5 border-red-500/10 flex flex-col justify-center">
+                    <h5 class="text-xs font-black text-red-400 uppercase tracking-widest mb-4">Special Case</h5>
+                    <h4 class="text-xl font-bold mb-4">No Show?</h4>
+                    <p class="text-sm text-white/50 leading-relaxed">
+                        If a customer doesn't arrive within 2 minutes, click the <strong>NO SHOW</strong> button. This will mark them as absent and remove them from the active display.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div id="tv-display" class="max-w-4xl mx-auto mb-20 section">
+            <h2 class="font-tomorrow text-3xl mb-12 flex items-center gap-4">
+                <span class="w-12 h-1 bg-yellow-500"></span>
+                TV Display Setup
+            </h2>
+            <div class="p-10 glass border-white/10 text-center">
+                <h3 class="text-2xl font-bold mb-4">Syncing your TV</h3>
+                <p class="text-white/40 text-sm mb-8 mx-auto max-w-md">The TV display should be opened on a large screen in the waiting area. It stays in sync with all counters automatically.</p>
+                <button class="px-8 py-4 gradient-btn rounded-xl font-bold uppercase tracking-widest text-xs">Test TV Connection</button>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-20 pt-10 border-t border-white/5 text-center text-white/20 text-xs">
+            &copy; 2026 SQMS Premium. All system logs are recorded.
+        </footer>
+    </main>
+
+    <script>
+        // Simple Intersection Observer for sidebar highlighting
+        const sections = document.querySelectorAll('.section');
+        const navLinks = document.querySelectorAll('.sidebar-link');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').includes(current)) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
